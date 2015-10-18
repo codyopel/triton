@@ -476,6 +476,8 @@ let
 
   sublime-text = callPackage ../all-pkgs/sublime-text { };
 
+  vlc = callPackage ../all-pkgs/vlc { };
+
 ################################################################################
 ################################################################################
 ################################################################################
@@ -7979,11 +7981,6 @@ let
     signon = callPackage ../development/libraries/signon { };
 
     telepathy = callPackage ../development/libraries/telepathy/qt5 { };
-
-    vlc = callPackage ../applications/video/vlc {
-      qt4 = null;
-      withQt5 = true;
-    };
 
   };
 
