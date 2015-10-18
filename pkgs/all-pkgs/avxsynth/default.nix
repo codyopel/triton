@@ -1,11 +1,23 @@
-{ stdenv, fetchFromGitHub, autoreconfHook, pkgconfig
-, cairo, ffmpeg, ffms, libjpeg, log4cpp, pango
-, avxeditSupport ? false, qt4 ? null
+{ stdenv, fetchFromGitHub
+, autoreconfHook
+, pkgconfig
+
+, cairo
+, ffmpeg
+, ffms
+, libjpeg_original
+, log4cpp
+, pango
+
+# Optional
+, qt4 # Avxedit support
 }:
 
-let
-  inherit (stdenv.lib) enableFeature optional;
-in
+with {
+  inherit (stdenv.lib)
+    enFlag
+    optional;
+};
 
 stdenv.mkDerivation rec {
   name = "avxsynth-${version}";
@@ -23,20 +35,30 @@ stdenv.mkDerivation rec {
     "--enable-framecapture"
     "--enable-subtitle"
     "--enable-ffms2"
-    (enableFeature avxeditSupport "avxedit")
+    (enFlag "avxedit" (qt4 != null) null)
     "--with-jpeg=${libjpeg}/lib"
   ];
 
-  nativeBuildInputs = [ autoreconfHook pkgconfig ];
+  nativeBuildInputs = [
+    autoreconfHook
+    pkgconfig
+  ];
 
-  buildInputs = [ cairo ffmpeg ffms libjpeg log4cpp pango ]
-    ++ optional avxeditSupport qt4;
+  buildInputs = [
+    cairo
+    ffmpeg
+    ffms
+    libjpeg
+    log4cpp
+    pango
+    qt4
+  ];
 
   meta = with stdenv.lib; {
     description = "A script system that allows advanced non-linear editing";
     homepage = https://github.com/avxsynth/avxsynth;
     license = licenses.gpl2Plus;
-    maintainers = with maintainers; [ codyopel viric ];
+    maintainers = with maintainers; [ codyopel ];
     platforms = platforms.linux;
   };
 }

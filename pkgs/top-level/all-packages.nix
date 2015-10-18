@@ -474,6 +474,10 @@ let
 ################################################################################
 ################################################################################
 
+  avxsynth = callPackage ../all-pkgs/avxsynth {
+    qt4 = null;
+  };
+
   mpv = callPackage ../all-pkgs/mpv {
     lua = lua5_1;
     lua5_sockets = lua5_1_sockets;
@@ -10786,10 +10790,6 @@ let
   };
 
   avrdudess = callPackage ../applications/misc/avrdudess { };
-
-  avxsynth = callPackage ../applications/video/avxsynth {
-    libjpeg = libjpeg_original; # error: 'JCOPYRIGHT_SHORT' was not declared in this scope
-  };
 
   awesome-3-4 = callPackage ../applications/window-managers/awesome/3.4.nix {
     cairo = cairo.override { xcbSupport = true; };
