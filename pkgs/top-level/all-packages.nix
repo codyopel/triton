@@ -478,6 +478,8 @@ let
 
   vlc = callPackage ../all-pkgs/vlc { };
 
+  xine-ui = callPackage ../all-pkgs/xine-ui { };
+
 ################################################################################
 ################################################################################
 ################################################################################
@@ -13351,8 +13353,6 @@ let
   };
 
   xfig = callPackage ../applications/graphics/xfig { };
-
-  xineUI = callPackage ../applications/video/xine-ui { };
 
   xneur_0_13 = callPackage ../applications/misc/xneur { };
 
