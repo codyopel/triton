@@ -1,5 +1,5 @@
-{ stdenv, lib, browser, makeDesktopItem, makeWrapper, plugins, gst_plugins, libs, gtk_modules
-, browserName, desktopName, nameSuffix, icon, libtrick ? true
+{ stdenv, lib, browser, makeDesktopItem, makeWrapper, plugins, gst_plugins
+, libs, gtk_modules, browserName, desktopName, nameSuffix, icon, libtrick ? true
 }:
 
 let p = builtins.parseDrvName browser.name; in
