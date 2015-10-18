@@ -1,26 +1,35 @@
-{ stdenv, fetchurl, doxygen }:
+{ stdenv, fetchurl
+, doxygen
+}:
 
 stdenv.mkDerivation rec {
-  version = "${passthru.majorVersion}.${passthru.minorVersion}";
   name = "libmpdclient-${version}";
+  versionMajor = "2";
+  versionMinor = "10";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "http://www.musicpd.org/download/libmpdclient/2/${name}.tar.xz";
+    url = "http://www.musicpd.org/download/libmpdclient/${versionMajor}/"
+        + "${name}.tar.xz";
     sha256 = "10pzs9z815a8hgbbbiliapyiw82bnplsccj5irgqjw5f5plcs22g";
   };
 
-  buildInputs = [ doxygen ];
+  nativeBuildInputs = [
+    doxygen
+  ];
+
+  enableParallelBuilding = true;
 
   passthru = {
-    majorVersion = "2";
-    minorVersion = "10";
+    majorVersion = versionMajor;
+    minorVersion = versionMinor;
   };
 
   meta = with stdenv.lib; {
     description = "Client library for MPD (music player daemon)";
     homepage = http://www.musicpd.org/libs/libmpdclient/;
     license = licenses.gpl2;
+    maintainers = with maintainers; [ codyopel ];
     platforms = platforms.unix;
-    maintainers = with maintainers; [ mornfall emery ];
   };
 }

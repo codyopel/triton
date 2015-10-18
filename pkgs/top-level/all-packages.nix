@@ -9028,13 +9028,7 @@ let
   mod_python = pkgs.apacheHttpdPackages.mod_python;
   mod_wsgi = pkgs.apacheHttpdPackages.mod_wsgi;
 
-  mpd = callPackage ../servers/mpd {
-    aacSupport    = config.mpd.aacSupport or true;
-    clientSupport = config.mpd.clientSupport or false;
-    ffmpegSupport = config.mpd.ffmpegSupport or true;
-    opusSupport   = config.mpd.opusSupport or true;
-
-  };
+  mpd = callPackage ../servers/mpd { };
 
   mpd_clientlib = callPackage ../servers/mpd/clientlib.nix { };
 

@@ -1,119 +1,207 @@
-{ stdenv, fetchurl, pkgconfig, glib, systemd, boost
-, alsaSupport ? true, alsaLib
-, flacSupport ? true, flac
-, vorbisSupport ? true, libvorbis
-, madSupport ? true, libmad
-, id3tagSupport ? true, libid3tag
-, mikmodSupport ? true, libmikmod
-, shoutSupport ? true, libshout
-, sqliteSupport ? true, sqlite
-, curlSupport ? true, curl
-, audiofileSupport ? true, audiofile
-, bzip2Support ? true, bzip2
-, ffmpegSupport ? true, ffmpeg
-, fluidsynthSupport ? true, fluidsynth
-, zipSupport ? true, zziplib
-, samplerateSupport ? true, libsamplerate
-, mmsSupport ? true, libmms
-, mpg123Support ? true, mpg123
-, aacSupport ? true, faad2
-, pulseaudioSupport ? true, libpulseaudio
-, jackSupport ? true, libjack2
-, gmeSupport ? true, game-music-emu
-, icuSupport ? true, icu
-, clientSupport ? false, mpd_clientlib
-, opusSupport ? true, libopus
+{ stdenv, fetchurl
+, pkgconfig
+
+# Required
+, boost
+, glib
+
+# Optional
+, alsaLib
+, audiofile
+, avahi
+, bzip2
+, curl
+, dbus
+, expat
+, faad2
+, ffmpeg
+, flac
+, fluidsynth
+, game-music-emu
+, icu
+, lame
+, libao
+, libiconv
+, libid3tag
+, libjack2
+, libmad
+, libmikmod
+, libmms
+, libmodplug
+, libopus
+, libpulseaudio
+, libsamplerate
+, libshout
+, libsndfile
+, libupnp
+, libvorbis
+, mpd_clientlib
+, mpg123
+, openal
+, samba
+, shout
+, soxr
+, sqlite
+, systemd
+#, twolame
+#, wavpack
+, yajl
+, zlib
+, zziplib
+# Options
+, debugSupport ? false
+, documentationSupport ? false
+  , xmlto
+  , doxygen
 }:
 
-with stdenv.lib;
-let
-  opt = optional;
-  major = "0.19";
-  minor = "9";
-in
+with {
+  inherit (stdenv.lib)
+    enFlag
+    wtFlag
+    optional
+    optionals;
+};
+
 stdenv.mkDerivation rec {
-  name = "mpd-${major}.${minor}";
+  name = "mpd-${version}";
+  versionMajor = "0.19";
+  versionMinor = "10";
+  version = "${versionMajor}.${versionMinor}";
+
   src = fetchurl {
-    url    = "http://www.musicpd.org/download/mpd/${major}/${name}.tar.xz";
-    sha256 = "0vzj365s4j0pw5w37lfhx3dmpkdp85driravsvx8rlrw0lii91a7";
+    url    = "http://www.musicpd.org/download/mpd/${versionMajor}/${name}.tar.xz";
+    sha256 = "0laqn68iggqf0h06hg282cvpd9wsjqpjfg5fnn9wk3gr48yyp1n3";
   };
 
-  buildInputs = [ pkgconfig glib boost ]
-    ++ opt stdenv.isLinux systemd
-    ++ opt (stdenv.isLinux && alsaSupport) alsaLib
-    ++ opt flacSupport flac
-    ++ opt vorbisSupport libvorbis
-    # using libmad to decode mp3 files on darwin is causing a segfault -- there
-    # is probably a solution, but I'm disabling it for now
-    ++ opt (!stdenv.isDarwin && madSupport) libmad
-    ++ opt id3tagSupport libid3tag
-    ++ opt mikmodSupport libmikmod
-    ++ opt shoutSupport libshout
-    ++ opt sqliteSupport sqlite
-    ++ opt curlSupport curl
-    ++ opt bzip2Support bzip2
-    ++ opt audiofileSupport audiofile
-    ++ opt ffmpegSupport ffmpeg
-    ++ opt fluidsynthSupport fluidsynth
-    ++ opt samplerateSupport libsamplerate
-    ++ opt mmsSupport libmms
-    ++ opt mpg123Support mpg123
-    ++ opt aacSupport faad2
-    ++ opt zipSupport zziplib
-    ++ opt pulseaudioSupport libpulseaudio
-    ++ opt jackSupport libjack2
-    ++ opt gmeSupport game-music-emu
-    ++ opt icuSupport icu
-    ++ opt clientSupport mpd_clientlib
-    ++ opt opusSupport libopus;
+  configureFlags = [
+    (enFlag "aac" (faad2 != null) null)
+    # TODO: adplug support
+    #(enFlag "adplug" true null)
+    (enFlag "alsa" (alsaLib != null) null)
+    (enFlag "audiofile" (audiofile != null) null)
+    (enFlag "bzip2" (bzip2 != null) null)
+    # TODO: cdio-paranoia support
+    #(enFlag "cdio-paranoia" (libcdio != null) null)
+    (enFlag "curl" (curl != null) null)
+    (enFlag "database" true null)
+    (enFlag "dsd" true null)
+    (enFlag "fifo" true null)
+    (enFlag "ffmpeg" (ffmpeg != null) null)
+    (enFlag "flac" (flac != null) null)
+    (enFlag "fluidsynth" (fluidsynth != null) null)
+    (enFlag "gme" (game-music-emu != null) null)
+    (enFlag "haiku" true null)
+    (enFlag "httpd-output" true null)
+    (enFlag "iconv" (libiconv != null) null)
+    (enFlag "icu" (icu != null) null)
+    (enFlag "id3" (libid3tag != null) null)
+    (enFlag "inotify" true null)
+    (enFlag "ipv6" true null)
+    (enFlag "jack" (libjack2 != null) null)
+    (enFlag "lame-encoder" (lame != null) null)
+    (enFlag "libmpdclient" (mpd_clientlib != null) null)
+    # TODO: libwrap support
+    #(enFlag "libwrap" true null)
+    (enFlag "sndfile" (libsndfile != null) null)
+    (enFlag "lsr" (libsamplerate != null) null)
+    (enFlag "mad" (libmad != null) null)
+    (enFlag "mikmod" (libmikmod != null) null)
+    (enFlag "mms" (libmms != null) null)
+    (enFlag "modplug" (libmodplug != null) null)
+    (enFlag "mpg123" (mpg123 != null) null)
+    (enFlag "neighbor-plugins" true null)
+    (enFlag "openal" (openal != null) null)
+    (enFlag "opus" (libopus != null) null)
+    (enFlag "oss" true null)
+    "--disable-osx"
+    (enFlag "pipe-output" true null)
+    (enFlag "pulse" (libpulseaudio != null) null)
+    (enFlag "shout" (libshout != null) null)
+    "--disable-solaris-output"
+    (enFlag "soundcloud" (yajl != null) null)
+    (enFlag "sqlite" (sqlite != null) null)
+    # TODO: twolame support
+    #(enFlag "twolame" (twolame != null) null)
+    (enFlag "un" true null)
+    (enFlag "upnp" (libupnp != null) null)
+    (enFlag "vorbis" (libvorbis != null) null)
+    (enFlag "vorbis-encoder" (libvorbis != null) null)
+    (enFlag "wave-encoder" true null)
+    # FIXME: wavpack support
+    #(enFlag "wavpack" (wavpack != null) null)
+    (wtFlag "zeroconf" (avahi != null && dbus != null) "avahi")
+    (enFlag "zlib" (zlib != null) null)
+    (enFlag "zzip" (zziplib != null) null)
 
-  configureFlags =
-    [ (mkEnable (!stdenv.isDarwin && alsaSupport) "alsa" null)
-      (mkEnable flacSupport "flac" null)
-      (mkEnable vorbisSupport "vorbis" null)
-      (mkEnable vorbisSupport "vorbis-encoder" null)
-      (mkEnable (!stdenv.isDarwin && madSupport) "mad" null)
-      (mkEnable mikmodSupport "mikmod" null)
-      (mkEnable id3tagSupport "id3" null)
-      (mkEnable shoutSupport "shout" null)
-      (mkEnable sqliteSupport "sqlite" null)
-      (mkEnable curlSupport "curl" null)
-      (mkEnable audiofileSupport "audiofile" null)
-      (mkEnable bzip2Support "bzip2" null)
-      (mkEnable ffmpegSupport "ffmpeg" null)
-      (mkEnable fluidsynthSupport "fluidsynth" null)
-      (mkEnable zipSupport "zzip" null)
-      (mkEnable samplerateSupport "lsr" null)
-      (mkEnable mmsSupport "mms" null)
-      (mkEnable mpg123Support "mpg123" null)
-      (mkEnable aacSupport "aac" null)
-      (mkEnable pulseaudioSupport "pulse" null)
-      (mkEnable jackSupport "jack" null)
-      (mkEnable stdenv.isDarwin "osx" null)
-      (mkEnable icuSupport "icu" null)
-      (mkEnable gmeSupport "gme" null)
-      (mkEnable clientSupport "libmpdclient" null)
-      (mkEnable opusSupport "opus" null)
-      (mkEnable true "debug" null)
-    ]
-    ++ opt stdenv.isLinux
-      "--with-systemdsystemunitdir=$(out)/etc/systemd/system";
+    (wtFlag "systemdsystemunitdir" (systemd != null) "$(out)/etc/systemd/system")
+    (enFlag "debug" debugSupport null)
+    (enFlag "documentation" documentationSupport null)
+    (enFlag "werror" false null)
+  ];
 
-  NIX_LDFLAGS = ''
-    ${if shoutSupport then "-lshout" else ""}
-  '';
+  NIX_LDFLAGS = [ ] ++ optional (libshout != null) "-lshout";
 
-  meta = {
+  nativeBuildInputs = [
+    pkgconfig
+  ];
+
+  buildInputs = [
+    # Required
+    boost
+    glib
+    # Optional
+    alsaLib
+    audiofile
+    avahi
+    bzip2
+    curl
+    dbus
+    expat
+    faad2
+    ffmpeg
+    flac
+    fluidsynth
+    game-music-emu
+    icu
+    lame
+    libao
+    libiconv
+    libid3tag
+    libjack2
+    libmad
+    libmikmod
+    libmms
+    libmodplug
+    libopus
+    libpulseaudio
+    libsamplerate
+    libshout
+    libsndfile
+    libupnp
+    libvorbis
+    mpd_clientlib
+    mpg123
+    openal
+    soxr
+    sqlite
+    systemd
+    #wavpack
+    yajl
+    zlib
+    zziplib
+  ] ++ optionals documentationSupport [
+    doxygen
+    xmlto
+  ];
+
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
     description = "A flexible, powerful daemon for playing music";
-    homepage    = http://mpd.wikia.com/wiki/Music_Player_Daemon_Wiki;
-    license     = licenses.gpl2;
-    maintainers = with maintainers; [ astsmtl fuuzetsu emery ];
-    platforms   = platforms.unix;
-
-    longDescription = ''
-      Music Player Daemon (MPD) is a flexible, powerful daemon for playing
-      music. Through plugins and libraries it can play a variety of sound
-      files while being controlled by its network protocol.
-    '';
+    homepage = http://www.musicpd.org/;
+    license = licenses.gpl2;
+    maintainers = with maintainers; [ codyopel ];
+    platforms = platforms.unix;
   };
 }
