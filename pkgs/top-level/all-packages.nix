@@ -13105,12 +13105,6 @@ let
 
   vkeybd = callPackage ../applications/audio/vkeybd {};
 
-  vlc = callPackage ../applications/video/vlc {
-    ffmpeg = ffmpeg_2;
-  };
-
-  vlc_qt5 = qt5Libs.vlc;
-
   vmpk = callPackage ../applications/audio/vmpk { };
 
   vnstat = callPackage ../applications/networking/vnstat { };
