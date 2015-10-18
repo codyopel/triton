@@ -177,8 +177,16 @@ rec {
      cond: The condition for the prepended string type and value
      name: The flag name
      val: The value of the flag only set when cond is true */
-  mkFlag = trueStr: falseStr: cond: name: val:
-    if cond == null then null else
+  mkFlag =
+    trueStr:
+    falseStr:
+    cond:
+    name:
+    val:
+
+    if cond == null then
+      null
+    else
       "--${if cond != false then trueStr else falseStr}${name}"
       + "${if val != null && cond != false then "=${val}" else ""}";
 
@@ -186,6 +194,58 @@ rec {
   mkEnable = mkFlag "enable-" "disable-";
   mkWith = mkFlag "with-" "without-";
   mkOther = mkFlag "" "" true;
+
+  /* Returns a configure flag string in an autotools format
+     trueStr: Prepended when cond is true
+     falseStr: Prepended when cond is false
+     cond: The condition for the prepended string type and value
+     name: The flag name
+     val: The value of the flag only set when cond is true */
+  atFlag =
+    trueStr:
+    falseStr:
+    flag:
+    condition:
+    value:
+
+    if condition == null then
+      null
+    else
+      "--${
+        if condition == true then
+          trueStr
+        else
+          falseStr
+      }${flag}${
+        if value != null && condition == true then
+          "=${value}"
+        else
+          ""
+      }";
+
+  /* Flag setting helpers for autotools like packages */
+  enFlag = atFlag "enable-" "disable-";
+  wtFlag = atFlag "with-" "without-";
+  otFlag =
+    flag:
+    value:
+
+    atFlag "" "" flag true value;
+
+  cmFlag =
+    flag:
+    value:
+
+    "-D${flag}${
+      if value == true then
+        "=ON"
+      else if value == false then
+        "=OFF"
+      else if value != null then
+        "=${value}"
+      else
+        ""
+    }";
 
   /* Make a set of packages with a common scope. All packages called
      with the provided `callPackage' will be evaluated with the same
