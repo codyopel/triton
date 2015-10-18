@@ -31,9 +31,7 @@ let
     test-patch = with pkgs.kernelPatches; grsecurity_unstable;
     stable-patch = with pkgs.kernelPatches; grsecurity_stable;
 
-    grKernel = if cfg.stable
-               then mkKernel pkgs.linux_3_14 stable-patch
-               else mkKernel pkgs.linux_4_1 test-patch;
+    grKernel = mkKernel pkgs.linux_4_2 test-patch;
 
     ## -- grsecurity configuration ---------------------------------------------
 
