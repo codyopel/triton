@@ -474,6 +474,12 @@ let
 ################################################################################
 ################################################################################
 
+  mpv = callPackage ../all-pkgs/mpv {
+    lua = lua5_1;
+    lua5_sockets = lua5_1_sockets;
+    youtube-dl = pythonPackages.youtube-dl;
+  };
+
   sublime-text = callPackage ../all-pkgs/sublime-text { };
 
   vlc = callPackage ../all-pkgs/vlc { };
@@ -12161,16 +12167,6 @@ let
       inherit browser;
       # !!! should depend on MPlayer
     };
-
-  mpv = callPackage ../applications/video/mpv rec {
-    lua = lua5_1;
-    lua5_sockets = lua5_1_sockets;
-    youtube-dl = pythonPackages.youtube-dl;
-    bs2bSupport = config.mpv.bs2bSupport or true;
-    youtubeSupport = config.mpv.youtubeSupport or true;
-    cacaSupport = config.mpv.cacaSupport or true;
-    vaapiSupport = config.mpv.vaapiSupport or false;
-  };
 
   mrpeach = callPackage ../applications/audio/pd-plugins/mrpeach { };
 
