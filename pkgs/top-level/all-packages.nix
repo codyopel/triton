@@ -2040,7 +2040,7 @@ let
 
   nodePackages_4_1 = recurseIntoAttrs (callPackage ./node-packages.nix { self = nodePackages_4_1; nodejs = nodejs-4_1; });
 
-  nodePackages_0_10 = recurcallPackage ./node-packages.nix { self = nodePackages_0_10; nodejs = nodejs-0_10; };
+  #nodePackages_0_10 = recurcallPackage ./node-packages.nix { self = nodePackages_0_10; nodejs = nodejs-0_10; };
 
   nodePackages = if stdenv.system == "armv5tel-linux" then
     nodePackages_0_10
@@ -9109,7 +9109,7 @@ let
     # The following are disabled in the default build, because if this
     # functionality is desired, they are only needed in the PulseAudio
     # server.
-    xlibs = null;
+    xorg = null;
     coreaudio = null;
     esound = null;
     libjack2 = null;
