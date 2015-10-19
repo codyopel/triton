@@ -1,11 +1,28 @@
-{ stdenv, fetchurl, fetchFromSavannah, autogen, flex, bison, python, autoconf, automake
-, gettext, ncurses, libusb, freetype, qemu, devicemapper
+{ stdenv, fetchurl, fetchFromSavannah
+, autogen
+, flex
+, bison
+, python
+, autoconf
+, automake
+
+, gettext
+, ncurses
+, libusb
+, freetype
+, qemu
+, devicemapper
 , zfs ? null
 , efiSupport ? false
 , zfsSupport ? true
 }:
 
-with stdenv.lib;
+with {
+  inherit (stdenv.lib)
+    optional
+    optionals;
+};
+
 let
   pcSystems = {
     "i686-linux".target = "i386";
@@ -20,7 +37,7 @@ let
   canEfi = any (system: stdenv.system == system) (mapAttrsToList (name: _: name) efiSystems);
   inPCSystems = any (system: stdenv.system == system) (mapAttrsToList (name: _: name) pcSystems);
 
-  version = "2.x-2015-07-27";
+  version = "2.x-2015-10-13";
 
   unifont_bdf = fetchurl {
     url = "http://unifoundry.com/unifont-5.1.20080820.bdf.gz";
@@ -32,8 +49,7 @@ let
     url = "http://alpha.gnu.org/gnu/grub/grub-2.02~beta2.tar.gz";
     sha256 = "1lr9h3xcx0wwrnkxdnkfjwy08j7g7mdlmmbdip2db4zfgi69h0rm";
   };
-
-in (
+in
 
 assert efiSupport -> canEfi;
 assert zfsSupport -> zfs != null;
@@ -43,82 +59,87 @@ stdenv.mkDerivation rec {
 
   src = fetchFromSavannah {
     repo = "grub";
-    rev = "72fc110d95129410443b898e931ff7a1db75312e";
-    sha256 = "0l2hws8h1jhww5s0m8pkwdggacpqb7fvz2jx83syg7ynczpgzbxs";
+    rev = "a3645c1240a0b89c3b51593bd3efc14fe66d67cf";
+    sha256 = "0vxc2hi4qgv3hm90q6m3s5a9xi3j40fkc0wqv09hfkw25rabqk60";
   };
 
-  nativeBuildInputs = [ autogen flex bison python autoconf automake ];
-  buildInputs = [ ncurses libusb freetype gettext devicemapper ]
-    ++ optional doCheck qemu
+  patches = [
+    ./fix-bash-completion.patch
+  ];
+
+  prePatch = ''
+    tar zxf ${po_src} grub-2.02~beta2/po
+    rm -rf po
+    mv grub-2.02~beta2/po po
+    sh autogen.sh
+    gunzip < "${unifont_bdf}" > "unifont.bdf"
+    sed -i "configure" \
+        -e "s|/usr/src/unifont.bdf|$PWD/unifont.bdf|g"
+  '';
+
+  nativeBuildInputs = [
+    autogen
+    flex bison
+    python
+    autoconf
+    automake
+  ];
+
+  buildInputs = [
+    ncurses
+    libusb
+    freetype
+    gettext
+    devicemapper
+  ] ++ optional doCheck qemu
     ++ optional zfsSupport zfs;
 
-  preConfigure =
-    '' for i in "tests/util/"*.in
-       do
-         sed -i "$i" -e's|/bin/bash|/bin/sh|g'
-       done
+  preConfigure = ''
+    for i in "tests/util/"*.in ; do
+      sed -i "$i" -e's|/bin/bash|/bin/sh|g'
+    done
 
-       # Apparently, the QEMU executable is no longer called
-       # `qemu-system-i386', even on i386.
-       #
-       # In addition, use `-nodefaults' to avoid errors like:
-       #
-       #  chardev: opening backend "stdio" failed
-       #  qemu: could not open serial device 'stdio': Invalid argument
-       #
-       # See <http://www.mail-archive.com/qemu-devel@nongnu.org/msg22775.html>.
-       sed -i "tests/util/grub-shell.in" \
-           -e's/qemu-system-i386/qemu-system-x86_64 -nodefaults/g'
-    '';
+    # Apparently, the QEMU executable is no longer called
+    # `qemu-system-i386', even on i386.
+    #
+    # In addition, use `-nodefaults' to avoid errors like:
+    #
+    #  chardev: opening backend "stdio" failed
+    #  qemu: could not open serial device 'stdio': Invalid argument
+    #
+    # See <http://www.mail-archive.com/qemu-devel@nongnu.org/msg22775.html>.
+    sed -i "tests/util/grub-shell.in" \
+        -e's/qemu-system-i386/qemu-system-x86_64 -nodefaults/g'
+  '';
 
-  prePatch =
-    '' tar zxf ${po_src} grub-2.02~beta2/po
-       rm -rf po
-       mv grub-2.02~beta2/po po
-       sh autogen.sh
-       gunzip < "${unifont_bdf}" > "unifont.bdf"
-       sed -i "configure" \
-           -e "s|/usr/src/unifont.bdf|$PWD/unifont.bdf|g"
-    '';
-
-  patches = [ ./fix-bash-completion.patch ];
-
-  configureFlags = optional zfsSupport "--enable-libzfs"
-    ++ optionals efiSupport [ "--with-platform=efi" "--target=${efiSystems.${stdenv.system}.target}" "--program-prefix=" ];
+  configureFlags = [ ]
+    ++ optional zfsSupport "--enable-libzfs"
+    ++ optionals efiSupport [
+      "--with-platform=efi"
+      "--target=${efiSystems.${stdenv.system}.target}"
+      "--program-prefix="
+    ];
 
   # save target that grub is compiled for
-  grubTarget = if efiSupport
-               then "${efiSystems.${stdenv.system}.target}-efi"
-               else if inPCSystems
-                    then "${pcSystems.${stdenv.system}.target}-pc"
-                    else "";
-
-  doCheck = false;
-  enableParallelBuilding = true;
+  grubTarget =
+    if efiSupport then
+      "${efiSystems.${stdenv.system}.target}-efi"
+    else if inPCSystems then
+      "${pcSystems.${stdenv.system}.target}-pc"
+    else
+      "";
 
   postInstall = ''
     paxmark pms $out/sbin/grub-{probe,bios-setup}
   '';
 
+  doCheck = false;
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
-    description = "GNU GRUB, the Grand Unified Boot Loader (2.x beta)";
-
-    longDescription =
-      '' GNU GRUB is a Multiboot boot loader. It was derived from GRUB, GRand
-         Unified Bootloader, which was originally designed and implemented by
-         Erich Stefan Boleyn.
-
-         Briefly, the boot loader is the first software program that runs when a
-         computer starts.  It is responsible for loading and transferring
-         control to the operating system kernel software (such as the Hurd or
-         the Linux).  The kernel, in turn, initializes the rest of the
-         operating system (e.g., GNU).
-      '';
-
+    description = "GNU GRUB, the Grand Unified Boot Loader";
     homepage = http://www.gnu.org/software/grub/;
-
     license = licenses.gpl3Plus;
-
     platforms = platforms.gnu;
   };
-})
+}
