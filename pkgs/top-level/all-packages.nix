@@ -478,6 +478,16 @@ let
     qt4 = null;
   };
 
+  lightdm_gtk = callPackage ../all-pkgs/lightdm {
+    qt5 = null;
+  };
+  lightdm_qt = lightdm.override {
+    qt5 = qt5;
+  };
+  lightdm = lightdm_gtk;
+
+  lightdm-gtk-greeter = callPackage ../all-pkgs/lightdm-gtk-greeter { };
+
   mpv = callPackage ../all-pkgs/mpv {
     lua = lua5_1;
     lua5_sockets = lua5_1_sockets;
@@ -12730,15 +12740,6 @@ let
   };
 
   dropbox-cli = callPackage ../applications/networking/dropbox-cli { };
-
-  lightdm = qt5Libs.callPackage ../applications/display-managers/lightdm {
-    qt4 = null;
-    withQt5 = false;
-  };
-
-  lightdm_qt = lightdm.override { withQt5 = true; };
-
-  lightdm_gtk_greeter = callPackage ../applications/display-managers/lightdm-gtk-greeter { };
 
   slic3r = callPackage ../applications/misc/slic3r { };
 
