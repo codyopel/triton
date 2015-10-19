@@ -7,7 +7,7 @@ import ./generic.nix (args // rec {
 
   src = fetchurl {
     url = "mirror://kernel/linux/kernel/v4.x/linux-${version}.tar.xz";
-    sha256 = "1zhck5892c3anbifq3d0ngy40zmxq4c651kgkjk9wf32jjpnngar";
+    sha256 = "1gmsrz2ldpyn46fbfagnbs8ncsx6mq9wwr7avi1c995gk70ff92p";
   };
 
   features.iwlwifi = true;
