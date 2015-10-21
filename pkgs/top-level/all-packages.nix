@@ -11473,7 +11473,19 @@ let
     inherit (pythonPackages) pysqlite;
     libpng = libpng_apng;
     enableGTK3 = false;
-  }) firefox firefox-esr;
+  });
+
+  firefox = callPackage ../applications/networking/browsers/firefox {
+    inherit (gnome) libIDL;
+    inherit (pythonPackages) pysqlite;
+    libpng = libpng_apng;
+  };
+  firefox-esr = callPackage ../applications/networking/browsers/firefox {
+    channel = "esr";
+    inherit (gnome) libIDL;
+    inherit (pythonPackages) pysqlite;
+    libpng = libpng_apng;
+  };
 
   firefox-wrapper = wrapFirefox { browser = pkgs.firefox; };
   firefox-esr-wrapper = wrapFirefox { browser = pkgs.firefox-esr; };
