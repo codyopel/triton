@@ -19,6 +19,8 @@
 
 with {
   inherit (stdenv.lib)
+    any
+    mapAttrsToList
     optional
     optionals;
 };
