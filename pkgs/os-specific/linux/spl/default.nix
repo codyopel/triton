@@ -1,4 +1,9 @@
-{ fetchFromGitHub, stdenv, autoconf, automake, libtool, coreutils, gawk
+{ stdenv, fetchFromGitHub
+, autoconf
+, automake
+, libtool
+, coreutils
+, gawk
 , configFile ? "all"
 
 # Kernel dependencies
@@ -17,18 +22,26 @@ assert buildKernel -> kernel != null;
 stdenv.mkDerivation rec {
   name = "spl-${configFile}-${version}${optionalString buildKernel "-${kernel.version}"}";
 
-  version = "0.6.5";
+  version = "0.6.5.3";
 
   src = fetchFromGitHub {
     owner = "zfsonlinux";
     repo = "spl";
     rev = "spl-${version}";
-    sha256 = "0ryw2vh3px0q38skm53g83p46011ndrdxi3y2kqvd1pjqgfbjdmj";
+    sha256 = "0lj57apwsy8cfwsvg9z62k71r3qms2p87lgcdk54g7352cwziqps";
   };
 
-  patches = [ ./const.patch ./install_prefix.patch ];
+  patches = [
+    ./const.patch
+    ./install_prefix.patch
+  ];
 
-  buildInputs = [ autoconf automake libtool ];
+  configureFlags = [
+    "--with-config=${configFile}"
+  ] ++ optionals buildKernel [
+    "--with-linux=${kernel.dev}/lib/modules/${kernel.modDirVersion}/source"
+    "--with-linux-obj=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build"
+  ];
 
   preConfigure = ''
     ./autogen.sh
@@ -41,26 +54,19 @@ stdenv.mkDerivation rec {
     substituteInPlace ./module/splat/splat-linux.c --replace "PATH=/sbin:/usr/sbin:/bin:/usr/bin" "PATH=${coreutils}:/bin"
   '';
 
-  configureFlags = [
-    "--with-config=${configFile}"
-  ] ++ optionals buildKernel [
-    "--with-linux=${kernel.dev}/lib/modules/${kernel.modDirVersion}/source"
-    "--with-linux-obj=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build"
+  buildInputs = [
+    autoconf
+    automake
+    libtool
   ];
 
   enableParallelBuilding = true;
 
   meta = {
-    description = "Kernel module driver for solaris porting layer (needed by in-kernel zfs)";
-
-    longDescription = ''
-      This kernel module is a porting layer for ZFS to work inside the linux
-      kernel.
-    '';
-
+    description = "Kernel module driver for solaris porting layer";
     homepage = http://zfsonlinux.org/;
-    platforms = platforms.linux;
     license = licenses.gpl2Plus;
-    maintainers = with maintainers; [ jcumming wizeman wkennington ];
+    maintainers = with maintainers; [ wkennington ];
+    platforms = platforms.linux;
   };
 }
