@@ -5,7 +5,7 @@ import ./generic.nix (args // rec {
   extraMeta.branch = "4.2";
 
   src = fetchurl {
-    url = "mirror://kernel/linux/kernel/v4.x/linux-${version}.tar.xz";
+    url = "http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz";
     sha256 = "1wigr2s7d17syvwpizvq7q8h6slg81b5y9p9xq0qv485910mhyhn";
   };
 
