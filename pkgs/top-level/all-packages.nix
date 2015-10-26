@@ -488,6 +488,14 @@ let
 
   lightdm-gtk-greeter = callPackage ../all-pkgs/lightdm-gtk-greeter { };
 
+  mkvtoolnix = callPackage ../all-pkgs/mkvtoolnix { };
+  mkvtoolnix-cli = mkvtoolnix.override {
+    withGUI = false;
+    qt5 = null;
+    legacyGUI = false;
+    wxGTK = null;
+  };
+
   mpv = callPackage ../all-pkgs/mpv {
     lua = lua5_1;
     lua5_sockets = lua5_1_sockets;
@@ -7635,15 +7643,6 @@ let
     avahi = avahi.override {
       withLibdnssdCompat = true;
     };
-  };
-
-  mkvtoolnix = callPackage ../applications/video/mkvtoolnix { };
-
-  mkvtoolnix-cli = mkvtoolnix.override {
-    withGUI = false;
-    qt5 = null;
-    legacyGUI = false;
-    wxGTK = null;
   };
 
   mlt-qt4 = callPackage ../development/libraries/mlt {
