@@ -1,20 +1,27 @@
-{ stdenv, lib, go, fetchFromGitHub }:
+{ stdenv, fetchFromGitHub
+, go
+}:
 
 stdenv.mkDerivation rec {
   name = "fleet-${version}";
-  version = "0.9.0";
+  version = "0.11.5";
 
   src = fetchFromGitHub {
     owner = "coreos";
     repo = "fleet";
     rev = "v${version}";
-    sha256 = "0gjminfprprs1nmg9y9a0qkyl9spixrk4pc2b7bl0lxdgpq2yiid";
+    sha256 = "0dc95dpqqc2rclbvgdqjcilrkji7lrpigdrzpwm3nbgz58vkfnz3";
   };
 
-  buildInputs = [ go ];
+  patchPhase = ''
+    patchShebangs ./build
+  '';
+
+  buildInputs = [
+    go 
+  ];
 
   buildPhase = ''
-    patchShebangs build
     ./build
   '';
 
@@ -27,7 +34,7 @@ stdenv.mkDerivation rec {
     description = "A distributed init system";
     homepage = http://coreos.com/using-coreos/clustering/;
     license = licenses.asl20;
-    maintainers = with maintainers; [ cstrahan offline ];
-    platforms = platforms.unix;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.linux;
   };
 }
