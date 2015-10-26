@@ -16,10 +16,7 @@ in
 stdenv.mkDerivation {
   name = "linux-headers-${version}";
 
-  src = fetchurl {
-    url = "http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz";
-    sha256 = "1gmsrz2ldpyn46fbfagnbs8ncsx6mq9wwr7avi1c995gk70ff92p";
-  };
+  inherit (linux_4_1) src;
 
   targetConfig = if cross != null then cross.config else null;
 
