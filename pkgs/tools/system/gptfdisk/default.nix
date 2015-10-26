@@ -1,33 +1,40 @@
-{ fetchurl, stdenv, libuuid, popt, icu, ncurses }:
+{ fetchurl, stdenv
+, libuuid
+, popt
+, icu
+, ncurses
+}:
 
-let
-  inherit (stdenv) isDarwin isFreeBSD isLinux system;
-  inherit (stdenv.lib) optionalString;
-in
-
-# Make sure platform is supported
-assert (!isDarwin && !isFreeBSD && !isLinux) -> throw "gptfdisk does not support the `${system}' platform";
+with {
+  inherit (stdenv)
+    isFreeBSD
+    system;
+  inherit (stdenv.lib)
+    optionalString;
+}
 
 # TODO: add Cygwin support
 
 stdenv.mkDerivation rec {
-  name = "gptfdisk-1.0.0";
+  name = "gptfdisk-1.0.1";
 
   src = fetchurl {
     url = "mirror://sourceforge/gptfdisk/${name}.tar.gz";
-    sha256 = "0v0xl0mzwabdf9yisgsvkhpyi48kbik35c6df42gr6d78dkrarjv";
+    sha256 = "1izazbyv5n2d81qdym77i8mg9m870hiydmq4d0s51npx5vp8lk46";
   };
 
-  # Use the correct makefile on FreeBSD & Darwin
-  patchPhase = optionalString (isDarwin || isFreeBSD) ''
+  # Use the correct makefile on FreeBSD
+  patchPhase = optionalString isFreeBSD ''
     rm -f Makefile
-  '' + optionalString isDarwin ''
-    mv Makefile.mac Makefile
-  '' + optionalString isFreeBSD ''
     mv Makefile.freebsd Makefile
   '';
 
-  buildInputs = [ icu libuuid ncurses popt ];
+  buildInputs = [
+    icu
+    libuuid
+    ncurses
+    popt
+  ];
 
   installPhase = ''
     mkdir -p $out/bin
