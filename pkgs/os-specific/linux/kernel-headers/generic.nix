@@ -1,8 +1,15 @@
 { stdenv, fetchurl
-, linux_4_1
+, linux
 , perl
 , cross ? null
 }:
+
+with {
+  inherit (stdenv.lib)
+    versionAtLeast;
+  inherit (builtins.getAttr linux.meta.branch (import ./sources.nix))
+    sha256;
+};
 
 assert cross == null -> stdenv.isLinux;
 
@@ -16,14 +23,18 @@ in
 
 stdenv.mkDerivation rec {
   name = "linux-headers-${version}";
-  version = "${}";
+  version = "${linux.meta.branch}";
 
   src = fetchurl {
     url = "http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz";
-    sha256 = "0xip3xj5aga4sij3rrcxv3h7b8qk47iy3x25vak66yjbdai9zbj1";
+    inherit sha256;
   };
 
-  targetConfig = if cross != null then cross.config else null;
+  targetConfig =
+    if cross != null then
+      cross.config
+    else
+      null;
 
   platform =
     if cross != null then
@@ -39,7 +50,7 @@ stdenv.mkDerivation rec {
     else if stdenv.platform ? kernelArch then
       stdenv.platform.kernelArch
     else
-      abort "don't know what the kernel include directory is called for this platform";
+      abort "Can't determine the kernel include directory for your platform";
 
   buildInputs = [
     perl

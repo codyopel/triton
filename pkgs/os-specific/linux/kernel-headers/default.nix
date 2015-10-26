@@ -1,19 +1,34 @@
 { stdenv, kernel, perl }:
 
 let
-  baseBuildFlags = [ "INSTALL_HDR_PATH=$(out)" "headers_install" ];
-in stdenv.mkDerivation {
+  baseBuildFlags = [
+    "INSTALL_HDR_PATH=$(out)"
+    "headers_install"
+  ];
+in
+
+stdenv.mkDerivation {
   name = "linux-headers-${kernel.version}";
 
-  inherit (kernel) src patches;
+  inherit (kernel)
+    src
+    patches;
 
-  nativeBuildInputs = [ perl ];
+  nativeBuildInputs = [
+    perl
+  ];
 
-  buildFlags = [ "ARCH=${stdenv.platform.kernelArch}" ] ++ baseBuildFlags;
+  buildFlags = [
+    "ARCH=${stdenv.platform.kernelArch}"
+  ] ++ baseBuildFlags;
 
   crossAttrs = {
-    inherit (kernel.crossDrv) src patches;
-    buildFlags = [ "ARCH=${stdenv.cross.platform.kernelArch}" ] ++ baseBuildFlags;
+    inherit (kernel.crossDrv)
+      src
+      patches;
+    buildFlags = [
+      "ARCH=${stdenv.cross.platform.kernelArch}"
+    ] ++ baseBuildFlags;
   };
 
   installPhase = ''
