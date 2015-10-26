@@ -1,5 +1,11 @@
-{ stdenv, fetchurl, makeWrapper, buildPythonPackage, zip, ffmpeg
-, pandoc ? null }:
+{ stdenv, fetchurl
+, buildPythonPackage
+, makeWrapper
+#, pandoc ? null
+
+, ffmpeg
+, zip
+}:
 
 # Pandoc is required to build the package's man page. Release tarballs
 # contain a formatted man page already, though, so it's fine to pass
@@ -10,31 +16,40 @@
 
 buildPythonPackage rec {
   name = "youtube-dl-${version}";
-  version = "2015.08.28";
+  version = "2015.10.24";
 
   src = fetchurl {
     url = "http://youtube-dl.org/downloads/${version}/${name}.tar.gz";
-    sha256 = "0iahbynd6fw097a4cc57w26szlbqsmhb8v5ny6qrcil0d4wdqqvp";
+    sha256 = "1q9srq08vb2yzl81hmjrgqwajckq52fhh9ag2ppbbxjibf91w5gs";
   };
 
-  buildInputs = [ makeWrapper zip pandoc ];
+  makeFlags = [
+    "PREFIX=$(out)"
+    "SYSCONFDIR=$(out)/etc"
+  ];
 
-  # Ensure ffmpeg is available in $PATH for post-processing & transcoding support.
-  postInstall = stdenv.lib.optionalString (ffmpeg != null)
-    ''wrapProgram $out/bin/youtube-dl --prefix PATH : "${ffmpeg}/bin"'';
+  nativeBuildInputs = [
+    makeWrapper
+    #pandoc
+  ];
+
+  buildInputs = [
+    zip
+  ];
+
+
+  # Include FFmpeg for post-processing & transcoding support
+  # Ensure ffmpeg is available in $PATH for youtube-dl
+  postInstall = stdenv.lib.optionalString (ffmpeg != null) ''
+    wrapProgram $out/bin/youtube-dl \
+      --prefix PATH : "${ffmpeg}/bin"
+  '';
 
   meta = with stdenv.lib; {
-    homepage = "http://rg3.github.com/youtube-dl/";
-    repositories.git = https://github.com/rg3/youtube-dl.git;
     description = "Command-line tool to download videos from YouTube.com and other sites";
-    longDescription = ''
-      youtube-dl is a small, Python-based command-line program
-      to download videos from YouTube.com and a few more sites.
-      youtube-dl is released to the public domain, which means
-      you can modify it, redistribute it or use it however you like.
-    '';
+    homepage = http://rg3.github.com/youtube-dl/;
     license = licenses.publicDomain;
-    platforms = with platforms; linux ++ darwin;
-    maintainers = with maintainers; [ bluescreen303 simons phreedom AndersonTorres fuuzetsu ];
+    maintainers = with maintainers; [ ];
+    platforms = platforms.linux;
   };
 }
