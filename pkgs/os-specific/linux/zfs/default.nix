@@ -1,4 +1,9 @@
-{ stdenv, fetchFromGitHub, autoreconfHook, utillinux, nukeReferences, coreutils
+{ stdenv, fetchFromGitHub
+, autoreconfHook
+
+, utillinux
+, nukeReferences
+, coreutils
 , configFile ? "all"
 
 # Userspace dependencies
@@ -20,23 +25,38 @@ assert buildKernel -> kernel != null && spl != null;
 stdenv.mkDerivation rec {
   name = "zfs-${configFile}-${version}${optionalString buildKernel "-${kernel.version}"}";
 
-  version = "0.6.5.1";
+  version = "0.6.5.2";
 
   src = fetchFromGitHub {
     owner = "zfsonlinux";
     repo = "zfs";
     rev = "zfs-${version}";
-    sha256 = "0lbii5kc3b68zj8mvvznl05czwdkr0ld3a2javbkngfvrcn09rz2";
+    sha256 = "0246cypa65rjm8j2123al4x4cwpydqwqrg828pxcpk08v1djy3v1";
   };
 
-  patches = [ ./nix-build.patch ];
-
-  buildInputs = [ autoreconfHook nukeReferences ]
-    ++ optionals buildKernel [ spl ]
-    ++ optionals buildUser [ zlib libuuid python ];
+  patches = [
+    ./nix-build.patch
+  ];
 
   # for zdb to get the rpath to libgcc_s, needed for pthread_cancel to work
   NIX_CFLAGS_LINK = "-lgcc_s";
+
+  configureFlags = [
+    "--with-config=${configFile}"
+  ] ++ optionals buildUser [
+    "--with-dracutdir=$(out)/lib/dracut"
+    "--with-udevdir=$(out)/lib/udev"
+    "--with-systemdunitdir=$(out)/etc/systemd/system"
+    "--with-systemdpresetdir=$(out)/etc/systemd/system-preset"
+    "--with-mounthelperdir=$(out)/bin"
+    "--sysconfdir=/etc"
+    "--localstatedir=/var"
+    "--enable-systemd"
+  ] ++ optionals buildKernel [
+    "--with-spl=${spl}/libexec/spl"
+    "--with-linux=${kernel.dev}/lib/modules/${kernel.modDirVersion}/source"
+    "--with-linux-obj=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build"
+  ];
 
   preConfigure = ''
     substituteInPlace ./module/zfs/zfs_ctldir.c   --replace "umount -t zfs"           "${utillinux}/bin/umount -t zfs"
@@ -56,24 +76,11 @@ stdenv.mkDerivation rec {
     ./autogen.sh
   '';
 
-  configureFlags = [
-    "--with-config=${configFile}"
-  ] ++ optionals buildUser [
-    "--with-dracutdir=$(out)/lib/dracut"
-    "--with-udevdir=$(out)/lib/udev"
-    "--with-systemdunitdir=$(out)/etc/systemd/system"
-    "--with-systemdpresetdir=$(out)/etc/systemd/system-preset"
-    "--with-mounthelperdir=$(out)/bin"
-    "--sysconfdir=/etc"
-    "--localstatedir=/var"
-    "--enable-systemd"
-  ] ++ optionals buildKernel [
-    "--with-spl=${spl}/libexec/spl"
-    "--with-linux=${kernel.dev}/lib/modules/${kernel.modDirVersion}/source"
-    "--with-linux-obj=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build"
-  ];
-
-  enableParallelBuilding = true;
+  buildInputs = [
+    autoreconfHook
+    nukeReferences
+  ] ++ optionals buildKernel [ spl ]
+    ++ optionals buildUser [ zlib libuuid python ];
 
   installFlags = [
     "sysconfdir=\${out}/etc"
@@ -97,16 +104,13 @@ stdenv.mkDerivation rec {
     ln -s ../share/pkgconfig $out/lib/pkgconfig
   '';
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "ZFS Filesystem Linux Kernel module";
-    longDescription = ''
-      ZFS is a filesystem that combines a logical volume manager with a
-      Copy-On-Write filesystem with data integrity detection and repair,
-      snapshotting, cloning, block devices, deduplication, and more.
-      '';
     homepage = http://zfsonlinux.org/;
     license = licenses.cddl;
+    maintainers = with maintainers; [ wkennington ];
     platforms = platforms.linux;
-    maintainers = with maintainers; [ jcumming wizeman wkennington ];
   };
 }
