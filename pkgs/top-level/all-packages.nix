@@ -5020,7 +5020,7 @@ let
     fetchurl = fetchurlBoot;
   };
 
-  perl = perl522;
+  perl = perl520;
 
   php = php56;
 
