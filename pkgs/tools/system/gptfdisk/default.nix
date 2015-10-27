@@ -11,7 +11,7 @@ with {
     system;
   inherit (stdenv.lib)
     optionalString;
-}
+};
 
 # TODO: add Cygwin support
 
