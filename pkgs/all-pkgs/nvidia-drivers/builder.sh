@@ -260,8 +260,13 @@ nvidiaKernelspace() {
     'kernel/nvidia.ko' \
     "${out}/lib/modules/${kernelVersion}/misc"
 
+  nuke-refs 'kernel/nvidia-modeset.ko'
+  cp -p \
+    'kernel/nvidia-modeset.ko' \
+    "${out}/lib/modules/${kernelVersion}/misc"
+
   if [ ${versionMajor} -ge 340 ] ; then
-    if [ ${versionMajor} -ge 355 ] ; then
+    if [ ${versionMajor} -ge 355 ] && [ "${system}" == 'x86_64-linux' ] ; then
       nuke-refs 'kernel/nvidia-uvm.ko'
       cp -p \
         'kernel/nvidia-uvm.ko' \

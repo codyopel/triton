@@ -135,7 +135,7 @@ stdenv.mkDerivation {
   patches =
     optionals (versionAtLeast versionMajor "346" &&
                versionOlder versionMajor "355") [
-      ./nvidia-4.2.patch
+      ./linux-4.2.patch
     ];
 
   # Make sure anything that isn't declared within the derivation

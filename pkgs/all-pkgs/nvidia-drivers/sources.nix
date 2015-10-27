@@ -17,8 +17,8 @@
   "long-lived" = {
     versionMajor = "352";
     versionMinor = "55";
-    sha256i686   = "1qzn6dhkrpkx015f7y9adafn7fmz7zbxbczzf9930li8pgvmmz5k";
-    sha256x86_64 = "1k9hmmn5x9snzyggx23km64kjdqjh2kva090ha6mlayyyxrclz56";
+    sha256i686   = "0hfqklyij4hnsp3w89i8ai8rfpigc71sb1l70qplkq4511xj6bqx";
+    sha256x86_64 = "00bawsxzwwaasfbmzkw301fsm2g1k0p3rfxyx6qpj0pgac3lrhhj";
   };
   "short-lived" = {
     versionMajor = "355";
@@ -29,8 +29,8 @@
   "testing" = {
     versionMajor = "358";
     versionMinor = "09";
-    sha256i686   = "0nbq9nki964bk20qx34h8a7zwsbvxbwidk20g4x2snghfklsh6vl";
-    sha256x86_64 = "0rp88ya8anq6sxjwisyk7nnl5i3p1khfqm9hxwghzi2nybgn6864";
+    sha256i686   = "1ks8qczfmjxsdxpfvy7qc14cp59g2sipg4cmg7iascpy0ncm4lff";
+    sha256x86_64 = "1z1jwc2z4fw71dkff6f0v866czpbg80w05lii6nqhx35iipqggsb";
   };
 
 }
