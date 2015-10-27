@@ -21,8 +21,7 @@ stdenv.mkDerivation rec {
       ./fixed-man-page-date.patch
       ./no-date-in-perl-binary.patch
     ]
-    ++ lib.optional stdenv.isSunOS  ./ld-shared.patch
-    ++ lib.optional stdenv.isDarwin [ ./cpp-precomp.patch ./no-libutil.patch ] ;
+    ++ lib.optional stdenv.isSunOS  ./ld-shared.patch;
 
   # There's an annoying bug on sandboxed Darwin in Perl's Cwd.pm where it looks for pwd
   # in /bin/pwd and /usr/bin/pwd and then falls back on just "pwd" if it can't get them
@@ -62,12 +61,6 @@ stdenv.mkDerivation rec {
 
       ${lib.optionalString stdenv.isArm ''
         configureFlagsArray=(-Dldflags="-lm -lrt")
-      ''}
-
-      ${lib.optionalString stdenv.isCygwin ''
-        cp cygwin/cygwin.c{,.bak}
-        echo "#define PERLIO_NOT_STDIO 0" > tmp
-        cat tmp cygwin/cygwin.c.bak > cygwin/cygwin.c
       ''}
     '';
 
