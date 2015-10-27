@@ -1,4 +1,4 @@
-# Generic builder for the NVIDIA drivers, supports versions 340+
+# Generic builder for the NVIDIA drivers, supports versions 304+
 
 # Notice:
 # The generic builder does not use the exact version changes were made, so if
@@ -292,7 +292,7 @@ nvidiaUserspace() {
 
     # Graphics libraries
       # OpenGL API entry point
-      installNvidiaLib  0  0  'libGL'
+      installNvidiaLib 0 0 'libGL'
       # OpenGL ES API entry point
       installNvidiaLib 340 0 'libGLESv1_CM'
       installNvidiaLib 340 0 'libGLESv2' '2'
