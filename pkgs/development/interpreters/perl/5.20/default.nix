@@ -36,19 +36,7 @@ stdenv.mkDerivation rec {
       # Remove in 5.20.3
       ./perl-5.20.2-gcc5_fixes-1.patch
     ]
-    ++ optional stdenv.isSunOS ./ld-shared.patch
-    ++ stdenv.lib.optional stdenv.isDarwin [ ./cpp-precomp.patch ./no-libutil.patch ] ;
-
-  # There's an annoying bug on sandboxed Darwin in Perl's Cwd.pm where it looks for pwd
-  # in /bin/pwd and /usr/bin/pwd and then falls back on just "pwd" if it can't get them
-  # while at the same time erasing the PATH environment variable so it unconditionally
-  # fails. The code in question is guarded by a check for Mac OS, but the patch below
-  # doesn't have any runtime effect on other platforms.
-  postPatch = stdenv.lib.optional (stdenv.isDarwin && !stdenv.cc.nativeLibc) ''
-    pwd="$(type -P pwd)"
-    substituteInPlace dist/PathTools/Cwd.pm \
-      --replace "pwd_cmd = 'pwd'" "pwd_cmd = '$pwd'"
-  '';
+    ++ optional stdenv.isSunOS ./ld-shared.patch;
 
   # Build a thread-safe Perl with a dynamic libperls.o.  We need the
   # "installstyle" option to ensure that modules are put under
@@ -79,8 +67,6 @@ stdenv.mkDerivation rec {
       ${optionalString stdenv.isArm ''
         configureFlagsArray=(-Dldflags="-lm -lrt")
       ''}
-    '' + optionalString stdenv.isDarwin ''
-      substituteInPlace hints/darwin.sh --replace "env MACOSX_DEPLOYMENT_TARGET=10.3" ""
     '';
 
   preBuild = optionalString (!(stdenv ? cc && stdenv.cc.nativeTools))
