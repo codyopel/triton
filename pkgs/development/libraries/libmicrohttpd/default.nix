@@ -1,11 +1,24 @@
-{ stdenv, fetchurl, pkgconfig
-, curl
+{ stdenv, fetchurl
+, pkgconfig
 
+, curl
 # Optional Dependencies
-, openssl ? null, zlib ? null, libgcrypt ? null, gnutls ? null
+, openssl ? null
+, zlib ? null
+, libgcrypt ? null
+, gnutls ? null
 }:
 
-with stdenv;
+with {
+  inherit (stdenv)
+    shouldUsePkg;
+  inherit (stdenv.lib)
+    mkEnable
+    mkWith
+    optional
+    optionals;
+};
+
 let
   optOpenssl = shouldUsePkg openssl;
   optZlib = shouldUsePkg zlib;
@@ -15,46 +28,50 @@ let
   optGnutls = shouldUsePkg gnutls;
   hasHttps = optLibgcrypt != null && optGnutls != null;
 in
-with stdenv.lib;
+
 stdenv.mkDerivation rec {
-  name = "libmicrohttpd-0.9.43";
+  name = "libmicrohttpd-0.9.44";
 
   src = fetchurl {
     url = "mirror://gnu/libmicrohttpd/${name}.tar.gz";
-    sha256 = "17q6v5q0jpg57vylby6rx1qkil72bdx8gij1g9m694gxf5sb6js1";
+    sha256 = "07j1p21rvbrrfpxngk8xswzkmjkh94bp1971xfjh1p0ja709qwzj";
   };
 
-  nativeBuildInputs = [ pkgconfig ];
-  buildInputs = optional doCheck curl
-    ++ optionals hasSpdy [ optOpenssl optZlib ]
-    ++ optionals hasHttps [ optLibgcrypt optGnutls ];
-
   configureFlags = [
-    (mkWith   true                 "threads"       "posix")
-    (mkEnable true                 "doc"           null)
-    (mkEnable false                "examples"      null)
-    (mkEnable true                 "poll"          "auto")
-    (mkEnable true                 "epoll"         "auto")
-    (mkEnable true                 "socketpair"    null)
-    (mkEnable doCheck              "curl"          null)
-    (mkEnable hasSpdy              "spdy"          null)
-    (mkEnable true                 "messages"      null)
-    (mkEnable true                 "postprocessor" null)
-    (mkWith   hasHttps             "gnutls"        null)
-    (mkEnable hasHttps             "https"         null)
-    (mkEnable true                 "bauth"         null)
-    (mkEnable true                 "dauth"         null)
-    (mkEnable false                "coverage"      null)
+    (mkWith true "threads" "posix")
+    (mkEnable true "doc" null)
+    (mkEnable false "examples" null)
+    (mkEnable true "poll" "auto")
+    (mkEnable true "epoll" "auto")
+    (mkEnable true "socketpair" null)
+    (mkEnable doCheck "curl" null)
+    (mkEnable hasSpdy "spdy" null)
+    (mkEnable true "messages" null)
+    (mkEnable true "postprocessor" null)
+    (mkWith hasHttps "gnutls" null)
+    (mkEnable hasHttps "https" null)
+    (mkEnable true "bauth" null)
+    (mkEnable true "dauth" null)
+    (mkEnable false "coverage" null)
   ];
+
+  nativeBuildInputs = [
+    pkgconfig
+  ];
+
+  buildInputs =
+    optional doCheck curl ++
+    optionals hasSpdy [ optOpenssl optZlib ] ++
+    optionals hasHttps [ optLibgcrypt optGnutls ];
 
   # Disabled because the tests can time-out.
   doCheck = false;
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Embeddable HTTP server library";
     homepage = http://www.gnu.org/software/libmicrohttpd/;
     license = licenses.lgpl2Plus;
-    platforms = platforms.all;
     maintainers = with maintainers; [ wkennington ];
+    platforms = platforms.all;
   };
 }
