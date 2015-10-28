@@ -23,11 +23,11 @@ stdenv.mkDerivation rec {
     sha256 = "1izazbyv5n2d81qdym77i8mg9m870hiydmq4d0s51npx5vp8lk46";
   };
 
-  # Use the correct makefile on FreeBSD
-  patchPhase = optionalString isFreeBSD ''
-    rm -f Makefile
-    mv Makefile.freebsd Makefile
-  '';
+  makefile =
+    if isFreeBSD then
+      "Makefile.freebsd"
+    else
+      "Makefile";
 
   buildInputs = [
     icu
