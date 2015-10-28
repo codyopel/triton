@@ -5,18 +5,27 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "http://people.freedesktop.org/~aplattner/vdpau/${name}.tar.bz2";
-    sha256 = "857a01932609225b9a3a5bf222b85e39b55c08787d0ad427dbd9ec033d58d736";
+    sha256 = "0dnpb0yh7v6rvckx82kxg045rd9rbsw25wjv7ad5n8h94s9h2yl5";
   };
 
-  buildInputs = with xorg; [ pkgconfig dri2proto libXext ];
+  nativeBuildInputs = [
+    pkgconfig
+  ];
 
-  propagatedBuildInputs = [ xorg.libX11 ];
+  buildInputs = [
+    xorg.dri2proto
+    xorg.libXext
+  ];
+
+  propagatedBuildInputs = [
+    xorg.libX11
+  ];
 
   meta = with stdenv.lib; {
+    description = "Video Decode and Presentation API for Unix";
     homepage = http://people.freedesktop.org/~aplattner/vdpau/;
-    description = "Library to use the Video Decode and Presentation API for Unix (VDPAU)";
-    license = licenses.mit; # expat version
+    license = licenses.mit;
+    maintainers = [ ];
     platforms = platforms.unix;
-    maintainers = [ maintainers.vcunat ];
   };
 }
