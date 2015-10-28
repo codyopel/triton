@@ -1,5 +1,10 @@
 { stdenv, fetchurl }:
 
+with {
+  inherit (stdenv.lib)
+    optionalString;
+};
+
 stdenv.mkDerivation rec {
   version = "0.5.1";
   name = "libmpeg2-${version}";
@@ -10,12 +15,12 @@ stdenv.mkDerivation rec {
   };
 
   # Otherwise clang fails with 'duplicate symbol ___sputc'
-  buildFlags = stdenv.lib.optionalString stdenv.isDarwin "CFLAGS=-std=gnu89";
+  buildFlags = optionalString stdenv.cc.isClang "CFLAGS=-std=gnu89";
 
-  meta = {
+  meta = with stdenv.lib; {
+    description = "Library for decoding mpeg-2 and mpeg-1 video streams";
     homepage = http://libmpeg2.sourceforge.net/;
-    description = "A free library for decoding mpeg-2 and mpeg-1 video streams";
-    license = stdenv.lib.licenses.gpl2;
-    maintainers = with stdenv.lib.maintainers; [ fuuzetsu ];
+    license = licenses.gpl2;
+    maintainers = with maintainers; [ ];
   };
 }
