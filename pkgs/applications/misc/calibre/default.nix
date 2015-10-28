@@ -1,16 +1,36 @@
-{ stdenv, fetchurl, python, pyqt5, sip_4_16, poppler_utils, pkgconfig, libpng
-, imagemagick, libjpeg, fontconfig, podofo, qt5, icu, sqlite
-, pil, makeWrapper, unrar, chmlib, pythonPackages, xz, libusb1, libmtp
+{ stdenv, fetchurl
+, makeWrapper
+, pkgconfig
+
+, python
+, pyqt5
+, sip_4_16
+, poppler_utils
+, libpng
+, imagemagick
+, libjpeg
+, fontconfig
+, podofo
+, qt5
+, icu
+, sqlite
+, pil
+, unrar
+, chmlib
+, pythonPackages
+, xz
+, libusb1
+, libmtp
 , xdg_utils
 }:
 
 stdenv.mkDerivation rec {
   name = "calibre-${version}";
-  version = "2.38.0";
+  version = "2.41.0";
 
   src = fetchurl {
     url = "https://github.com/kovidgoyal/calibre/releases/download/v${version}/${name}.tar.xz";
-    sha256 = "075axil53djss99fj9drfh5cvxdbjw6z5z5qk53vm13k5pw6bmhn";
+    sha256 = "069fkcsx7kaazs7f095nkz4jw9jrm0k9zq16ayx41lxjbd1r97ik";
   };
 
   inherit python;
@@ -20,16 +40,40 @@ stdenv.mkDerivation rec {
       setup/build_environment.py
   '';
 
-  nativeBuildInputs = [ makeWrapper pkgconfig ];
+  nativeBuildInputs = [
+    makeWrapper
+    pkgconfig
+  ];
 
-  buildInputs =
-    [ python pyqt5 sip_4_16 poppler_utils libpng imagemagick libjpeg
-      fontconfig podofo qt5.base pil chmlib icu sqlite libusb1 libmtp xdg_utils
-      pythonPackages.mechanize pythonPackages.lxml pythonPackages.dateutil
-      pythonPackages.cssutils pythonPackages.beautifulsoup pythonPackages.pillow
-      pythonPackages.sqlite3 pythonPackages.netifaces pythonPackages.apsw
-      pythonPackages.cssselect
-    ];
+  buildInputs = [
+    python
+    pyqt5
+    sip_4_16
+    poppler_utils
+    libpng
+    imagemagick
+    libjpeg
+    fontconfig
+    podofo
+    qt5.base
+    pil
+    chmlib
+    icu
+    sqlite
+    libusb1
+    libmtp
+    xdg_utils
+    pythonPackages.mechanize
+    pythonPackages.lxml
+    pythonPackages.dateutil
+    pythonPackages.cssutils
+    pythonPackages.beautifulsoup
+    pythonPackages.pillow
+    pythonPackages.sqlite3
+    pythonPackages.netifaces
+    pythonPackages.apsw
+    pythonPackages.cssselect
+  ];
 
   installPhase = ''
     export HOME=$TMPDIR/fakehome
@@ -51,7 +95,7 @@ stdenv.mkDerivation rec {
     sed -i "s/env python[0-9.]*/python/" $PYFILES
     sed -i "2i import sys; sys.argv[0] = 'calibre'" $out/bin/calibre
 
-    for a in $out/bin/*; do
+    for a in $out/bin/* ; do
       wrapProgram $a --prefix PYTHONPATH : $PYTHONPATH \
                      --prefix LD_LIBRARY_PATH : ${unrar}/lib \
                      --prefix PATH : ${poppler_utils}/bin
@@ -62,7 +106,7 @@ stdenv.mkDerivation rec {
     description = "Comprehensive e-book software";
     homepage = http://calibre-ebook.com;
     license = licenses.gpl3;
-    maintainers = with maintainers; [ viric iElectric pSub ];
+    maintainers = with maintainers; [ ];
     platforms = platforms.linux;
   };
 }
