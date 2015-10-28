@@ -1,25 +1,31 @@
-{ stdenv, fetchurl, qt4 }:
+{ stdenv, fetchurl
+, qt5
+}:
 
 stdenv.mkDerivation rec {
-  name = "smplayer-14.9.0.6690";
+  name = "smplayer-15.9.0";
 
   src = fetchurl {
     url = "mirror://sourceforge/smplayer/${name}.tar.bz2";
-    sha256 = "0nmw69kg8rqvl9icyx1r1v1pyxg6560363l0kyqyja18j79a3j2y";
+    sha256 = "1yx6kikaj9v5aj8aavvrcklx283wl6wrnpl905hjc7v03kgp1ac5";
   };
 
-  patches = [ ./basegui.cpp.patch ];
+  patches = [
+    ./basegui.cpp.patch
+  ];
 
-  buildInputs = [ qt4 ];
+  makeFlags = [
+    "PREFIX=$(out)"
+  ];
 
-  preConfigure = ''
-    makeFlags="PREFIX=$out"
-  '';
+  buildInputs = [
+    qt5.script
+  ];
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "A complete front-end for MPlayer";
-    homepage = "http://smplayer.sourceforge.net/";
-    license = stdenv.lib.licenses.gpl3Plus;
-    platforms = stdenv.lib.platforms.linux;
+    homepage = http://smplayer.sourceforge.net/;
+    license = licenses.gpl3Plus;
+    platforms = platforms.linux;
   };
 }
