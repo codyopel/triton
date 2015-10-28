@@ -1,7 +1,13 @@
-{ stdenv, fetchFromGitHub, writeScript, glibcLocales
-, buildPythonPackage, pythonPackages, python, imagemagick
+{ stdenv, fetchFromGitHub
+, writeScript
+, glibcLocales
+, buildPythonPackage
+, pythonPackages
+, python
+, imagemagick
 
 , enableAcoustid   ? true
+, enableBadfiles   ? true, flac ? null, mp3val ? null
 , enableDiscogs    ? true
 , enableEchonest   ? true
 , enableFetchart   ? true
@@ -11,10 +17,23 @@
 , enableThumbnails ? true
 , enableWeb        ? true
 
-, bashInteractive, bashCompletion
+, bashInteractive
+, bashCompletion
 }:
 
+with {
+  inherit (stdenv.lib)
+    attrNames
+    concatMapStrings
+    concatStringsSep
+    filterAttrs
+    id
+    optional
+    optionalString;
+};
+
 assert enableAcoustid    -> pythonPackages.pyacoustid     != null;
+assert enableBadfiles    -> flac != null && mp3val != null;
 assert enableDiscogs     -> pythonPackages.discogs_client != null;
 assert enableEchonest    -> pythonPackages.pyechonest     != null;
 assert enableFetchart    -> pythonPackages.responses      != null;
@@ -24,10 +43,9 @@ assert enableReplaygain  -> pythonPackages.audiotools     != null;
 assert enableThumbnails  -> pythonPackages.pyxdg          != null;
 assert enableWeb         -> pythonPackages.flask          != null;
 
-with stdenv.lib;
-
 let
   optionalPlugins = {
+    badfiles = enableBadfiles;
     chroma = enableAcoustid;
     discogs = enableDiscogs;
     echonest = enableEchonest;
@@ -42,12 +60,43 @@ let
   };
 
   pluginsWithoutDeps = [
-    "bench" "bpd" "bpm" "bucket" "convert" "cue" "duplicates" "embedart"
-    "filefilter" "freedesktop" "fromfilename" "ftintitle" "fuzzy" "ihate"
-    "importadded" "importfeeds" "info" "inline" "ipfs" "keyfinder" "lyrics"
-    "mbcollection" "mbsync" "metasync" "missing" "permissions" "play"
-    "plexupdate" "random" "rewrite" "scrub" "smartplaylist" "spotify" "the"
-    "types" "zero"
+    "badfiles"
+    "bench"
+    "bpd"
+    "bpm"
+    "bucket"
+    "convert"
+    "cue"
+    "duplicates"
+    "embedart"
+    "filefilter"
+    "freedesktop"
+    "fromfilename"
+    "ftintitle"
+    "fuzzy"
+    "ihate"
+    "importadded"
+    "importfeeds"
+    "info"
+    "inline"
+    "ipfs"
+    "keyfinder"
+    "lyrics"
+    "mbcollection"
+    "mbsync"
+    "metasync"
+    "missing"
+    "permissions"
+    "play"
+    "plexupdate"
+    "random"
+    "rewrite"
+    "scrub"
+    "smartplaylist"
+    "spotify"
+    "the"
+    "types"
+    "zero"
   ];
 
   enabledOptionalPlugins = attrNames (filterAttrs (_: id) optionalPlugins);
@@ -60,15 +109,33 @@ let
 
 in buildPythonPackage rec {
   name = "beets-${version}";
-  version = "1.3.14";
+  version = "1.3.15";
   namePrefix = "";
 
   src = fetchFromGitHub {
     owner = "sampsyo";
     repo = "beets";
     rev = "v${version}";
-    sha256 = "0bha101x1wdrl2hj31fhixm3hp7ahdm2064b9k5gg0ywm651128g";
+    sha256 = "17mbkilqqkxxa8ra8b4zlsax712jb0nfkvcx9iyq9303rqwv5sx2";
   };
+
+  patches = [
+    ./replaygain-default-audiotools.patch
+  ];
+
+  postPatch = ''
+    sed -i -e '/assertIn.*item.*path/d' test/test_info.py
+    echo echo completion tests passed > test/test_completion.sh
+
+    sed -i -e '/^BASH_COMPLETION_PATHS *=/,/^])$/ {
+      /^])$/i u"${completion}"
+    }' beets/ui/commands.py
+  '' + optionalString enableBadfiles ''
+    sed -i -e '/self\.run_command(\[/ {
+      s,"flac","${flac}/bin/flac",
+      s,"mp3val","${mp3val}/bin/mp3val",
+    }' beetsplug/badfiles.py
+   '';
 
   propagatedBuildInputs = [
     pythonPackages.enum34
@@ -99,19 +166,6 @@ in buildPythonPackage rec {
     rarfile
     responses
   ];
-
-  patches = [
-    ./replaygain-default-audiotools.patch
-  ];
-
-  postPatch = ''
-    sed -i -e '/assertIn.*item.*path/d' test/test_info.py
-    echo echo completion tests passed > test/test_completion.sh
-
-    sed -i -e '/^BASH_COMPLETION_PATHS *=/,/^])$/ {
-      /^])$/i u"${completion}"
-    }' beets/ui/commands.py
-  '';
 
   doCheck = true;
 
@@ -163,11 +217,11 @@ in buildPythonPackage rec {
     runHook postInstallCheck
   '';
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Music tagger and library organizer";
     homepage = http://beets.radbox.org;
     license = licenses.mit;
-    maintainers = with maintainers; [ aszlig iElectric pjones ];
+    maintainers = with maintainers; [ ];
     platforms = platforms.linux;
   };
 }
