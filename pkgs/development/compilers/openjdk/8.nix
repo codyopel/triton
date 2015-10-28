@@ -40,7 +40,7 @@ let
           };
   jdk = fetchurl {
              url = "${baseurl}/jdk/archive/${repover}.tar.gz";
-             sha256 = "11c90zz728p30zc6zas9ip67n9sd09i0v6afxs608k9s451057wr";
+             sha256 = "0hcf9azgr7p2ry7n117ba5k4q4h15gjh8nx7n8p45h3rr0a0ixh5";
           };
   jaxws = fetchurl {
              url = "${baseurl}/jaxws/archive/${repover}.tar.gz";
