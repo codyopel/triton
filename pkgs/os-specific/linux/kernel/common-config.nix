@@ -484,6 +484,10 @@ with stdenv.lib;
   ${optionalString (versionAtLeast version "3.17") ''
     FW_LOADER_USER_HELPER_FALLBACK y
   ''}
+ 
+  # Support x2APIC (which requires IRQ remapping).
+  X86_X2APIC y
+  IRQ_REMAP y
 
   ${kernelPlatform.kernelExtraConfig or ""}
   ${extraConfig}
