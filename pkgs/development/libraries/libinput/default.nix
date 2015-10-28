@@ -1,8 +1,20 @@
-{ stdenv, fetchurl, pkgconfig
-, libevdev, mtdev, udev
-, documentationSupport ? false, doxygen ? null, graphviz ? null # Documentation
-, eventGUISupport ? false, cairo ? null, glib ? null, gtk3 ? null # GUI event viewer support
-, testsSupport ? false, check ? null, valgrind ? null
+{ stdenv, fetchurl
+, pkgconfig
+
+, libevdev
+, mtdev
+, udev
+, documentationSupport ? false
+  , doxygen ? null
+  , graphviz ? null
+# GUI event viewer support
+, eventGUISupport ? false
+  , cairo ? null
+  , glib ? null
+  , gtk3 ? null
+, testsSupport ? false
+  , check ? null
+  , valgrind ? null
 }:
 
 assert documentationSupport -> doxygen != null && graphviz != null;
@@ -11,11 +23,11 @@ assert testsSupport -> check != null && valgrind != null;
 
 with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "libinput-1.0.1";
+  name = "libinput-1.1.0";
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/libinput/${name}.tar.xz";
-    sha256 = "17prgxxq95i2l8a00clwwmvvskbb9xza9fmym1jvlmxl358v6bs8";
+    sha256 = "10pmcg367zs33cp25bnrfibifyr1z4s8hxd9z9d6jaqd5bm8ccb7";
   };
 
   configureFlags = [
@@ -24,18 +36,31 @@ stdenv.mkDerivation rec {
     (mkEnable testsSupport         "tests"         null)
   ];
 
-  nativeBuildInputs = [ pkgconfig ];
+  nativeBuildInputs = [
+    pkgconfig
+  ];
 
-  buildInputs = [ libevdev mtdev udev ]
-    ++ optionals eventGUISupport [ cairo glib gtk3 ]
-    ++ optionals documentationSupport [ doxygen graphviz ]
-    ++ optionals testsSupport [ check valgrind ];
+  buildInputs = [
+    libevdev
+    mtdev
+    udev
+  ] ++ optionals eventGUISupport [
+    cairo
+    glib
+    gtk3
+  ] ++ optionals documentationSupport [
+    doxygen
+    graphviz
+  ] ++ optionals testsSupport [
+    check
+    valgrind
+  ];
 
   meta = {
     description = "Handles input devices in Wayland compositors and provides a generic X.Org input driver";
-    homepage    = http://www.freedesktop.org/wiki/Software/libinput;
-    license     = licenses.mit;
-    platforms   = platforms.unix;
+    homepage = http://www.freedesktop.org/wiki/Software/libinput;
+    license = licenses.mit;
     maintainers = with maintainers; [ codyopel wkennington ];
+    platforms = platforms.unix;
   };
 }
