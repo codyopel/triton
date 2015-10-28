@@ -1,6 +1,23 @@
-{ stdenv, fetchFromGitHub, cmake, gettext, glib, libmsgpack, libtermkey
-, libtool, libuv, lpeg, lua, luajit, luaMessagePack, luabitop, ncurses, perl
-, pkgconfig, unibilium, makeWrapper, vimUtils
+{ stdenv, fetchFromGitHub
+, cmake
+, gettext
+, libtool
+, makeWrapper
+, pkgconfig
+
+, glib
+, libmsgpack
+, libtermkey
+, libuv
+, lpeg
+, lua
+, luajit
+, luaMessagePack
+, luabitop
+, ncurses
+, perl
+, unibilium
+, vimUtils
 
 , withPython ? true, pythonPackages, extraPythonPackages ? []
 , withPython3 ? true, python3Packages, extraPython3Packages ? []
@@ -10,36 +27,45 @@
 , configure ? null
 }:
 
-with stdenv.lib;
+with {
+  inherit (stdenv.lib)
+    optional
+    optionalString;
+};
 
 let
-
-  version = "2015-06-09";
+  version = "2015-10-28";
 
   # Note: this is NOT the libvterm already in nixpkgs, but some NIH silliness:
-  neovimLibvterm = let version = "2015-02-23"; in stdenv.mkDerivation {
+  neovimLibvterm = let version = "2015-10-26"; in stdenv.mkDerivation {
     name = "neovim-libvterm-${version}";
 
     src = fetchFromGitHub {
-      sha256 = "0i2h74jrx4fy90sv57xj8g4lbjjg4nhrq2rv6rz576fmqfpllcc5";
-      rev = "20ad1396c178c72873aeeb2870bd726f847acb70";
-      repo = "libvterm";
       owner = "neovim";
+      repo = "libvterm";
+      rev = "c4317a6d86a753e4e6f3cef830eae24febcb5a0b";
+      sha256 = "031ksvdpnb61a31sicvkcvlnd55cxq6pr5rvz4bdj2hgdm5ly4g4";
     };
+  
+    nativeBuildInputs = [
+      libtool
+    ];
 
-    buildInputs = [ perl ];
-    nativeBuildInputs = [ libtool ];
+    buildInputs = [
+      perl
+    ];
 
-    makeFlags = [ "PREFIX=$(out)" ]
-      ++ stdenv.lib.optional stdenv.isDarwin "LIBTOOL=${libtool}/bin/libtool";
+    makeFlags = [
+      "PREFIX=$(out)"
+    ];
 
     enableParallelBuilding = true;
 
-    meta = {
+    meta = with stdenv.lib; {
       description = "VT220/xterm/ECMA-48 terminal emulator library";
       homepage = http://www.leonerd.org.uk/code/libvterm/;
       license = licenses.mit;
-      maintainers = with maintainers; [ nckx ];
+      maintainers = with maintainers; [ ];
       platforms = platforms.unix;
     };
   };
@@ -58,13 +84,18 @@ let
     name = "neovim-${version}";
 
     src = fetchFromGitHub {
-      sha256 = "1lycql0lwi7ynrsaln4kxybwvxb9fvganiq3ba4pnpcfgl155k1j";
-      rev = "6270d431aaeed71e7a8782411f36409ab8e0ee35";
-      repo = "neovim";
       owner = "neovim";
+      repo = "neovim";
+      rev = "dc8b0c47b10a5a7a1280a768b181f23bd990ab6e";
+      sha256 = "0357286dki7gn2537n22bzsi7jyzdm7q94kgqzjmqikfn5wziz5a";
     };
 
-    enableParallelBuilding = true;
+    nativeBuildInputs = [
+      cmake
+      gettext
+      makeWrapper
+      pkgconfig
+    ];
 
     buildInputs = [
       glib
@@ -81,29 +112,13 @@ let
       unibilium
     ] ++ optional withJemalloc jemalloc;
 
-    nativeBuildInputs = [
-      cmake
-      gettext
-      makeWrapper
-      pkgconfig
-    ];
-
     LUA_CPATH="${lpeg}/lib/lua/${lua.luaversion}/?.so;${luabitop}/lib/lua/5.2/?.so";
     LUA_PATH="${luaMessagePack}/share/lua/5.1/?.lua";
 
-    preConfigure = stdenv.lib.optionalString stdenv.isDarwin ''
-      export DYLD_LIBRARY_PATH=${jemalloc}/lib
-    '';
-
-    postInstall = stdenv.lib.optionalString stdenv.isDarwin ''
-      echo patching $out/bin/nvim
-      install_name_tool -change libjemalloc.1.dylib \
-                ${jemalloc}/lib/libjemalloc.1.dylib \
-                $out/bin/nvim
-    '' + optionalString withPython ''
+    postInstall = optionalString withPython ''
       ln -s ${pythonEnv}/bin/python $out/bin/nvim-python
     '' + optionalString withPython3 ''
-      ln -s ${python3Env}/bin/python $out/bin/nvim-python3
+      ln -s ${python3Env}/bin/python3 $out/bin/nvim-python3
     '' + optionalString (withPython || withPython3) ''
         wrapProgram $out/bin/nvim --add-flags "${
           (optionalString withPython
@@ -113,25 +128,14 @@ let
         }"
     '';
 
-    meta = {
+    enableParallelBuilding = true;
+
+    meta = with stdenv.lib; {
       description = "Vim text editor fork focused on extensibility and agility";
-      longDescription = ''
-        Neovim is a project that seeks to aggressively refactor Vim in order to:
-        - Simplify maintenance and encourage contributions
-        - Split the work between multiple developers
-        - Enable the implementation of new/modern user interfaces without any
-          modifications to the core source
-        - Improve extensibility with a new plugin architecture
-      '';
-      homepage    = http://www.neovim.io;
-      # "Contributions committed before b17d96 by authors who did not sign the
-      # Contributor License Agreement (CLA) remain under the Vim license.
-      # Contributions committed after b17d96 are licensed under Apache 2.0 unless
-      # those contributions were copied from Vim (identified in the commit logs
-      # by the vim-patch token). See LICENSE for details."
+      homepage = http://www.neovim.io;
       license = with licenses; [ asl20 vim ];
-      maintainers = with maintainers; [ manveru nckx garbas ];
-      platforms   = platforms.unix;
+      maintainers = with maintainers; [ ];
+      platforms = platforms.unix;
     };
   };
 
