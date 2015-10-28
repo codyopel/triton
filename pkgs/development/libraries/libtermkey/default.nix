@@ -1,21 +1,32 @@
-{ stdenv, lib, fetchzip, libtool, pkgconfig, ncurses }:
+{ stdenv, fetchzip
+, libtool
+, pkgconfig
+
+, ncurses
+}:
 
 stdenv.mkDerivation rec {
-  name = "libtermkey-${version}";
-
-  version = "0.17";
+  name = "libtermkey-0.18";
 
   src = fetchzip {
-    url = "http://www.leonerd.org.uk/code/libtermkey/libtermkey-${version}.tar.gz";
-    sha256 = "085mdshgqsn76gfnnzfns7awv6lals9mgv5a6bybd9f9aj7lvrm5";
+    url = "http://www.leonerd.org.uk/code/libtermkey/${name}.tar.gz";
+    sha256 = "0a0ih1a114phzmyq6jzgbp03x97463fwvrp1cgnl26awqw3f8sbf";
   };
 
-  makeFlags = [ "PREFIX=$(out)" ]
-    ++ stdenv.lib.optional stdenv.isDarwin "LIBTOOL=${libtool}/bin/libtool";
+  makeFlags = [
+    "PREFIX=$(out)"
+  ];
 
-  buildInputs = [ libtool pkgconfig ncurses ];
+  nativeBuildInputs = [
+    libtool
+    pkgconfig
+  ];
 
-  meta = with lib; {
+  buildInputs = [
+    ncurses
+  ];
+
+  meta = with stdenv.lib; {
     description = "Terminal keypress reading library";
     license = licenses.mit;
   };
