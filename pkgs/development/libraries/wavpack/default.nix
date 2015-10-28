@@ -1,10 +1,13 @@
-{ lib, stdenv, fetchurl }:
+{ stdenv, fetchurl }:
 
 stdenv.mkDerivation rec {
   name = "wavpack-${version}";
   version = "4.75.0";
 
-  enableParallelBuilding = true;
+  src = fetchurl {
+    url = "http://www.wavpack.com/${name}.tar.bz2";
+    sha256 = "0bmgwcvch3cjcivk7pyasqysj0s81wkg40j3zfrcd7bl0qhmqgn6";
+  };
 
   patches = [
     # backported from
@@ -12,24 +15,21 @@ stdenv.mkDerivation rec {
     ./wavpack_clang.patch
   ];
 
+  # https://github.com/dbry/WavPack/issues/3
+  # --disable-asm is required for clang
+  configureFlags = stdenv.lib.optionalString stdenv.cc.isClang "--disable-asm";
+
   preConfigure = ''
     sed -i '2iexec_prefix=@exec_prefix@' wavpack.pc.in
   '';
 
-  # --disable-asm is required for clang
-  # https://github.com/dbry/WavPack/issues/3
-  configureFlags = lib.optionalString stdenv.cc.isClang "--disable-asm";
-
-  src = fetchurl {
-    url = "http://www.wavpack.com/${name}.tar.bz2";
-    sha256 = "0bmgwcvch3cjcivk7pyasqysj0s81wkg40j3zfrcd7bl0qhmqgn6";
-  };
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Hybrid audio compression format";
-    homepage    = http://www.wavpack.com/;
-    license     = licenses.bsd3;
-    platforms   = platforms.unix;
+    homepage = http://www.wavpack.com/;
+    license = licenses.bsd3;
     maintainers = with maintainers; [ codyopel ];
+    platforms = platforms.unix;
   };
 }
