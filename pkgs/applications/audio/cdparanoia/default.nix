@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
 
   preConfigure = "unset CC";
 
-  enableParallelBuilding = true;
+  enableParallelBuilding = false;
 
   meta = {
     homepage = http://xiph.org/paranoia;
