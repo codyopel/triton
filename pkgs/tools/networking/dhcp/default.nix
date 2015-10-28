@@ -1,16 +1,33 @@
-{ stdenv, fetchurl, perl, makeWrapper, autoreconfHook
-, nettools, iputils, iproute, coreutils, gnused
+{ stdenv, fetchurl
+, autoreconfHook
+, makeWrapper
+, perl
 
-# Optional Dependencies
-, bind ? null, openldap ? null
+, coreutils
+, gnused
+, iproute
+, iputils
+, nettools
+# Optional
+, bind ? null
+, openldap ? null
 }:
 
-with stdenv;
+with {
+  inherit (stdenv)
+    shouldUsePkg;
+  inherit (stdenv.lib)
+    mkEnable
+    mkOther
+    mkWith
+    optionalString;
+};
+
 let
   optBind = shouldUsePkg bind;
   optOpenldap = shouldUsePkg openldap;
 in
-with stdenv.lib;
+
 stdenv.mkDerivation rec {
   name = "dhcp-${version}";
   version = "4.3.3";
@@ -19,9 +36,6 @@ stdenv.mkDerivation rec {
     url = "http://ftp.isc.org/isc/dhcp/${version}/${name}.tar.gz";
     sha256 = "1pjy4lylx7dww1fp2mk5ikya5vxaf97z70279j81n74vn12ljg2m";
   };
-
-  nativeBuildInputs = [ perl makeWrapper autoreconfHook ];
-  buildInputs = [ optBind optOpenldap ];
 
   postPatch = optionalString (optBind != null) ''
     # Don't use the built in bind
@@ -64,6 +78,17 @@ stdenv.mkDerivation rec {
     (mkWith   (optOpenldap != null) "ldapcrypto"     null)
   ];
 
+  nativeBuildInputs = [
+    autoreconfHook
+    makeWrapper
+    perl
+  ];
+
+  buildInputs = [
+    optBind
+    optOpenldap
+  ];
+
   installFlags = [
     "sysconfdir=\${out}/etc"
   ];
@@ -76,21 +101,14 @@ stdenv.mkDerivation rec {
       "${nettools}/bin:${nettools}/sbin:${iputils}/bin:${coreutils}/bin:${gnused}/bin"
   '';
 
-  enableParallelBuilding = true;
+  # all-recursive make failure
+  enableParallelBuilding = false;
 
   meta = with stdenv.lib; {
     description = "Dynamic Host Configuration Protocol (DHCP) tools";
-
-    longDescription = ''
-      ISC's Dynamic Host Configuration Protocol (DHCP) distribution
-      provides a freely redistributable reference implementation of
-      all aspects of DHCP, through a suite of DHCP tools: server,
-      client, and relay agent.
-   '';
-
     homepage = http://www.isc.org/products/DHCP/;
     license = licenses.isc;
-    platforms = platforms.unix;
     maintainers = with maintainers; [ wkennington ];
+    platforms = platforms.unix;
   };
 }
