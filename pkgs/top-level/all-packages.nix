@@ -496,6 +496,8 @@ let
     wxGTK = null;
   };
 
+  mp3val = callPackage ../all-pkgs/mp3val { };
+
   mpv = callPackage ../all-pkgs/mpv {
     lua = lua5_1;
     lua5_sockets = lua5_1_sockets;
