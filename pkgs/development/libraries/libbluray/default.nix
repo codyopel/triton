@@ -1,63 +1,65 @@
-{ stdenv, fetchurl, pkgconfig, fontconfig, autoreconfHook
-, withJava ? false, jdk ? null, ant ? null
-, withAACS ? false, libaacs ? null
-, withBDplus ? false, libbdplus ? null
-, withMetadata ? true, libxml2 ? null
-, withFonts ? true, freetype ? null
+{ stdenv, fetchurl
+, ant
+, autoreconfHook
+, pkgconfig
+
+, fontconfig
+, freetype
+, jdk
+, libaacs
+, libbdplus
+, libxml2
 }:
-
-with stdenv.lib;
-
-assert withJava -> jdk != null && ant != null;
-assert withAACS -> libaacs != null;
-assert withBDplus -> libbdplus != null;
-assert withMetadata -> libxml2 != null;
-assert withFonts -> freetype != null;
 
 # Info on how to use:
 # https://wiki.archlinux.org/index.php/BluRay
 
+let
+  inherit (stdenv.lib)
+    optional;
+in
+
 stdenv.mkDerivation rec {
-  baseName = "libbluray";
-  version  = "0.8.1";
-  name = "${baseName}-${version}";
+  name = "libbluray-${version}";
+  version  = "0.9.0";
 
   src = fetchurl {
-    url = "ftp://ftp.videolan.org/pub/videolan/${baseName}/${version}/${name}.tar.bz2";
-    sha256 = "13zvkrwy2fr877gkifgwnqfsb3krbz7hklfcwqfjbhmvqn0cdgnd";
+    url = "ftp://ftp.videolan.org/pub/videolan/libbluray/${version}/${name}.tar.bz2";
+    sha256 = "0kb9znxk6610vi0fjhqxn4z5i98nvxlsz1f8dakj99rg42livdl4";
   };
 
-  nativeBuildInputs = [ pkgconfig autoreconfHook ]
-                      ++ optionals withJava [ ant ]
-                      ;
-
-  buildInputs = [ fontconfig ]
-                ++ optional withJava jdk
-                ++ optional withMetadata libxml2
-                ++ optional withFonts freetype
-                ;
-
-  propagatedBuildInputs = stdenv.lib.optional withAACS libaacs;
+  patches = [
+    # Fix search path for BDJ jarfile
+    ./BDJ-JARFILE-path.patch
+  ];
 
   preConfigure = ''
-    ${optionalString withJava ''export JDK_HOME="${jdk.home}"''}
-    ${optionalString withAACS ''export NIX_LDFLAGS="$NIX_LDFLAGS -L${libaacs}/lib -laacs"''}
-    ${optionalString withBDplus ''export NIX_LDFLAGS="$NIX_LDFLAGS -L${libbdplus}/lib -lbdplus"''}
+    export JDK_HOME="${jdk.home}"
+    export NIX_LDFLAGS="$NIX_LDFLAGS -L${libaacs}/lib -laacs"
+    export NIX_LDFLAGS="$NIX_LDFLAGS -L${libbdplus}/lib -lbdplus"
   '';
 
-  configureFlags =  with stdenv.lib;
-                    optional (! withJava) "--disable-bdjava"
-                 ++ optional (! withMetadata) "--without-libxml2"
-                 ++ optional (! withFonts) "--without-freetype"
-                 ;
+  nativeBuildInputs = [
+    ant
+    autoreconfHook
+    pkgconfig
+  ];
 
-  # Fix search path for BDJ jarfile
-  patches = stdenv.lib.optional withJava ./BDJ-JARFILE-path.patch;
+  propagatedBuildInputs = [
+    libaacs
+  ];
+
+  buildInputs = [
+    fontconfig
+    freetype
+    jdk
+    libxml2
+  ];
 
   meta = with stdenv.lib; {
-    homepage = http://www.videolan.org/developers/libbluray.html;
     description = "Library to access Blu-Ray disks for video playback";
+    homepage = http://www.videolan.org/developers/libbluray.html;
     license = licenses.lgpl21;
-    maintainers = [ maintainers.abbradar ];
+    maintainers = [ ];
   };
 }
