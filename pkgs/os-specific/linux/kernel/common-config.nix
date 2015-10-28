@@ -486,8 +486,10 @@ with stdenv.lib;
   ''}
  
   # Support x2APIC (which requires IRQ remapping).
-  X86_X2APIC y
-  IRQ_REMAP y
+  ${optionalString (stdenv.system == "x86_64-linux") ''
+    X86_X2APIC y
+    IRQ_REMAP y
+  ''}
 
   ${kernelPlatform.kernelExtraConfig or ""}
   ${extraConfig}
