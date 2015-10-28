@@ -54,6 +54,8 @@ stdenv.mkDerivation rec {
     qt4
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "A script system that allows advanced non-linear editing";
     homepage = https://github.com/avxsynth/avxsynth;

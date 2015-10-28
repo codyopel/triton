@@ -19,6 +19,8 @@ stdenv.mkDerivation rec {
 
   preConfigure = [ ''sed -i "s@PREFIX = /usr/local@PREFIX = $out@g" config.mk'' ];
 
+  enableParallelBuilding = true;
+
   meta = {
       description = "A patched fork of the original dmenu - an efficient dynamic menu for X";
       homepage = https://bitbucket.org/melek/dmenu2;

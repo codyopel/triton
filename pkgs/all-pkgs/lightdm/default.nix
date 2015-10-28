@@ -79,6 +79,8 @@ stdenv.mkDerivation rec {
     "localstatedir=\${TMPDIR}"
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "A lightweight display manager";
     homepage = https://launchpad.net/lightdm;

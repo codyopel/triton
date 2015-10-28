@@ -42,6 +42,8 @@ stdenv.mkDerivation rec {
       --add-flags '--theme=feh'
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "A light-weight image viewer";
     homepage = https://derf.homelinux.org/projects/feh/;

@@ -18,6 +18,8 @@ stdenv.mkDerivation rec {
     ./A03-automake.patch
   ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "ATSC A/52 stream decoder";
     homepage = http://liba52.sourceforge.net/;

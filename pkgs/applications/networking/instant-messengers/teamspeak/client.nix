@@ -125,6 +125,8 @@ stdenv.mkDerivation rec {
 
   dontStrip = true;
   dontPatchELF = true;
+
+  enableParallelBuilding = true;
   
   meta = with stdenv.lib; { 
     description = "The TeamSpeak voice communication tool";

@@ -19,6 +19,8 @@ stdenv.mkDerivation rec {
     "--enable-lyrics-screen"
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Curses-based interface for MPD (music player daemon)";
     homepage    = http://www.musicpd.org/clients/ncmpc/;

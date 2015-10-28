@@ -39,6 +39,8 @@ stdenv.mkDerivation rec {
 
   installPhase = ''python waf install'';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; { 
     description = "A virtual guitar amplifier for Linux running with JACK";
     longDescription = ''

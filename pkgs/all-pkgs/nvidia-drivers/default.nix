@@ -207,6 +207,8 @@ stdenv.mkDerivation {
         false;
   };
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Drivers and Linux kernel modules for NVIDIA graphics cards";
     homepage = http://www.nvidia.com/object/unix.html;

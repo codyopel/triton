@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
       libjpeg libtiff cfitsio exiv2 lcms lensfun
     ];
 
+  enableParallelBuilding = true;
+
   meta = {
     homepage = http://ufraw.sourceforge.net/;
 

@@ -9,6 +9,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ libogg libao pkgconfig libopus flac ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "Tools to work with opus encoded audio streams";
     homepage = http://www.opus-codec.org/;

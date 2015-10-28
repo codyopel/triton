@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
   configureFlags = [ "--with-libmediainfo=${libmediainfo}" ];
   preConfigure = "sh autogen.sh";
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "Supplies technical and tag information about a video or audio file";
     longDescription = ''

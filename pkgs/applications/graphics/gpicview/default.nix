@@ -8,6 +8,8 @@ stdenv.mkDerivation {
     sha256 = "1svcy1c8bgk0pl12yhyv16h2fl52x5vzzcv57z6qdcv5czgvgglr";
   };
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "A simple and fast image viewer for X";
     homepage    = http://lxde.sourceforge.net/gpicview/;

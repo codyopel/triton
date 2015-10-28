@@ -32,6 +32,8 @@ stdenv.mkDerivation rec {
     optional enableLibsndfile libsndfile ++
     optionals enableAMR [ amrnb amrwb ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "Sample Rate Converter for audio";
     homepage = http://sox.sourceforge.net/;

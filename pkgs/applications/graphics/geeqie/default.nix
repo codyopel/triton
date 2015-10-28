@@ -25,6 +25,8 @@ stdenv.mkDerivation rec {
         -e '1 a export PATH=${exiv2}/bin:${fbida}/bin:$PATH'
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Lightweight GTK+ based image viewer";
 

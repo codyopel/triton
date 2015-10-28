@@ -12,6 +12,8 @@ stdenv.mkDerivation rec {
 
   propagatedBuildInputs = [ cairo xlibsWrapper fontconfig freetype libsigcxx ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "A 2D graphics library with support for multiple output devices";
 

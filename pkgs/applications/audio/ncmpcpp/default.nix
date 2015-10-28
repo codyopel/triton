@@ -37,6 +37,8 @@ stdenv.mkDerivation rec {
     ++ optional visualizerSupport fftw
     ++ optional taglibSupport taglib;
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "A featureful ncurses based MPD client inspired by ncmpc";
     homepage    = http://ncmpcpp.rybczak.net/;

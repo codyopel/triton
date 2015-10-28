@@ -13,6 +13,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ libogg ];
 
   #doCheck = true; # takes lots of time
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     homepage = http://xiph.org/flac/;

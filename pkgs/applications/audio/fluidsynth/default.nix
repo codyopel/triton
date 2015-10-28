@@ -23,6 +23,8 @@ stdenv.mkDerivation  rec {
   buildInputs = [ glib libsndfile pkgconfig ]
     ++ stdenv.lib.optionals (!stdenv.isDarwin) [ alsaLib libpulseaudio libjack2 ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Real-time software synthesizer based on the SoundFont 2 specifications";
     homepage    = http://www.fluidsynth.org;

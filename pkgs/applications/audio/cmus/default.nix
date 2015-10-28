@@ -14,6 +14,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ ncurses pkgconfig alsaLib flac libmad ffmpeg libvorbis libmpc mp4v2 libcue libpulseaudio ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "Small, fast and powerful console music player for Linux and *BSD";
     homepage = https://cmus.github.io/;

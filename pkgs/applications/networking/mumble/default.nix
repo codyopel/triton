@@ -61,6 +61,8 @@ stdenv.mkDerivation rec {
     cp icons/mumble.svg $out/share/icons
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Low-latency, high quality voice chat software";
     homepage = "http://mumble.sourceforge.net/";

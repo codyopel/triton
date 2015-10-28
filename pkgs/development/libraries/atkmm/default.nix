@@ -11,4 +11,6 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [ atk glibmm ];
 
   nativeBuildInputs = [ pkgconfig ];
+
+  enableParallelBuilding = true;
 }

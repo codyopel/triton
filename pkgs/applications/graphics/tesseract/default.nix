@@ -47,6 +47,8 @@ stdenv.mkDerivation rec {
 
   postInstall = concatStringsSep "; " extraLanguages;
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "OCR engine";
     homepage = http://code.google.com/p/tesseract-ocr/;

@@ -16,6 +16,8 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "An audio resampling library";
     homepage = http://soxr.sourceforge.net;

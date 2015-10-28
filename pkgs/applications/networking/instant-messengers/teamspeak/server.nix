@@ -63,6 +63,8 @@ stdenv.mkDerivation {
 
   dontStrip = true;
   dontPatchELF = true;
+
+  enableParallelBuilding = true;
   
   meta = with stdenv.lib; { 
     description = "TeamSpeak voice communication server";

@@ -40,6 +40,8 @@ stdenv.mkDerivation rec {
   makeFlags="PREFIX=$(out)";
   installPhase = "PREFIX=$out make install";
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "A tiling window manager";
     homepage    = "https://github.com/conformal/spectrwm";

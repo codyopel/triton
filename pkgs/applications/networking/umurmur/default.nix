@@ -18,6 +18,8 @@ stdenv.mkDerivation rec {
     "--enable-shmapi"
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Minimalistic Murmur (Mumble server)";
     license = licenses.bsd3;

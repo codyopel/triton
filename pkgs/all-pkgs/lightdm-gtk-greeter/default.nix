@@ -63,6 +63,8 @@ stdenv.mkDerivation rec {
       --prefix XDG_DATA_DIRS ":" "${hicolor_icon_theme}/share"
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "LightDM GTK+ Greeter";
     homepage = http://launchpad.net/lightdm-gtk-greeter;

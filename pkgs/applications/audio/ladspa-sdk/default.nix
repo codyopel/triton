@@ -13,6 +13,8 @@ stdenv.mkDerivation rec {
     sed -i 's@-mkdirhier@mkdir -p@g'  makefile
   '';
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "The SDK for the LADSPA audio plugin standard";
     longDescription = ''

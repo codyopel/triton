@@ -12,6 +12,8 @@ stdenv.mkDerivation rec {
 
   patches = [ ./cdrtools-2.01-install.patch ];
 
+  enableParallelBuilding = true;
+
   meta = {
     homepage = http://sourceforge.net/projects/cdrtools/;
     description = "Highly portable CD/DVD/BluRay command line recording software";

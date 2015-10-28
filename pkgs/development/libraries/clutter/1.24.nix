@@ -25,6 +25,8 @@ stdenv.mkDerivation rec {
 
   #doCheck = true; # no tests possible without a display
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "Clutter, a library for creating fast, dynamic graphical user interfaces";
 

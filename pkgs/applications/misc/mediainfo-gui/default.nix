@@ -14,6 +14,8 @@ stdenv.mkDerivation rec {
 
   preConfigure = "sh autogen.sh";
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "Supplies technical and tag information about a video or audio file (GUI version)";
     longDescription = ''

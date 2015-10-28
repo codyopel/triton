@@ -26,6 +26,8 @@ stdenv.mkDerivation rec {
     itstool libxml2 gsettings_desktop_schemas gnome3.defaultIconTheme gnome3.dconf
   ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "View and edit tags for various audio files";
     homepage = "http://projects.gnome.org/easytag/";

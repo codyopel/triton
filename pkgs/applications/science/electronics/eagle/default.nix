@@ -76,6 +76,8 @@ stdenv.mkDerivation rec {
     ln -s "$out/eagle-${version}/bin/eagleicon50.png" "$out"/share/icons/eagle.png
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Schematic editor and PCB layout tool from CadSoft";
     homepage = http://www.cadsoftusa.com/;

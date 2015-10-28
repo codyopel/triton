@@ -9,6 +9,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig openssl libogg libopus ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "High-level API for decoding and seeking in .opus files";
     homepage = http://www.opus-codec.org/;

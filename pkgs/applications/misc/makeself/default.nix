@@ -15,6 +15,9 @@ stdenv.mkDerivation rec {
     mv makeself-header.sh $out/share/${name}
     sed -e 's|HEADER=`dirname $0`/makeself-header.sh|HEADER=`dirname $0`/../share/${name}/makeself-header.sh|' -i $out/bin/makeself
   '';
+
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = http://megastep.org/makeself;
     description = "Utility to create self-extracting packages";

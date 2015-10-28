@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
     install -Dv mp3val "$out/bin/mp3val"
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "A tool for validating and repairing MPEG audio streams";
     homepage = http://mp3val.sourceforge.net/index.shtml;

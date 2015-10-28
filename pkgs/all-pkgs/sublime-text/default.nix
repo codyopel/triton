@@ -96,6 +96,8 @@ stdenv.mkDerivation rec {
     ln -s ${sublime-text-bin}/Icon/256x256/sublime_text.png $out/share/icons
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Sophisticated text editor for code, markup and prose";
     homepage = https://www.sublimetext.com/;

@@ -47,6 +47,8 @@ stdenv.mkDerivation rec {
     rm $out/share/icons/*/icon-theme.cache
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Fast and simple image viewer";
     homepage = http://siyanpanayotov.com/project/viewnior/;

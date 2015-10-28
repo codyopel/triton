@@ -55,6 +55,8 @@ stdenv.mkDerivation rec {
     xorg.libXft
   ];
 
+  enableParallelBuilding = true;
+
   meta = { 
     homepage = http://www.xine-project.org/;
     description = "Xlib-based interface to Xine, a video player";

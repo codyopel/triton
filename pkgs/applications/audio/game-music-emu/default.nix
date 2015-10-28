@@ -11,6 +11,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ cmake ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://code.google.com/p/game-music-emu/;
     description = "A collection of video game music file emulators";

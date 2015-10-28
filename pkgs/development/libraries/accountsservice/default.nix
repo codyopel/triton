@@ -25,6 +25,8 @@ stdenv.mkDerivation rec {
       --run "${coreutils}/bin/mkdir -p /var/lib/AccountsService/icons"
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "D-Bus interface for user account query and manipulation";
     homepage = http://www.freedesktop.org/wiki/Software/AccountsService;

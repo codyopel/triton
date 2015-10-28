@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ python pkgconfig popt atk libX11 libICE xorg.libXtst libXi
                   intltool dbus_glib at_spi2_core libSM ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.unix;
   };
