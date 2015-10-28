@@ -1,59 +1,74 @@
-{ stdenv, lib, fetchurl, pkgconfig, jansson
+{ stdenv, fetchurl
+, pkgconfig
+, python2
+, python3
+
+, jansson
 , plugins
-, pam, withPAM ? stdenv.isLinux
-, systemd, withSystemd ? stdenv.isLinux
-, python2, python3, ncurses
+, withPAM ? stdenv.isLinux, pam
+, withSystemd ? stdenv.isLinux, systemd
+, ncurses
 }:
 
-let pythonPlugin = pkg : { name = "python${if pkg ? isPy2 then "2" else "3"}";
-                           interpreter = pkg;
-                           path = "plugins/python";
-                           deps = [ pkg ncurses ];
-                           install = ''
-                             install -Dm644 uwsgidecorators.py $out/${pkg.sitePackages}/uwsgidecorators.py
-                             ${pkg.executable} -m compileall $out/${pkg.sitePackages}/
-                             ${pkg.executable} -O -m compileall $out/${pkg.sitePackages}/
-                           '';
-                         };
-    available = [ (pythonPlugin python2)
-                  (pythonPlugin python3)
-                ];
-     needed = builtins.filter (x: lib.any (y: x.name == y) plugins) available;
+with {
+  inherit (stdenv.lib)
+    all
+    any
+    concatMap
+    concatStringsSep
+    optional;
+};
+
+let
+  pythonPlugin =
+    pkg: {
+      name = "python${if pkg ? isPy2 then "2" else "3"}";
+      interpreter = pkg;
+      path = "plugins/python";
+      deps = [ pkg ncurses ];
+      install = ''
+        install -Dm644 uwsgidecorators.py $out/${pkg.sitePackages}/uwsgidecorators.py
+        ${pkg.executable} -m compileall $out/${pkg.sitePackages}/
+        ${pkg.executable} -O -m compileall $out/${pkg.sitePackages}/
+      '';
+    };
+  available = [
+    (pythonPlugin python2)
+    (pythonPlugin python3)
+  ];
+  needed = builtins.filter (x: any (y: x.name == y) plugins) available;
 in
 
-assert builtins.filter (x: lib.all (y: y.name != x) available) plugins == [];
+assert builtins.filter (x: all (y: y.name != x) available) plugins == [];
 
 stdenv.mkDerivation rec {
-  name = "uwsgi-2.0.11.1";
+  name = "uwsgi-2.0.11.2";
 
   src = fetchurl {
     url = "http://projects.unbit.it/downloads/${name}.tar.gz";
-    sha256 = "11v2j9n204hlvi1p1wp4r3nn22fqyd1qlbqcfqddi77sih9x79vm";
-  };
-
-  nativeBuildInputs = [ python3 pkgconfig ];
-
-  buildInputs =  with stdenv.lib;
-                 [ jansson ]
-              ++ optional withPAM pam
-              ++ optional withSystemd systemd
-              ++ lib.concatMap (x: x.deps) needed
-              ;
-
-  basePlugins =  with stdenv.lib;
-                 concatStringsSep ","
-                 (  optional withPAM "pam"
-                 ++ optional withSystemd "systemd_logger"
-                 );
-
-  passthru = {
-    inherit python2 python3;
+    sha256 = "0p482j4yi48bmpgx1qpdfk86hjn4dswb137jbmigdlrd9l5rp20b";
   };
 
   configurePhase = ''
     export pluginDir=$out/lib/uwsgi
     substituteAll ${./nixos.ini} buildconf/nixos.ini
   '';
+
+  nativeBuildInputs = [
+    pkgconfig
+    python3
+  ];
+
+  buildInputs = [
+    jansson
+  ] ++ optional withPAM pam
+    ++ optional withSystemd systemd
+    ++ concatMap (x: x.deps) needed;
+
+  basePlugins = concatStringsSep "," (
+    optional withPAM "pam" ++
+    optional withSystemd "systemd_logger"
+  );
 
   buildPhase = ''
     mkdir -p $pluginDir
@@ -67,10 +82,16 @@ stdenv.mkDerivation rec {
     ${lib.concatMapStringsSep "\n" (x: x.install) needed}
   '';
 
+  passthru = {
+    inherit
+      python2
+      python3;
+  };
+
   meta = with stdenv.lib; {
+    description = "Application container server";
     homepage = http://uwsgi-docs.readthedocs.org/en/latest/;
-    description = "A fast, self-healing and developer/sysadmin-friendly application container server coded in pure C";
     license = licenses.gpl2;
-    maintainers = with maintainers; [ abbradar ];
+    maintainers = with maintainers; [ ];
   };
 }
