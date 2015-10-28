@@ -2676,7 +2676,6 @@ let
   philter = callPackage ../tools/networking/philter { };
 
   pinentry = callPackage ../tools/security/pinentry {
-    libcap = if stdenv.isDarwin then null else libcap;
     qt4 = null;
   };
 
@@ -3736,7 +3735,7 @@ let
   };
 
   #Use this instead of stdenv to build with clang
-  clangStdenv = if stdenv.isDarwin then stdenv else lowPrio llvmPackages.stdenv;
+  clangStdenv = llvmPackages.stdenv;
   libcxxStdenv = stdenvAdapters.overrideCC stdenv (clangWrapSelf llvmPackages.clang-unwrapped);
 
   clean = callPackage ../development/compilers/clean { };
@@ -4055,14 +4054,10 @@ let
   go_1_4 = callPackage ../development/compilers/go/1.4.nix {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
-
   go_1_5 = callPackage ../development/compilers/go/1.5.nix {
     inherit (darwin.apple_sdk.frameworks) Security;
   };
-
-  go = if stdenv.isDarwin
-    then go_1_4 # missing DWARF files during go-1.5 build
-    else go_1_5;
+  go = go_1_5;
 
   go-repo-root = goPackages.go-repo-root.bin // { outputs = [ "bin" ]; };
 
@@ -4092,19 +4087,17 @@ let
 
   path64 = callPackage ../development/compilers/path64 { };
 
-  openjdk7 =
-    if stdenv.isDarwin then
-      callPackage ../development/compilers/openjdk-darwin { }
-    else
-      callPackage ../development/compilers/openjdk/7.nix {
-        bootjdk = callPackage ../development/compilers/openjdk/bootstrap.nix { version = "7"; };
-      };
-
-  openjdk8 = callPackage ../development/compilers/openjdk/8.nix {
-    bootjdk = callPackage ../development/compilers/openjdk/bootstrap.nix { version = "8"; };
+  openjdk7 = callPackage ../development/compilers/openjdk/7.nix {
+    bootjdk = callPackage ../development/compilers/openjdk/bootstrap.nix {
+      version = "7";
+    };
   };
-
-  openjdk = if stdenv.isDarwin then openjdk7 else openjdk8;
+  openjdk8 = callPackage ../development/compilers/openjdk/8.nix {
+    bootjdk = callPackage ../development/compilers/openjdk/bootstrap.nix {
+      version = "8";
+    };
+  };
+  openjdk = openjdk8;
 
   jdk7 = openjdk7 // { outputs = [ "out" ]; };
   jre7 = lib.setName "openjre-${lib.getVersion pkgs.openjdk7.jre}" (openjdk7.jre // { outputs = [ "jre" ]; });
@@ -4112,8 +4105,8 @@ let
   jdk8 = openjdk8 // { outputs = [ "out" ]; };
   jre8 = lib.setName "openjre-${lib.getVersion pkgs.openjdk8.jre}" (openjdk8.jre // { outputs = [ "jre" ]; });
 
-  jdk = if stdenv.isDarwin then jdk7 else jdk8;
-  jre = if stdenv.isDarwin then jre7 else jre8;
+  jdk = jdk8;
+  jre = jre8;
 
   oraclejdk = pkgs.jdkdistro true false;
 
@@ -4823,7 +4816,7 @@ let
     nativeLibc = stdenv.cc.nativeLibc or false;
     nativePrefix = stdenv.cc.nativePrefix or "";
     cc = baseCC;
-    dyld = if stdenv.isDarwin then darwin.dyld else null;
+    dyld = null;
     isGNU = baseCC.isGNU or false;
     isClang = baseCC.isClang or false;
     inherit libc extraBuildCommands;
@@ -5318,7 +5311,7 @@ let
 
   bin_replace_string = callPackage ../development/tools/misc/bin_replace_string { };
 
-  binutils = if stdenv.isDarwin then darwin.binutils else binutils-raw;
+  binutils = binutils-raw;
 
   binutils-raw = callPackage ../development/tools/misc/binutils { inherit noSysDirs; };
 
@@ -5416,12 +5409,12 @@ let
 
   cmake-2_8 = callPackage ../development/tools/build-managers/cmake/2.8.nix {
     wantPS = stdenv.isDarwin;
-    ps     = if stdenv.isDarwin then darwin.adv_cmds else null;
+    ps     = null;
   };
 
   cmake = callPackage ../development/tools/build-managers/cmake {
     wantPS = stdenv.isDarwin;
-    ps     = if stdenv.isDarwin then darwin.adv_cmds else null;
+    ps     = null;
   };
 
   cmakeCurses = cmake.override { useNcurses = true; };
@@ -5486,12 +5479,10 @@ let
      wrapCC (distcc.links extraConfig)) {};
   distccStdenv = lowPrio (overrideCC stdenv distccWrapper);
 
-  distccMasquerade = if stdenv.isDarwin
-    then null
-    else callPackage ../development/tools/misc/distcc/masq.nix {
-      gccRaw = gcc.cc;
-      binutils = binutils;
-    };
+  distccMasquerade = callPackage ../development/tools/misc/distcc/masq.nix {
+    gccRaw = gcc.cc;
+    binutils = binutils;
+  };
 
   doclifter = callPackage ../development/tools/misc/doclifter { };
 
@@ -6185,23 +6176,7 @@ let
   ffmpeg_2 = ffmpeg_2_7;
   ffmpeg = ffmpeg_2;
 
-  ffmpeg-full = callPackage ../development/libraries/ffmpeg-full {
-    # The following need to be fixed on Darwin
-    frei0r = if stdenv.isDarwin then null else frei0r;
-    game-music-emu = if stdenv.isDarwin then null else game-music-emu;
-    gsm = if stdenv.isDarwin then null else gsm;
-    libjack2 = if stdenv.isDarwin then null else libjack2;
-    libmodplug = if stdenv.isDarwin then null else libmodplug;
-    libssh = if stdenv.isDarwin then null else libssh;
-    libvpx = if stdenv.isDarwin then null else libvpx;
-    openal = if stdenv.isDarwin then null else openal;
-    openjpeg_1 = if stdenv.isDarwin then null else openjpeg_1;
-    libpulseaudio = if stdenv.isDarwin then null else libpulseaudio;
-    samba = if stdenv.isDarwin then null else samba;
-    vid-stab = if stdenv.isDarwin then null else vid-stab;
-    x265 = if stdenv.isDarwin then null else x265;
-    xavs = if stdenv.isDarwin then null else xavs;
-  };
+  ffmpeg-full = callPackage ../development/libraries/ffmpeg-full { };
 
   ffmpegthumbnailer = callPackage ../development/libraries/ffmpegthumbnailer { };
 
@@ -7096,11 +7071,7 @@ let
   libmsgpack = callPackage ../development/libraries/libmsgpack { };
   libmsgpack_0_5 = callPackage ../development/libraries/libmsgpack/0.5.nix { };
 
-  libnatspec = callPackage ../development/libraries/libnatspec (
-    stdenv.lib.optionalAttrs stdenv.isDarwin {
-      inherit (darwin) libiconv;
-    }
-  );
+  libnatspec = callPackage ../development/libraries/libnatspec { };
 
   libndp = callPackage ../development/libraries/libndp { };
 
@@ -7140,10 +7111,8 @@ let
   # standalone libiconv, just in case you want it
   libiconv = if crossSystem != null then
     (if crossSystem.libc == "glibc" then libcCross
-      else if crossSystem.libc == "libSystem" then darwin.libiconv
       else libiconvReal)
     else if stdenv.isGlibc then stdenv.cc.libc
-    else if stdenv.isDarwin then darwin.libiconv
     else libiconvReal;
 
   libiconvReal = callPackage ../development/libraries/libiconv {
@@ -7317,11 +7286,7 @@ let
 
   libpqxx = callPackage ../development/libraries/libpqxx { };
 
-  libproxy = callPackage ../development/libraries/libproxy {
-    stdenv = if stdenv.isDarwin
-      then overrideCC stdenv gcc
-      else stdenv;
-  };
+  libproxy = callPackage ../development/libraries/libproxy { };
 
   libpseudo = callPackage ../development/libraries/libpseudo { };
 
@@ -7392,12 +7357,7 @@ let
 
   libtorrentRasterbar = callPackage ../development/libraries/libtorrent-rasterbar { };
 
-  libtorrentRasterbar_0_16 = callPackage ../development/libraries/libtorrent-rasterbar/0.16.nix {
-    # fix "unrecognized option -arch" error
-    stdenv = if stdenv.isDarwin
-      then clangStdenv
-      else stdenv;
-  };
+  libtorrentRasterbar_0_16 = callPackage ../development/libraries/libtorrent-rasterbar/0.16.nix { };
 
   libtoxcore = callPackage ../development/libraries/libtoxcore/old-api { };
 
@@ -7447,9 +7407,7 @@ let
 
   libusbmuxd = callPackage ../development/libraries/libusbmuxd { };
 
-  libunwind = if stdenv.isDarwin
-    then libunwindNative
-    else callPackage ../development/libraries/libunwind { };
+  libunwind = callPackage ../development/libraries/libunwind { };
 
   libunwindNative = callPackage ../development/libraries/libunwind/native.nix {};
 
@@ -7596,26 +7554,24 @@ let
 
   mesaSupported = lib.elem system lib.platforms.mesaPlatforms;
 
-  mesaDarwinOr = alternative: if stdenv.isDarwin
-    then callPackage ../development/libraries/mesa-darwin { }
-    else alternative;
-  mesa_noglu = mesaDarwinOr (callPackage ../development/libraries/mesa {
+  mesa_noglu = callPackage ../development/libraries/mesa {
     # makes it slower, but during runtime we link against just mesa_drivers
     # through /run/opengl-driver*, which is overriden according to config.grsecurity
     grsecEnabled = true;
     llvmPackages = llvmPackages_36;
-  });
-  mesa_glu =  mesaDarwinOr (callPackage ../development/libraries/mesa-glu { });
-  mesa_drivers = mesaDarwinOr (
-    let mo = mesa_noglu.override {
-      grsecEnabled = config.grsecurity or false;
-    };
-    in mo.drivers
-  );
-  mesa = mesaDarwinOr (buildEnv {
+  };
+  mesa_glu = callPackage ../development/libraries/mesa-glu { };
+  mesa_drivers =
+    let
+      mo = mesa_noglu.override {
+        grsecEnabled = config.grsecurity or false;
+      };
+    in
+    mo.drivers;
+  mesa = buildEnv {
     name = "mesa-${mesa_noglu.version}";
     paths = [ mesa_noglu mesa_glu ];
-  });
+  };
 
   metaEnvironment = recurseIntoAttrs (let callPackage = newScope pkgs.metaEnvironment; in rec {
     sdfLibrary    = callPackage ../development/libraries/sdf-library { aterm = aterm28; };
@@ -9290,11 +9246,6 @@ let
   samba4 = callPackage ../servers/samba/4.x.nix {
     pythonPackages = python2Packages;
     kerberos = null;  # Bundle kerberos because samba uses internal, non-stable functions
-    cups = if stdenv.isDarwin then null else cups;
-    pam = if stdenv.isDarwin then null else pam;
-    libaio = if stdenv.isDarwin then null else libaio;
-    libceph = if stdenv.isDarwin then null else libceph;
-    glusterfs = if stdenv.isDarwin then null else glusterfs;
     dbus = if stdenv.isLinux then dbus else null;
     libibverbs = if stdenv.isLinux then libibverbs else null;
     librdmacm = if stdenv.isLinux then librdmacm else null;
@@ -9422,7 +9373,7 @@ let
       dbus libuuid openssl gperf m4 libevdev tradcpp libinput mcpp makeWrapper autoreconfHook
       autoconf automake libtool xmlto asciidoc flex bison python mtdev pixman;
     inherit (darwin) apple_sdk libobjc CF;
-    bootstrap_cmds = if stdenv.isDarwin then darwin.bootstrap_cmds else null;
+    bootstrap_cmds = null;
     mesa = mesa_noglu;
     udev = if stdenv.isLinux then udev else null;
     libdrm = if stdenv.isLinux then libdrm else null;
@@ -9682,12 +9633,7 @@ let
 
   hostapd = callPackage ../os-specific/linux/hostapd { };
 
-  htop =
-    if stdenv.isLinux then
-      callPackage ../os-specific/linux/htop { }
-    else if stdenv.isDarwin then
-      callPackage ../os-specific/darwin/htop { }
-    else null;
+  htop = callPackage ../os-specific/linux/htop { };
 
   # GNU/Hurd core packages.
   gnu = recurseIntoAttrs (callPackage ../os-specific/gnu {
@@ -11791,9 +11737,7 @@ let
 
   spectrwm = callPackage ../applications/window-managers/spectrwm { };
 
-  i3 = callPackage ../applications/window-managers/i3 {
-    xcb-util-cursor = if stdenv.isDarwin then xcb-util-cursor-HEAD else xcb-util-cursor;
-  };
+  i3 = callPackage ../applications/window-managers/i3 { };
 
   i3lock = callPackage ../applications/window-managers/i3/lock.nix {
     cairo = cairo.override { xcbSupport = true; };
@@ -12661,7 +12605,7 @@ let
   rstudio = callPackage ../applications/editors/rstudio { };
 
   rsync = callPackage ../applications/networking/sync/rsync {
-    enableACLs = !(stdenv.isDarwin || stdenv.isSunOS || stdenv.isFreeBSD);
+    enableACLs = !(stdenv.isSunOS || stdenv.isFreeBSD);
     enableCopyDevicesPatch = (config.rsync.enableCopyDevicesPatch or false);
   };
 
@@ -14470,11 +14414,7 @@ let
 
   iprover = callPackage ../applications/science/logic/iprover {};
 
-  jonprl = callPackage ../applications/science/logic/jonprl {
-    smlnj = if stdenv.isDarwin
-      then smlnjBootstrap
-      else smlnj;
-  };
+  jonprl = callPackage ../applications/science/logic/jonprl { };
 
   lean = callPackage ../applications/science/logic/lean {};
 
@@ -14525,11 +14465,7 @@ let
 
   tptp = callPackage ../applications/science/logic/tptp {};
 
-  twelf = callPackage ../applications/science/logic/twelf {
-    smlnj = if stdenv.isDarwin
-      then smlnjBootstrap
-      else smlnj;
-  };
+  twelf = callPackage ../applications/science/logic/twelf { };
 
   verifast = callPackage ../applications/science/logic/verifast {};
 
