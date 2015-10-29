@@ -1,30 +1,37 @@
-{ stdenv, fetchurl, pkgconfig, glib, libsigcxx }:
+{ stdenv, fetchurl
+, pkgconfig
 
-let
-  ver_maj = "2.44";
-  ver_min = "0";
-in
+, glib
+, libsigcxx
+}:
+
 stdenv.mkDerivation rec {
-  name = "glibmm-${ver_maj}.${ver_min}";
+  name = "glibmm-${version}";
+  versionMajor = "2.46";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/glibmm/${ver_maj}/${name}.tar.xz";
-    sha256 = "1a1fczy7hcpn24fglyn4i79f4yjc8s50is70q03mb294bm1c02hv";
+    url = "mirror://gnome/sources/glibmm/${versionMajor}/${name}.tar.xz";
+    sha256 = "1an4v1yk06svlmcyp1psk2a3bsn29s1a4gdx0ai2w788q6bfaiwn";
   };
 
-  nativeBuildInputs = [ pkgconfig ];
-  propagatedBuildInputs = [ glib libsigcxx ];
+  nativeBuildInputs = [
+    pkgconfig
+  ];
 
-  #doCheck = true; # some tests need network
+  propagatedBuildInputs = [
+    glib
+    libsigcxx
+  ];
 
-  meta = {
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
     description = "C++ interface to the GLib library";
-
     homepage = http://gtkmm.org/;
-
-    license = stdenv.lib.licenses.lgpl2Plus;
-
-    maintainers = with stdenv.lib.maintainers; [urkud raskin];
-    platforms = stdenv.lib.platforms.unix;
+    license = licenses.lgpl2Plus;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.unix;
   };
 }
