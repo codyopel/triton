@@ -1,38 +1,46 @@
-{ stdenv, fetchurl, pkgconfig, glib, freetype, cairo, libintlOrEmpty
-, icu, graphite2
-, withIcu ? false # recommended by upstream as default, but most don't needed and it's big
-, withGraphite2 ? true # it is small and major distros do include it
+{ stdenv, fetchurl
+, libintlOrEmpty
+, pkgconfig
+
+, cairo
+, fontconfig
+, freetype
+, glib
+, graphite2
+, icu
 }:
 
-# TODO: split non-icu and icu lib into different outputs?
-# (icu is a ~30 MB dependency, the rest is very small in comparison)
-
 stdenv.mkDerivation rec {
-  name = "harfbuzz-1.0.3";
+  name = "harfbuzz-1.0.4";
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/harfbuzz/release/${name}.tar.bz2";
-    sha256 = "1xrxlrvgyr6mm9qjxmkif2kvcah082y94gf1vqi0f0bdl1g8gp7b";
+    sha256 = "10a3yw6h6saqv17d2k74qk1zmpimrmpmxw90g4x0vh77aws3fc5h";
   };
 
-  outputs = [ "out" "doc" ];
-
   configureFlags = [
-    ( "--with-graphite2=" + (if withGraphite2 then "yes" else "no") ) # not auto-detected by default
-    ( "--with-icu=" +       (if withIcu       then "yes" else "no") )
+    "--with-graphite2=yes"
+    "--with-icu=yes"
   ];
 
-  buildInputs = [ pkgconfig glib freetype cairo ] # recommended by upstream
-    ++ libintlOrEmpty;
-  propagatedBuildInputs = []
-    ++ stdenv.lib.optional withGraphite2 graphite2
-    ++ stdenv.lib.optional withIcu icu
-    ;
+  nativeBuildInputs = [
+    libintlOrEmpty
+    pkgconfig
+  ];
 
-  meta = {
+  buildInputs = [
+    cairo
+    fontconfig
+    freetype
+    glib
+    graphite2
+    icu
+  ];
+
+  meta = with stdenv.lib; {
     description = "An OpenType text shaping engine";
     homepage = http://www.freedesktop.org/wiki/Software/HarfBuzz;
-    maintainers = [ stdenv.lib.maintainers.eelco ];
-    platforms = stdenv.lib.platforms.linux ++ stdenv.lib.platforms.darwin;
+    maintainers = [ ];
+    platforms = platforms.linux;
   };
 }
