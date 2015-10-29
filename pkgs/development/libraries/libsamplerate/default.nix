@@ -1,6 +1,17 @@
-{ stdenv, fetchurl, pkgconfig
-, fftw, libsndfile
+{ stdenv, fetchurl
+, pkgconfig
+# Optional
+, fftw
+, libsndfile
+, werror ? false
+, optimizations ? true
+, cpuclip ? true
 }:
+
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
 
 stdenv.mkDerivation rec {
   name = "libsamplerate-0.1.8";
@@ -10,30 +21,29 @@ stdenv.mkDerivation rec {
     sha256 = "01hw5xjbjavh412y63brcslj5hi9wdgkjd3h9csx5rnm8vglpdck";
   };
 
-  nativeBuildInputs = [ pkgconfig ];
-  buildInputs = [ fftw libsndfile ];
+  configureFlags = [
+    (enFlag "fftw" (fftw != null) null)
+    (enFlag "sndfile" (libsndfile != null) null)
+    (enFlag "gcc-werror" werror null)
+    (enFlag "gcc-pipe" true null)
+    (enFlag "gcc-opt" optimizations null)
+    (enFlag "cpu-clip" cpuclip null)
+  ];
 
-  # maybe interesting configure flags:
-  #--disable-fftw          disable usage of FFTW
-  #--disable-cpu-clip      disable tricky cpu specific clipper
+  nativeBuildInputs = [
+    pkgconfig
+  ];
 
-  postConfigure = stdenv.lib.optionalString stdenv.isDarwin
-    ''
-      # need headers from the Carbon.framework in /System/Library/Frameworks to
-      # compile this on darwin -- not sure how to handle
-      NIX_CFLAGS_COMPILE+=" -I$SDKROOT/System/Library/Frameworks/Carbon.framework/Versions/A/Headers"
-
-      substituteInPlace examples/Makefile --replace "-fpascal-strings" ""
-    '';
+  buildInputs = [
+    fftw
+    libsndfile
+  ];
 
   meta = with stdenv.lib; {
     description = "Sample Rate Converter for audio";
-    homepage    = http://www.mega-nerd.com/SRC/index.html;
-    # you can choose one of the following licenses:
-    # GPL or a commercial-use license (available at
-    # http://www.mega-nerd.com/SRC/libsamplerate-cul.pdf)
-    licenses    = with licenses; [ gpl3.shortName unfree ];
-    maintainers = with maintainers; [ lovek323 wkennington ];
-    platforms   = platforms.all;
+    homepage = http://www.mega-nerd.com/SRC/index.html;
+    licenses = licenses.gpl3;
+    maintainers = with maintainers; [ wkennington ];
+    platforms = platforms.all;
   };
 }
