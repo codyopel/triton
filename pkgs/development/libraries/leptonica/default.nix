@@ -35,13 +35,16 @@ stdenv.mkDerivation rec {
     (wtFlag "zlib" (zlib != null) null)
   ];
 
-  buildInputs = [
+  propagatedBuildInputs = [
     giflib
+    libwebp
+    openjpeg
+  ];
+
+  buildInputs = [
     libjpeg
     libpng
     libtiff
-    libwebp
-    openjpeg
     zlib
   ];
 
