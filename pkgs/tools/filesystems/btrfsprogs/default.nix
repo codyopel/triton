@@ -15,11 +15,11 @@
 
 stdenv.mkDerivation rec {
   name = "btrfs-progs-${version}";
-  version = "4.2.2";
+  version = "4.2.3";
 
   src = fetchurl {
     url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
-    sha256 = "05hkj8fpgc2c9068f167hp8k8h28zadlh7krcz0qi8m3nbmy91sx";
+    sha256 = "0gpknqvnpl4y78fsfak3iv147czc0rak8fbcg0d9krr50wzd3hf3";
   };
 
   # gcc bug with -O1 on ARM with gcc 4.8
@@ -40,6 +40,8 @@ stdenv.mkDerivation rec {
     docbook_xsl
     libxslt
   ];
+
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Utilities for the btrfs filesystem";
