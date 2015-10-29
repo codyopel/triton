@@ -1,15 +1,35 @@
-{stdenv, fetchurl, pkgconfig, libX11, gtk3, intltool}:
+{ stdenv, fetchurl
+, pkgconfig
+, gtk3
+, intltool
+, xorg
+}:
 
-stdenv.mkDerivation {
-  name = "libwnck-3.4.7";
+stdenv.mkDerivation rec {
+  name = "libwnck-${version}";
+  versionMajor = "3.14";
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = mirror://gnome/sources/libwnck/3.4/libwnck-3.4.7.tar.xz;
-    sha256 = "d48ac9c7f50c0d563097f63d07bcc83744c7d92a1b4ef65e5faeab32b5ccb723";
+    url = "mirror://gnome/sources/libwnck/${versionMajor}/${name}.tar.xz";
+    sha256 = "074jww04z8g9r1acndqap79wx4kbm3rpkf4lcg1v82b66iv0027m";
   };
 
-  patches = [ ./install_introspection_to_prefix.patch ];
+  patches = [
+    ./install_introspection_to_prefix.patch
+  ];
 
-  buildInputs = [ pkgconfig intltool ];
-  propagatedBuildInputs = [ libX11 gtk3 ];
+  nativeBuildInputs = [
+    pkgconfig
+    intltool
+  ];
+
+  buildInputs = [
+    gtk3
+    xorg.libX11
+    xorg.libXi
+    xorg.libXext
+    xorg.libXfixes
+  ];
 }

@@ -1,21 +1,33 @@
-{ stdenv, fetchurl, pkgconfig, gtk, intltool, xorg }:
+{ stdenv, fetchurl
+, pkgconfig
+, gtk2
+, intltool
+, xorg
+}:
 
-let
-  ver_maj = "2.31";
-  ver_min = "0";
-in
 stdenv.mkDerivation rec {
-  name = "libwnck-${ver_maj}.${ver_min}";
+  name = "libwnck-${version}";
+  versionMajor = "2.31";
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/libwnck/${ver_maj}/${name}.tar.xz";
+    url = "mirror://gnome/sources/libwnck/${versionMajor}/${name}.tar.xz";
     sha256 = "17isfjvrzgj5znld2a7zsk9vd39q9wnsysnw5jr8iz410z935xw3";
   };
 
-  buildInputs = [ pkgconfig gtk intltool xorg.libX11 xorg.libXres ];
-  # ?another optional: startup-notification
+  configureFlags = [
+    "--disable-introspection"
+  ];
 
-  configureFlags = [ "--disable-introspection" ]; # not needed anywhere AFAIK
+  # ?another optional: startup-notification
+  buildInputs = [
+    pkgconfig
+    gtk2
+    intltool
+    xorg.libX11
+    xorg.libXres
+  ];
 
   meta = {
     description = "A library for creating task lists and pagers";
