@@ -14,6 +14,7 @@ stdenv.mkDerivation rec {
   postInstall = "rm -rf $out/share/doc";
 
   doCheck = true;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "General-purpose data compression software";
