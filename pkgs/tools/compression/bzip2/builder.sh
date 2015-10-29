@@ -1,4 +1,4 @@
-source $stdenv/setup
+source "${stdenv}/setup"
 installFlags="PREFIX=$out"
 
 if test -n "$sharedLibrary"; then

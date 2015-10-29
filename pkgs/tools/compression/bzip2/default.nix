@@ -1,16 +1,33 @@
-{ stdenv, fetchurl, linkStatic ? false }:
+{ stdenv, fetchurl
+, linkStatic ? false
+}:
 
-let version = "1.0.6"; in
-
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "bzip2-${version}";
-
-  builder = ./builder.sh;
+  version = "1.0.6";
 
   src = fetchurl {
     url = "http://www.bzip.org/${version}/bzip2-${version}.tar.gz";
     sha256 = "1kfrc7f0ja9fdn6j1y6yir6li818npy6217hvr3wzmnmzhs8z152";
   };
+
+  builder = ./builder.sh;
+
+  prePatch = ''
+    substituteInPlace Makefile --replace '$(PREFIX)/man' '$(PREFIX)/share/man'
+  '';
+
+  makeFlags = [
+    (if linkStatic then "LDFLAGS=-static" else null)
+    (if stdenv.cc.isClang then
+      "CC=clang"
+    else
+      "CC=gcc")
+  ];
+
+  inherit linkStatic;
+
+  sharedLibrary = !(stdenv ? isStatic) && !linkStatic;
 
   crossAttrs = {
     patchPhase = ''
@@ -23,22 +40,10 @@ stdenv.mkDerivation {
     '';
   };
 
-  sharedLibrary =
-    !stdenv.isDarwin && !(stdenv ? isStatic) && stdenv.system != "i686-cygwin" && !linkStatic;
-
-  patchPhase = stdenv.lib.optionalString stdenv.isDarwin "substituteInPlace Makefile --replace 'CC=gcc' 'CC=clang'";
-
-  preConfigure = "substituteInPlace Makefile --replace '$(PREFIX)/man' '$(PREFIX)/share/man'";
-
-  makeFlags = if linkStatic then "LDFLAGS=-static" else "";
-
-  inherit linkStatic;
-
-  meta = {
-    homepage = "http://www.bzip.org";
+  meta = with stdenv.lib; {
     description = "high-quality data compression program";
-
-    platforms = stdenv.lib.platforms.all;
-    maintainers = [];
+    homepage = http://www.bzip.org;
+    maintainers = [ ];
+    platforms = platforms.all;
   };
 }
