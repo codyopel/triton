@@ -1,5 +1,11 @@
-{ stdenv, fetchurl, autoreconfHook
-, bison, flac, flex, id3v2, vorbisTools
+{ stdenv, fetchurl
+, autoreconfHook
+, bison
+, flex
+
+, flac
+, id3v2
+, vorbisTools
 }:
 
 stdenv.mkDerivation rec {
@@ -11,15 +17,23 @@ stdenv.mkDerivation rec {
     sha256 = "01xi3rvdmil9nawsha04iagjylqr1l9v9vlzk99scs8c207l58i4";
   };
 
-  nativeBuildInputs = [ autoreconfHook ];
+  nativeBuildInputs = [
+    autoreconfHook
+    bison
+    flex
+  ];
 
-  buildInputs = [ bison flac flex id3v2 vorbisTools ];
+  buildInputs = [
+    flac
+    id3v2
+    vorbisTools
+  ];
 
   meta = with stdenv.lib; {
-    description = "A set of utilities for working with cue files and toc files";
+    description = "Utilities for working with cue & toc files";
     homepage = https://github.com/svend/cuetools;
     license = licenses.gpl2;
-    maintainers = with maintainers; [ codyopel jcumming ];
+    maintainers = with maintainers; [ codyopel ];
     platforms = platforms.all;
   };
 }
