@@ -1,51 +1,57 @@
-{ stdenv, fetchurl, pkgconfig, xlibsWrapper, glib, cairo, libpng, harfbuzz
-, fontconfig, freetype, libintlOrEmpty, gobjectIntrospection
+{ stdenv, fetchurl
+, pkgconfig
+
+, cairo
+, fontconfig
+, freetype
+, glib
+, gobjectIntrospection
+, harfbuzz
+, libintlOrEmpty
+, libpng
+, xlibsWrapper
 }:
 
-let
-  ver_maj = "1.38";
-  ver_min = "0";
-in
 stdenv.mkDerivation rec {
-  name = "pango-${ver_maj}.${ver_min}";
+  name = "pango-${version}";
+  versionMajor = "1.38";
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/pango/${ver_maj}/${name}.tar.xz";
+    url = "mirror://gnome/sources/pango/${versionMajor}/${name}.tar.xz";
     sha256 = "0v12gi7f01iq3z852pclpnmkbcksbvpcmiazmklkx1dd9fbpakhx";
   };
 
-  buildInputs = with stdenv.lib; [ gobjectIntrospection ]
-    ++ optional stdenv.isDarwin fontconfig;
-  nativeBuildInputs = [ pkgconfig ];
+  nativeBuildInputs = [
+    pkgconfig
+  ];
 
-  propagatedBuildInputs = [ xlibsWrapper glib cairo libpng fontconfig freetype harfbuzz ] ++ libintlOrEmpty;
+  propagatedBuildInputs = [
+    cairo
+    fontconfig
+    freetype
+  ];
+
+  buildInputs = [
+    gobjectIntrospection
+    xlibsWrapper
+    glib
+    libpng
+    harfbuzz
+    libintlOrEmpty
+  ];
 
   enableParallelBuilding = true;
-
-  doCheck = false; # test-layout fails on 1.38.0
-  # jww (2014-05-05): The tests currently fail on Darwin:
-  #
-  # ERROR:testiter.c:139:iter_char_test: assertion failed: (extents.width == x1 - x0)
-  # .../bin/sh: line 5: 14823 Abort trap: 6 srcdir=. PANGO_RC_FILE=./pangorc ${dir}$tst
-  # FAIL: testiter
+  doCheck = false;
 
   postInstall = "rm -rf $out/share/gtk-doc";
 
   meta = with stdenv.lib; {
-    description = "A library for laying out and rendering of text, with an emphasis on internationalization";
-
-    longDescription = ''
-      Pango is a library for laying out and rendering of text, with an
-      emphasis on internationalization.  Pango can be used anywhere
-      that text layout is needed, though most of the work on Pango so
-      far has been done in the context of the GTK+ widget toolkit.
-      Pango forms the core of text and font handling for GTK+-2.x.
-    '';
-
+    description = "A library for laying out and rendering of text";
     homepage = http://www.pango.org/;
     license = licenses.lgpl2Plus;
-
-    maintainers = with maintainers; [ raskin urkud ];
-    platforms = with platforms; linux ++ darwin;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.linux;
   };
 }
