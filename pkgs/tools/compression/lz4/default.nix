@@ -1,37 +1,37 @@
-{ stdenv, fetchFromGitHub, valgrind }:
+{ stdenv, fetchurl
+, valgrind
+}:
 
-let version = "131"; in
+with {
+  inherit (stdenv.lib)
+    optional;
+};
+
 stdenv.mkDerivation rec {
   name = "lz4-${version}";
+  version = "131";
 
-  src = fetchFromGitHub {
-    sha256 = "1bhvcq8fxxsqnpg5qa6k3nsyhq0nl0iarh08sqzclww27hlpyay2";
-    rev = "r${version}";
-    repo = "lz4";
-    owner = "Cyan4973";
+  src = fetchurl {
+    url = "https://github.com/Cyan4973/lz4/archive/r${version}.tar.gz";
+    sha256 = "1vfg305zvj50hwscad24wan9jar6nqj14gdk2hqyr7bb9mhh0kcx";
   };
 
-  buildInputs = stdenv.lib.optional doCheck valgrind;
+  makeFlags = [
+    "PREFIX=$(out)"
+  ];
 
-  enableParallelBuilding = true;
+  buildInputs = optional doCheck valgrind;
 
-  makeFlags = "PREFIX=$(out)";
-
-  doCheck = false; # tests take a very long time
+  # tests take a very long time
+  doCheck = false;
   checkTarget = "test";
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Extremely fast compression algorithm";
-    longDescription = ''
-      Very fast lossless compression algorithm, providing compression speed
-      at 400 MB/s per core, with near-linear scalability for multi-threaded
-      applications. It also features an extremely fast decoder, with speed in
-      multiple GB/s per core, typically reaching RAM speed limits on
-      multi-core systems.
-    '';
-    homepage = https://code.google.com/p/lz4/;
+    homepage = http://www.lz4.org/;
     license = with licenses; [ bsd2 gpl2Plus ];
-    platforms = with platforms; linux;
-    maintainers = with maintainers; [ nckx ];
+    maintainers = with maintainers; [ ];
+    platforms = platforms.linux;
   };
 }
