@@ -1,25 +1,29 @@
-source $stdenv/setup
+source "${stdenv}/setup"
 
 preConfigure() {
-    # Workarounds for the ancient libtool shipped by libjpeg.
-    ln -s $libtool/bin/libtool .
-    cp $libtool/share/libtool/config.guess .
-    cp $libtool/share/libtool/config.sub .
+
+  # Workarounds for the ancient libtool shipped by libjpeg.
+  ln -sf "${libtool}/bin/libtool" .
+  cp -v "${libtool}/share/libtool/config.guess" .
+  cp -v "${libtool}/share/libtool/config.sub" .
+
 }
 
 preInstall() {
-    mkdir $out
-    mkdir $out/bin
-    mkdir $out/lib
-    mkdir $out/include
-    mkdir $out/man
-    mkdir $out/man/man1
+
+  mkdir -p "${out}/bin"
+  mkdir -p "${out}/lib"
+  mkdir -p "${out}/include"
+  mkdir -p "${out}/man/man1"
+
 }
 
 patchPhase() {
-    for i in $patches; do
-	patch < $i
-    done
+
+  for i in "${patches}" ; do
+    patch < "${i}"
+  done
+
 }
 
 genericBuild
