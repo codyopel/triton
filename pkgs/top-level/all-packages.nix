@@ -6537,10 +6537,6 @@ let
   libheimdal = heimdalFull.override { type = "lib"; };
 
   harfbuzz = callPackage ../development/libraries/harfbuzz { };
-  harfbuzz-icu = callPackage ../development/libraries/harfbuzz {
-    withIcu = true;
-    withGraphite2 = true;
-  };
 
   hawknl = callPackage ../development/libraries/hawknl { };
 
@@ -8381,12 +8377,10 @@ let
   webkit = webkitgtk;
 
   webkitgtk = callPackage ../development/libraries/webkitgtk {
-    harfbuzz = harfbuzz-icu;
     gst-plugins-base = gst_all_1.gst-plugins-base;
   };
 
   webkitgtk24x = callPackage ../development/libraries/webkitgtk/2.4.nix {
-    harfbuzz = harfbuzz-icu;
     gst-plugins-base = gst_all_1.gst-plugins-base;
   };
 
@@ -11968,9 +11962,6 @@ let
     };
     clucene_core = clucene_core_2;
     lcms = lcms2;
-    harfbuzz = harfbuzz.override {
-      withIcu = true; withGraphite2 = true;
-    };
   };
 
   liferea = callPackage ../applications/networking/newsreaders/liferea {
@@ -14928,9 +14919,6 @@ let
 
   texLive = builderDefsPackage (callPackage ../tools/typesetting/tex/texlive) {
     ghostscript = ghostscriptX;
-    harfbuzz = harfbuzz.override {
-      withIcu = true; withGraphite2 = true;
-    };
   };
 
   texLiveFull = lib.setName "texlive-full" (texLiveAggregationFun {
