@@ -1,25 +1,29 @@
-{ stdenv, fetchurl, autoreconfHook }:
+{ stdenv, fetchurl
+, autoreconfHook
+}:
 
 stdenv.mkDerivation rec {
   name = "libsass-${version}";
-  version = "3.2.4";
+  version = "3.3.1";
 
   src = fetchurl {
     url = "https://github.com/sass/libsass/archive/${version}.tar.gz";
-    sha256 = "1v804r7k0iv97ihlr46hwfw88v874kfklsm616b85yzdz0105i8h";
+    sha256 = "0izz9lhdg1cpwrrci7vzs0fd3bcwqdmzcmnbcmq35nnlifzjgb74";
   };
 
   patchPhase = ''
     export LIBSASS_VERSION=${version}
   '';
 
-  nativeBuildInputs = [ autoreconfHook ];
+  nativeBuildInputs = [
+    autoreconfHook
+  ];
 
   meta = with stdenv.lib; {
     description = "A C/C++ implementation of a Sass compiler";
     homepage = https://github.com/sass/libsass;
     license = licenses.mit;
-    maintainers = with maintainers; [ codyopel offline ];
+    maintainers = with maintainers; [ codyopel ];
     platforms = platforms.unix;
   };
 }
