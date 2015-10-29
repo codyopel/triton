@@ -1,25 +1,46 @@
-{ stdenv, fetchgit, cmake, libtiff, pkgconfig, tesseract }:
+{ stdenv, fetchgit
+, cmake
+, pkgconfig
 
-let rev = "a6abbd61127a6392d420bbbebdf7612608c943c2";
-    shortRev = builtins.substring 0 7 rev;
-in
-stdenv.mkDerivation {
-  name = "vobsub2srt-git-20140817-${shortRev}";
+, libtiff
+, tesseract
+}:
+
+stdenv.mkDerivation rec {
+  name = "vobsub2srt-${version}";
+  version = "2015-09-30";
 
   src = fetchgit {
-    inherit rev;
     url = https://github.com/ruediger/VobSub2SRT.git;
-    sha256 = "8e867a021ac529e7607627d5944b95bb9f1378ffabd8837e7a028663a8ce5adf";
+    rev = "573097e835b72e4a81a1cc6f750e945fab702b19";
+    sha256 = "0gxyl89i9mg4jiyavblibvpb7df2nmh1m983012qacmn3dxd5ffb";
   };
 
-  buildInputs = [ cmake libtiff pkgconfig ];
-  propagatedBuildInputs = [ tesseract ];
+  patchPhase = ''
+    rm -f ./configure
+  '';
 
-  meta = {
-    homepage = https://github.com/ruediger/VobSub2SRT;
+  cmakeFlags = [
+    "-DBUILD_STATIC=OFF"
+  ];
+
+  nativeBuildInputs = [
+    cmake
+    pkgconfig
+  ];
+
+  buildInputs = [
+    libtiff
+    tesseract
+  ];
+
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
     description = "Converts VobSub subtitles into SRT subtitles";
-    license = stdenv.lib.licenses.gpl3Plus;
-    platforms = stdenv.lib.platforms.unix;
-    maintainers = [ stdenv.lib.maintainers.ttuegel ];
+    homepage = https://github.com/ruediger/VobSub2SRT;
+    license = licenses.gpl3Plus;
+    maintainers = [ ];
+    platforms = platforms.unix;
   };
 }
