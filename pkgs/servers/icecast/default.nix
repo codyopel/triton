@@ -1,32 +1,71 @@
-{stdenv, fetchurl
-, libxml2, libxslt, curl
-, libvorbis, libtheora, speex, libkate, libopus }:
+{ stdenv, fetchurl
+, autoreconfHook
+# Required
+, libogg
+, libvorbis
+, libxml2
+, libxslt
+# Optional
+, curl
+, libkate
+, libopus
+, libtheora
+, openssl
+, speex
+}:
+
+with {
+  inherit (stdenv.lib)
+    enFlag
+    wtFlag;
+};
 
 stdenv.mkDerivation rec {
-  name = "icecast-2.4.1";
+  name = "icecast-2.4.2";
 
   src = fetchurl {
     url = "http://downloads.xiph.org/releases/icecast/${name}.tar.gz";
-    sha256 = "0js5lylrgklhvvaksx46zc8lc975qb1bns8h1ms545nv071rxy23";
+    sha256 = "0krzczymg1mza68sfi5hw46cnncrs54pj959c7ncqm246vxf46ma";
   };
 
-  buildInputs = [ libxml2 libxslt curl libvorbis libtheora speex libkate libopus ];
+  patches = [
+    # Allow disabling libkate, must re-run autoreconf
+    # https://bugs.gentoo.org/show_bug.cgi?id=368539
+    ./icecast-libkate.patch
+  ];
 
-  meta = {
+  configureFlags = [
+    (enFlag "kate" (libkate != null) null)
+    (wtFlag "theora" (libtheora != null) null)
+    (wtFlag "speex" (speex != null) null)
+    (wtFlag "curl" (curl != null) null)
+    (wtFlag "openssl" (openssl != null) null)
+    (enFlag "yp" (curl != null) null)
+  ];
+
+  nativeBuildInputs = [
+    autoreconfHook
+  ];
+
+  buildInputs = [
+    # Required
+    libogg
+    libvorbis
+    libxml2
+    libxslt
+    # Optional
+    curl
+    libkate
+    libopus
+    libtheora
+    openssl
+    speex
+  ];
+
+  meta = with stdenv.lib; {
     description = "Server software for streaming multimedia";
-
-    longDescription = ''
-      Icecast is a streaming media server which currently supports
-      Ogg (Vorbis and Theora), Opus, WebM and MP3 audio streams.
-      It can be used to create an Internet radio station or a privately
-      running jukebox and many things in between. It is very versatile
-      in that new formats can be added relatively easily and supports
-      open standards for commuincation and interaction.
-    '';
-
     homepage = http://www.icecast.org;
-    license = stdenv.lib.licenses.gpl2;
-    maintainers = with stdenv.lib.maintainers; [ jcumming ];
+    license = licenses.gpl2;
+    maintainers = with maintainers; [ ];
   };
 }
-
