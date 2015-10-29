@@ -5,13 +5,13 @@
 
 stdenv.mkDerivation rec {
   name = "libsigc++-${version}";
-  versionMajor = "1.2";
-  versionMinor = "7";
+  versionMajor = "2.6";
+  versionMinor = "1";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/libsigc++/${versionMajor}/${name}.tar.gz";
-    sha256 = "166bvyxma52245rdnypl2f1hz3p62dx30qkxiiflawcz7mia95f9";
+    url = "mirror://gnome/sources/libsigc++/${versionMajor}/${name}.tar.xz";
+    sha256 = "06xyvxaaxh3nbpjg86gcq5zcc2qnpx354wcfrqlhbndkq5kj2vqq";
   };
 
   nativeBuildInputs = [

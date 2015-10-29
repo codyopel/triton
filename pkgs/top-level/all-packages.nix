@@ -7304,9 +7304,10 @@ let
 
   libsearpc = callPackage ../development/libraries/libsearpc { };
 
-  libsigcxx = callPackage ../development/libraries/libsigcxx { };
-
-  libsigcxx12 = callPackage ../development/libraries/libsigcxx/1.2.nix { };
+  libsigcxx_1_2 = callPackage ../development/libraries/libsigcxx/1.2.x.nix { };
+  libsigcxx_2_4 = callPackage ../development/libraries/libsigcxx/2.4.x.nix { };
+  libsigcxx_2_6 = callPackage ../development/libraries/libsigcxx/2.6.x.nix { };
+  libsigcxx = libsigcxx_2_6;
 
   libsigsegv = callPackage ../development/libraries/libsigsegv { };
 
@@ -13511,7 +13512,7 @@ let
 
   asc = callPackage ../games/asc {
     lua = lua5_1;
-    libsigcxx = libsigcxx12;
+    libsigcxx = libsigcxx_1_2;
   };
 
   astromenace = callPackage ../games/astromenace { };
