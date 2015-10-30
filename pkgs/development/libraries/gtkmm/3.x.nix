@@ -1,42 +1,49 @@
-{ stdenv, fetchurl, pkgconfig, gtk3, glibmm, cairomm, pangomm, atkmm }:
+{ stdenv, fetchurl
+, pkgconfig
+, gtk3
+, glibmm
+, cairomm
+, pangomm
+, atkmm
+, gnome3
+, epoxy
+}:
 
-let
-  ver_maj = "3.16";
-  ver_min = "0";
-in
 stdenv.mkDerivation rec {
-  name = "gtkmm-${ver_maj}.${ver_min}";
+  name = "gtkmm-${version}";
+  versionMajor = gnome3.version;
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/gtkmm/${ver_maj}/${name}.tar.xz";
-    sha256 = "036xn22jkaf3akpid7w23b8vkqa3xxqz93mwacmyar5vw7slm3cv";
+    url = "mirror://gnome/sources/gtkmm/${versionMajor}/${name}.tar.xz";
+    sha256 = "0sxq700invkjpksn790gbnl8px8751kvgwn39663jx7dv89s37w2";
   };
 
-  nativeBuildInputs = [ pkgconfig ];
+  nativeBuildInputs = [
+    pkgconfig
+  ];
 
-  propagatedBuildInputs = [ glibmm gtk3 atkmm cairomm pangomm ];
+  buildInputs = [
+    glibmm
+    gtk3
+    cairomm
+    epoxy
+  ];
 
-  enableParallelBuilding = true;
+  propagatedBuildInputs = [
+    atkmm
+    pangomm
+  ];
+
   doCheck = true;
+  enableParallelBuilding = true;
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "C++ interface to the GTK+ graphical user interface library";
-
-    longDescription = ''
-      gtkmm is the official C++ interface for the popular GUI library
-      GTK+.  Highlights include typesafe callbacks, and a
-      comprehensive set of widgets that are easily extensible via
-      inheritance.  You can create user interfaces either in code or
-      with the Glade User Interface designer, using libglademm.
-      There's extensive documentation, including API reference and a
-      tutorial.
-    '';
-
     homepage = http://gtkmm.org/;
-
-    license = stdenv.lib.licenses.lgpl2Plus;
-
-    maintainers = with stdenv.lib.maintainers; [ raskin urkud vcunat ];
-    platforms = stdenv.lib.platforms.unix;
+    license = licenses.lgpl2Plus;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.unix;
   };
 }
