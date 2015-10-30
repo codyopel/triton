@@ -47,12 +47,12 @@ assert stdenv.cc.isGNU;
 stdenv.mkDerivation rec {
   name = "glib-${version}";
   versionMajor = "2.46";
-  versionMinor = "0";
+  versionMinor = "1";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/glib/${versionMajor}/${name}.tar.xz";
-    sha256 = "1d5cpb2zp5js98jjnbfn1fb96kj1j3q3fz16gkqq0zdfd4sfikmi";
+    sha256 = "1yzxr1ip3l0m9ydk5nq32piq70c9f17p5f0jyvlsghzbaawh67ss";
   };
 
   setupHook = ./setup-hook.sh;
