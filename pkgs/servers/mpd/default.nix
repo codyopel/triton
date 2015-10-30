@@ -66,12 +66,12 @@ with {
 stdenv.mkDerivation rec {
   name = "mpd-${version}";
   versionMajor = "0.19";
-  versionMinor = "10";
+  versionMinor = "11";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url    = "http://www.musicpd.org/download/mpd/${versionMajor}/${name}.tar.xz";
-    sha256 = "0laqn68iggqf0h06hg282cvpd9wsjqpjfg5fnn9wk3gr48yyp1n3";
+    sha256 = "1iin50s8cnlsgjgjwkm1cbyxlwa0b79f6jfwydx5nyprbam6cp3s";
   };
 
   configureFlags = [
