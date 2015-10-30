@@ -1,43 +1,84 @@
-{ stdenv, fetchurl, pkgconfig, intltool, libtool
-, glib, dbus, udev, udisks2, libgcrypt
-, libgphoto2, avahi, libarchive, fuse, libcdio
-, libxml2, libxslt, docbook_xsl, samba, libmtp
-, gnomeSupport ? false, gnome,libgnome_keyring, gconf, makeWrapper }:
+{ stdenv, fetchurl
+, pkgconfig
+, intltool
+, libtool
+, glib
+, dbus
+, udev
+, udisks2
+, libgcrypt
+, libgphoto2
+, avahi
+, libarchive
+, fuse
+, libcdio
+, libxml2
+, libxslt
+, docbook_xsl
+, samba
+, libmtp
+, gnome3
+, gnomeSupport ? false
+  , gnome
+  , libgnome_keyring
+  , gconf
+  , gtk3
+, makeWrapper
+}:
 
-let
-  ver_maj = "1.22";
-  version = "${ver_maj}.2";
-in
 stdenv.mkDerivation rec {
   name = "gvfs-${version}";
+  versionMajor = "1.26";
+  versionMinor = "1.1";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/gvfs/${ver_maj}/${name}.tar.xz";
-    sha256 = "8d08c4927b6c20d990498c23280017e7033b31a386f09b4c3ce5bedd20316250";
+    url = "mirror://gnome/sources/gvfs/${versionMajor}/${name}.tar.xz";
+    sha256 = "0vf0dm4hsm2na5ws4cfby0zaj2xk69a8l5vv01zivnv4wj3gkb9d";
   };
 
-  nativeBuildInputs = [ pkgconfig intltool libtool ];
+  nativeBuildInputs = [
+    pkgconfig
+    intltool
+    libtool
+  ];
 
-  buildInputs =
-    [ makeWrapper glib dbus.libs udev udisks2 libgcrypt
-      libgphoto2 avahi libarchive fuse libcdio
-      libxml2 libxslt docbook_xsl samba libmtp
-      # ToDo: a ligther version of libsoup to have FTP/HTTP support?
-    ] ++ stdenv.lib.optionals gnomeSupport (with gnome; [
-      gtk libsoup libgnome_keyring gconf
-      # ToDo: not working and probably useless until gnome3 from x-updates
-    ]);
-
-  enableParallelBuilding = true;
+  buildInputs = [
+    makeWrapper
+    glib
+    dbus.libs
+    udev udisks2
+    libgcrypt
+    libgphoto2
+    avahi
+    libarchive
+    fuse
+    libcdio
+    libxml2
+    libxslt
+    docbook_xsl
+    samba
+    libmtp
+    gnome3.gcr
+  ] ++ stdenv.lib.optionals gnomeSupport [
+    gtk3
+    # ToDo: a ligther version of libsoup to have FTP/HTTP support?
+    gnome.libsoup
+    libgnome_keyring
+    gconf
+    # ToDo: not working and probably useless until gnome3 from x-updates
+  ];
 
   # ToDo: one probably should specify schemas for samba and others here
   preFixup = ''
     wrapProgram $out/libexec/gvfsd --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
-    description = "Virtual Filesystem support library" + optionalString gnomeSupport " (full GNOME support)";
+    description = "Virtual Filesystem support library";
+    maintainers = [ ];
     platforms = platforms.linux;
-    maintainers = [ maintainers.lethalman ];
   };
 }
