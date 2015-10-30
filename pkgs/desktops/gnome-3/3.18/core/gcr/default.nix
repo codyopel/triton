@@ -1,20 +1,58 @@
-{ stdenv, fetchurl, pkgconfig, intltool, gnupg, p11_kit, glib
-, libgcrypt, libtasn1, dbus_glib, gtk, pango, gdk_pixbuf, atk
-, gobjectIntrospection, makeWrapper, libxslt, vala, gnome3 }:
+{ stdenv, fetchurl
+, pkgconfig
+, intltool
+, gnupg
+, p11_kit
+, glib
+, libgcrypt
+, libtasn1
+, dbus_glib
+, gtk3
+, pango
+, gdk_pixbuf
+, atk
+, gobjectIntrospection
+, makeWrapper
+, libxslt
+, vala
+, gnome3
+}:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gcr-${version}";
+  versionMajor = "3.18";
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
-  buildInputs = [
-    pkgconfig intltool gnupg glib gobjectIntrospection libxslt
-    libgcrypt libtasn1 dbus_glib gtk pango gdk_pixbuf atk makeWrapper vala
+  src = fetchurl {
+    url = "mirror://gnome/sources/gcr/${versionMajor}/${name}.tar.xz";
+    sha256 = "006f6xbd3jppkf9avg83mpqdld5d0z6mr0sm81lql52mmyjnvlfl";
+  };
+
+  propagatedBuildInputs = [
+    p11_kit
   ];
 
-  propagatedBuildInputs = [ p11_kit ];
+  buildInputs = [
+    pkgconfig
+    intltool
+    gnupg
+    glib
+    gobjectIntrospection
+    libxslt
+    libgcrypt
+    libtasn1
+    dbus_glib
+    gtk3
+    pango
+    gdk_pixbuf
+    atk
+    makeWrapper
+    vala
+  ];
 
-  #doCheck = true;
-
-  #enableParallelBuilding = true; issues on hydra
+  doCheck = false;
+  enableParallelBuilding = false; # issues on hydra
 
   preFixup = ''
     wrapProgram "$out/bin/gcr-viewer" \
