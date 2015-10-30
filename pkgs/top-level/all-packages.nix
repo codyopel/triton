@@ -6046,11 +6046,9 @@ let
 
   cminpack = callPackage ../development/libraries/cminpack { };
 
-  cogl = callPackage ../development/libraries/cogl { };
-
   cogl_1_20 = callPackage ../development/libraries/cogl/1.20.nix { };
-
   cogl_1_22 = callPackage ../development/libraries/cogl/1.22.nix { };
+  cogl = callPackage ../development/libraries/cogl { };
 
   coin3d = callPackage ../development/libraries/coin3d { };
 

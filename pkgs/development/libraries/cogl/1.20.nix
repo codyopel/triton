@@ -1,56 +1,72 @@
-{ stdenv, fetchurl, pkgconfig, mesa_noglu, glib, gdk_pixbuf, xorg, libintlOrEmpty
-, pangoSupport ? true, pango, cairo, gobjectIntrospection
-, gstreamerSupport ? true, gst_all_1 }:
+{ stdenv, fetchurl
+, gettext
+, pkgconfig
 
-let
-  ver_maj = "1.20";
-  ver_min = "0";
-in
+, bzip2
+, cairo
+, gdk_pixbuf
+, glib
+, gobjectIntrospection
+, gst-plugins-base
+, gstreamer
+, libdrm
+, libintlOrEmpty
+, mesa_noglu
+, pango
+, wayland
+, xorg
+}:
+
 stdenv.mkDerivation rec {
-  name = "cogl-${ver_maj}.${ver_min}";
+  name = "cogl-${version}";
+  versionMajor = "1.20";
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/cogl/${ver_maj}/${name}.tar.xz";
-    sha256 = "729e35495829e7d31fafa3358e47b743ba21a2b08ff9b6cd28fb74c0de91192b";
+    url = "mirror://gnome/sources/cogl/${versionMajor}/${name}.tar.xz";
+    sha256 = "0aqrj7gc0x7v536vdycgn2i23fj3nx3qwdd3mwgx7rr9b14kb7kj";
   };
-
-  nativeBuildInputs = [ pkgconfig ];
 
   configureFlags = [
     "--enable-introspection"
     "--enable-kms-egl-platform"
-  ] ++ stdenv.lib.optional gstreamerSupport "--enable-cogl-gst"
-    ++ stdenv.lib.optionals (!stdenv.isDarwin) [ "--enable-gles1" "--enable-gles2" ];
+    "--enable-cogl-gst"
+    "--enable-gles1"
+    "--enable-gles2"
+  ];
 
-  propagatedBuildInputs = with xorg; [
-      glib gdk_pixbuf gobjectIntrospection
-      mesa_noglu libXrandr libXfixes libXcomposite libXdamage
-    ]
-    ++ libintlOrEmpty
-    ++ stdenv.lib.optionals gstreamerSupport [ gst_all_1.gstreamer
-                                               gst_all_1.gst-plugins-base ];
+  nativeBuildInputs = [
+    gettext
+    pkgconfig
+  ];
 
-  buildInputs = stdenv.lib.optionals pangoSupport [ pango cairo ];
+  buildInputs = [
+    bzip2
+    cairo
+    gdk_pixbuf
+    glib
+    gobjectIntrospection
+    gstreamer
+    gst-plugins-base
+    libdrm
+    pango
+    wayland
+    xorg.libX11
+    xorg.libXdamage
+    xorg.libXfixes
+  ];
 
-  COGL_PANGO_DEP_CFLAGS
-    = stdenv.lib.optionalString (stdenv.isDarwin && pangoSupport)
-      "-I${pango}/include/pango-1.0 -I${cairo}/include/cairo";
-
-  NIX_LDFLAGS = stdenv.lib.optionalString stdenv.isDarwin "-lintl";
-
-  #doCheck = true; # all tests fail (no idea why)
+  propagatedBuildInputs = [
+    mesa_noglu # pkg-config
+    xorg.libXcomposite # pkg-config
+    xorg.libXext # pkg-config
+    xorg.libXrandr # pkg-config
+  ];
 
   meta = with stdenv.lib; {
-    description = "A small open source library for using 3D graphics hardware for rendering";
-    maintainers = with maintainers; [ lovek323 ];
-
-    longDescription = ''
-      Cogl is a small open source library for using 3D graphics hardware for
-      rendering. The API departs from the flat state machine style of OpenGL
-      and is designed to make it easy to write orthogonal components that can
-      render without stepping on each other's toes.
-    '';
-
-    platforms = stdenv.lib.platforms.mesaPlatforms;
+    description = "Library for using 3D graphics hardware for rendering";
+    maintainers = with maintainers; [ ];
+    platforms = platforms.mesaPlatforms;
   };
 }

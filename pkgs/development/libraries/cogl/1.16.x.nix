@@ -7,46 +7,32 @@
 , gdk_pixbuf
 , glib
 , gobjectIntrospection
-, gst_all_1
+, gst-plugins-base
+, gstreamer
 , libdrm
 , libintlOrEmpty
 , mesa_noglu
 , pango
-, wayland
 , xorg
 }:
 
 stdenv.mkDerivation rec {
   name = "cogl-${version}";
-  versionMajor = "1.22";
-  versionMinor = "0";
+  versionMajor = "1.16";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/cogl/${versionMajor}/${name}.tar.xz";
-    sha256 = "14daxqrid5039xmq9yl4pk86awng1n9zgl6ysblhc4gw2ifzp7b8";
+    sha256 = "1ryljadgrahc359hrhnvbvifw25in9wik9wkxkgnzvs62mcr3gk5";
   };
 
   configureFlags = [
-    "--disable-examples-install"
-    "--disable-maintainer-flags"
-    "--enable-cairo"
-    "--enable-deprecated"
-    "--enable-gdk-pixbuf"
-    "--enable-glib"
-    "--enable-glx"
-    "--enable-gl"
-    "--enable-cogl-gles2"
-    "--enable-xlib-egl-platform"
     "--enable-introspection"
     "--enable-kms-egl-platform"
     "--enable-cogl-gst"
     "--enable-gles1"
     "--enable-gles2"
-    "--enable-cogl-pango"
-    "--enable-wayland-egl-platform"
-    "--enable-wayland-egl-server"
-    "--disable-profile"
   ];
 
   nativeBuildInputs = [
@@ -60,14 +46,14 @@ stdenv.mkDerivation rec {
     gdk_pixbuf
     glib
     gobjectIntrospection
-    gst_all_1.gstreamer
-    gst_all_1.gst-plugins-base
+    gstreamer
+    gst-plugins-base
     libdrm
     pango
-    wayland
     xorg.libX11
     xorg.libXdamage
     xorg.libXfixes
+    xorg.libXrandr
   ];
 
   propagatedBuildInputs = [
