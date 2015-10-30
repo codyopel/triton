@@ -1,14 +1,8 @@
-{ stdenv, fetchgit, zlib
-, gnutlsSupport ? false, gnutls ? null, nettle ? null
-, opensslSupport ? true, openssl ? null
+{ stdenv, fetchgit
+, zlib
+, openssl
 }:
 
-# Must have an ssl library enabled
-assert (gnutlsSupport || opensslSupport);
-assert gnutlsSupport -> gnutlsSupport != null && nettle != null && !opensslSupport;
-assert opensslSupport -> openssl != null && !gnutlsSupport;
-
-with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "rtmpdump-${version}";
   version = "2015-01-15";
@@ -20,21 +14,21 @@ stdenv.mkDerivation rec {
     sha256 = "178h5j7w20g2h9mn6cb7dfr3fa4g4850hpl1lzxmi0nk3blzcsvl";
   };
 
-  makeFlags = [ ''prefix=$(out)'' ]
-    ++ optional gnutlsSupport "CRYPTO=GNUTLS"
-    ++ optional opensslSupport "CRYPTO=OPENSSL"
-    ++ optional stdenv.isDarwin "SYS=darwin"
-    ++ optional stdenv.cc.isClang "CC=clang";
+  makeFlags = [
+    ''prefix=$(out)''
+    "CRYPTO=OPENSSL"
+  ];
 
-  propagatedBuildInputs = [ zlib ]
-    ++ optionals gnutlsSupport [ gnutls nettle ]
-    ++ optional opensslSupport openssl;
+  propagatedBuildInputs = [
+    zlib
+    openssl
+  ];
 
-  meta = {
+  meta = with stdenv.lib; {
     description = "Toolkit for RTMP streams";
-    homepage    = http://rtmpdump.mplayerhq.hu/;
-    license     = licenses.gpl2;
-    platforms   = platforms.unix;
-    maintainers = with maintainers; [ codyopel viric ];
+    homepage = http://rtmpdump.mplayerhq.hu/;
+    license = licenses.gpl2;
+    maintainers = with maintainers; [ codyopel ];
+    platforms = platforms.unix;
   };
 }
