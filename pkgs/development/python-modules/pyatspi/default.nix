@@ -1,16 +1,28 @@
-{ stdenv, fetchurl, pkgconfig, python3, python3Packages, at_spi2_core }:
+{ stdenv, fetchurl
+, pkgconfig
+, python3
+, pygobject
+, at_spi2_core
+, gtk2
+}:
 
 stdenv.mkDerivation rec {
-  version = "2.16.0";
   name = "pyatspi-${version}";
+  versionMajor = "2.18";
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/pyatspi/2.16/${name}.tar.xz";
-    sha256 = "185lwgv9bk1fc6vw2xypznzr7p8fhp84ggnrb706zwgalmy8aym6";
+    url = "mirror://gnome/sources/pyatspi/${versionMajor}/${name}.tar.xz";
+    sha256 = "0imbyk2v6c11da7pkwz91313pkkldxs8zfg81zb2ql6h0nnh6vzq";
   };
 
   buildInputs = [
-    pkgconfig python3 python3Packages.pygobject3 at_spi2_core
+    pkgconfig
+    python3
+    pygobject
+    at_spi2_core
+    gtk2
   ];
 
   meta = with stdenv.lib; {
