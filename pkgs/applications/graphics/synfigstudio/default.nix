@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, boost, cairo, fontsConf, gettext, glibmm, gtk3, gtkmm3
+{ stdenv, fetchurl, boost, cairo, fontsConf, gettext, glibmm, gtk3, gtkmm
 , libjack2, libsigcxx, libtool, libxmlxx, makeWrapper, mlt-qt5, pango, pkgconfig
 , imagemagick, intltool
 }:
@@ -43,7 +43,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [
-    ETL boost cairo gettext glibmm gtk3 gtkmm3 imagemagick intltool
+    ETL boost cairo gettext glibmm gtk3 gtkmm imagemagick intltool
     libjack2 libsigcxx libtool libxmlxx makeWrapper mlt-qt5 pkgconfig
     synfig
   ];
