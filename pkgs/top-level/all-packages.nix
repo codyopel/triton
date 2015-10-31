@@ -1784,7 +1784,7 @@ let
 
   gtkgnutella = callPackage ../tools/networking/p2p/gtk-gnutella { };
 
-  gtkvnc = callPackage ../tools/admin/gtk-vnc {};
+  gtkvnc = callPackage ../tools/admin/gtk-vnc { };
 
   gtmess = callPackage ../applications/networking/instant-messengers/gtmess { };
 
@@ -13027,14 +13027,12 @@ let
   };
 
   virtviewer = callPackage ../applications/virtualization/virt-viewer {
-    gtkvnc = gtkvnc.override { enableGTK3 = true; };
     spice_gtk = spice_gtk.override { enableGTK3 = true; };
   };
   virtmanager = callPackage ../applications/virtualization/virt-manager {
     inherit (gnome) gnome_python;
     vte = gnome3.vte;
     dconf = gnome3.dconf;
-    gtkvnc = gtkvnc.override { enableGTK3 = true; };
     spice_gtk = spice_gtk.override { enableGTK3 = true; };
   };
 
