@@ -14,6 +14,7 @@
 , glib, gtk, dbus_glib
 , libXScrnSaver, libXcursor, libXtst, mesa
 , protobuf, speechd, libXdamage, cups
+, xorg
 
 # optional dependencies
 , libgcrypt ? null # gnomeSupport || cupsSupport
@@ -90,6 +91,9 @@ let
     libpng libxml2 libxslt libcap
     xdg_utils yasm minizip libwebp
     libusb1 libexif
+    xorg.libXi
+    xorg.libXcomposite
+    xorg.libXrandr
   ];
 
   # build paths and release info
