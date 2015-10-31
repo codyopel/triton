@@ -1,33 +1,45 @@
-{ stdenv, fetchurl, linux_4_2, perl, cross ? null }:
+{ stdenv, fetchurl
+, linux_4_2
+, perl
+, cross ? null
+}:
 
 assert cross == null -> stdenv.isLinux;
 
 let
-
-  version = linux_4_2.version;
-
   kernelHeadersBaseConfig =
-    if cross == null
-    then stdenv.platform.kernelHeadersBaseConfig
-    else cross.platform.kernelHeadersBaseConfig;
-
+    if cross == null then
+      stdenv.platform.kernelHeadersBaseConfig
+    else
+      cross.platform.kernelHeadersBaseConfig;
 in
 
 stdenv.mkDerivation {
   name = "linux-headers-${version}";
+  version = linux_4_2.meta.branch;
 
-  inherit (linux_4_2) src;
+  src = fetchurl {
+    url = "http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz";
+    sha256 = "1syv8n5hwzdbx69rsj4vayyzskfq1w5laalg5jjd523my52f086g";
+  };
 
   targetConfig = if cross != null then cross.config else null;
 
   platform =
-    if cross != null then cross.platform.kernelArch else
-    if stdenv.system == "i686-linux" then "i386" else
-    if stdenv.system == "x86_64-linux" then "x86_64" else
-    if stdenv.system == "powerpc-linux" then "powerpc" else
-    if stdenv.isArm then "arm" else
-    if stdenv.platform ? kernelArch then stdenv.platform.kernelArch else
-    abort "don't know what the kernel include directory is called for this platform";
+    if cross != null then
+      cross.platform.kernelArch
+    else if stdenv.system == "i686-linux" then
+      "i386"
+    else if stdenv.system == "x86_64-linux" then
+      "x86_64"
+    else if stdenv.system == "powerpc-linux" then
+      "powerpc"
+    else if stdenv.isArm then
+      "arm"
+    else if stdenv.platform ? kernelArch then
+      stdenv.platform.kernelArch
+    else
+      abort "don't know what the kernel include directory is called for this platform";
 
   buildInputs = [perl];
 

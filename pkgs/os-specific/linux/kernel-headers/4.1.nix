@@ -16,7 +16,7 @@ in
 
 stdenv.mkDerivation rec {
   name = "linux-headers-${version}";
-  version = "${}";
+  version = linux_4_1.meta.branch;
 
   src = fetchurl {
     url = "http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-${version}.tar.xz";
