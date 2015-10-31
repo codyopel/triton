@@ -12,7 +12,7 @@
 # Optional Dependencies
 , alsaLib ? null
 , avahi ? null
-, bluez5 ? null
+, bluez ? null
 , coreaudio ? null
 , dbus ? null
 , esound ? null
@@ -77,8 +77,8 @@ let
   optLirc = if libOnly then null else shouldUsePkg lirc;
   optDbus = shouldUsePkg dbus;
   optSbc = if libOnly then null else shouldUsePkg sbc;
-  optBluez5 = if optDbus == null || optSbc == null then null
-    else shouldUsePkg bluez5;
+  optBluez = if optDbus == null || optSbc == null then null
+    else shouldUsePkg bluez;
   optUdev = if libOnly then null else shouldUsePkg udev;
   optOpenssl = if libOnly then null else shouldUsePkg openssl;
   optFftw = shouldUsePkg fftw;
@@ -143,9 +143,9 @@ stdenv.mkDerivation rec {
     (enFlag "lirc" (optLirc != null) null)
     (enFlag "dbus" (optDbus != null) null)
     (enFlag "bluez4" false null)
-    (enFlag "bluez5" (optBluez5 != null) null)
-    (enFlag "bluez5-ofono-headset" (optBluez5 != null) null)
-    (enFlag "bluez5-native-headset" (optBluez5 != null) null)
+    (enFlag "bluez5" (optBluez != null) null)
+    (enFlag "bluez5-ofono-headset" (optBluez != null) null)
+    (enFlag "bluez5-native-headset" (optBluez != null) null)
     (enFlag "udev" (optUdev != null) null)
     (enFlag "hal-compat" false null)
     (enFlag "ipv6" true null)
@@ -231,8 +231,8 @@ stdenv.mkDerivation rec {
     libXtst
     xextproto
     libXi
-  ]) ++ optionals (optBluez5 != null) [
-    optBluez5
+  ]) ++ optionals (optBluez != null) [
+    optBluez
     optSbc
   ];
 

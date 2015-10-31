@@ -9075,7 +9075,7 @@ let
     libjack2 = null;
     avahi = null;
     lirc = null;
-    bluez5 = null;
+    bluez = null;
     tdb = null;
     gdbm = null;
     gtk3 = null;
@@ -9437,16 +9437,11 @@ let
 
   batctl = callPackage ../os-specific/linux/batman-adv/batctl.nix { };
 
-  bluez4 = callPackage ../os-specific/linux/bluez {
-    pygobject = pygobject3;
-  };
-
-  bluez5 = lowPrio (callPackage ../os-specific/linux/bluez/bluez5.nix { });
-
+  bluez_4 = callPackage ../os-specific/linux/bluez/4.x.nix { };
   # Needed for LibreOffice
-  bluez5_28 = lowPrio (callPackage ../os-specific/linux/bluez/bluez5_28.nix { });
-
-  bluez = bluez4;
+  bluez_5_28 = lowPrio (callPackage ../os-specific/linux/bluez/5.28.nix { });
+  bluez_5 = lowPrio (callPackage ../os-specific/linux/bluez/5.x.nix { });
+  bluez = bluez_5;
 
   inherit (pythonPackages) bedup;
 
@@ -11944,7 +11939,7 @@ let
     inherit (gnome) GConf ORBit2 gnome_vfs;
     zip = zip.override { enableNLS = false; };
     #glm = glm_0954;
-    bluez5 = bluez5_28;
+    bluez = bluez_5_28;
     fontsConf = makeFontsConf {
       fontDirectories = [
         freefont_ttf xorg.fontmiscmisc xorg.fontbhttf
@@ -12488,7 +12483,6 @@ let
 
   qemu = callPackage ../applications/virtualization/qemu {
     gtk = gtk3;
-    bluez = bluez5;
     libusb = libusb1;
     mesa = mesa_noglu;
   };
@@ -15036,7 +15030,7 @@ let
   };
 
   xwiimote = callPackage ../misc/drivers/xwiimote {
-    bluez = pkgs.bluez5.override {
+    bluez = pkgs.bluez.override {
       enableWiimote = true;
     };
   };
