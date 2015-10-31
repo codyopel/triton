@@ -1,7 +1,7 @@
 { fetchurl, stdenv
 , curl, dbus, dbus_glib, enchant, gtk, gnutls, gnupg, gpgme, libarchive
 , libcanberra, libetpan, libnotify, libsoup, libxml2, networkmanager, openldap
-, perl, pkgconfig, poppler, python, shared_mime_info, webkitgtk2
+, perl, pkgconfig, poppler, python, shared_mime_info, webkitgtk
 
 # Build options
 # TODO: A flag to build the manual.
@@ -61,7 +61,7 @@ stdenv.mkDerivation {
     ++ optional enableNetworkManager networkmanager
     ++ optional enableLdap openldap
     ++ optional enablePluginPdf poppler
-    ++ optional enablePluginFancy webkitgtk2;
+    ++ optional enablePluginFancy webkitgtk;
 
   configureFlags =
     optional (!enableLdap) "--disable-ldap"
