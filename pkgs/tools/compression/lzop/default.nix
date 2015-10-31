@@ -1,6 +1,6 @@
 { stdenv, fetchurl, lzo }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   name = "lzop-1.03";
 
   src = fetchurl {
