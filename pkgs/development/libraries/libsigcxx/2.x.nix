@@ -14,6 +14,10 @@ stdenv.mkDerivation rec {
     sha256 = "06xyvxaaxh3nbpjg86gcq5zcc2qnpx354wcfrqlhbndkq5kj2vqq";
   };
 
+  NIX_CFLAGS_COMPILE = [
+    "-std=c++11"
+  ];
+
   nativeBuildInputs = [
     pkgconfig
     gnum4
