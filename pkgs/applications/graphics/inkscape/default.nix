@@ -1,19 +1,47 @@
-{ stdenv, fetchurl, pkgconfig, perl, perlXMLParser, gtk, libXft
-, libpng, zlib, popt, boehmgc, libxml2, libxslt, glib, gtkmm
-, glibmm, libsigcxx, lcms, boost, gettext, makeWrapper, intltool
-, gsl, python, pyxml, lxml, poppler, imagemagick, libwpg, librevenge
-, libvisio, libcdr, libexif, unzip
+{ stdenv, fetchurl
+, gettext
+, intltool
+, makeWrapper
+, pkgconfig
+, perl
+, perlXMLParser
+
+, gtk
+, libXft
+, libpng
+, zlib
+, popt
+, boehmgc
+, libxml2
+, libxslt
+, glib
+, gtkmm
+, glibmm
+, libsigcxx
+, lcms
+, boost
+, gsl
+, python
+, pyxml
+, lxml
+, poppler
+, imagemagick
+, libwpg
+, librevenge
+, libvisio
+, libcdr
+, libexif
+, unzip
+, cairomm
 , boxMakerPlugin ? false # boxmaker plugin
 }:
 
 let 
-
-boxmaker = fetchurl {
-  # http://www.inkscapeforum.com/viewtopic.php?f=11&t=10403
-  url = "http://www.keppel.demon.co.uk/111000/files/BoxMaker0.91.zip";
-  sha256 = "5c5697f43dc3a95468f61f479cb50b7e2b93379a1729abf19e4040ac9f43a1a8";
-};
-
+  boxmaker = fetchurl {
+    # http://www.inkscapeforum.com/viewtopic.php?f=11&t=10403
+    url = "http://www.keppel.demon.co.uk/111000/files/BoxMaker0.91.zip";
+    sha256 = "5c5697f43dc3a95468f61f479cb50b7e2b93379a1729abf19e4040ac9f43a1a8";
+  };
 in
 
 stdenv.mkDerivation rec {
@@ -41,10 +69,35 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    pkgconfig perl perlXMLParser gtk libXft libpng zlib popt boehmgc
-    libxml2 libxslt glib gtkmm glibmm libsigcxx lcms boost gettext
-    makeWrapper intltool gsl poppler imagemagick libwpg librevenge
-    libvisio libcdr libexif
+    pkgconfig
+    perl
+    perlXMLParser
+    gtk
+    libXft
+    libpng
+    zlib
+    popt
+    boehmgc
+    libxml2
+    libxslt
+    glib
+    gtkmm
+    glibmm
+    libsigcxx
+    lcms
+    boost
+    gettext
+    makeWrapper
+    intltool
+    gsl
+    poppler
+    imagemagick
+    libwpg
+    librevenge
+    libvisio
+    libcdr
+    libexif
+    cairomm
   ] ++ stdenv.lib.optional boxMakerPlugin unzip;
 
   enableParallelBuilding = true;
