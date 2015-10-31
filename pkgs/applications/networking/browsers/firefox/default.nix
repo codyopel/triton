@@ -41,6 +41,7 @@
 , libpng
 , jemalloc
 , libpulseaudio
+, libffi
 , enableGTK3 ? false
 , debugBuild ? false
 , # If you want the resulting program to call itself "Firefox" instead of
@@ -173,6 +174,7 @@ stdenv.mkDerivation rec {
     libpng
     jemalloc
     libpulseaudio # only headers are needed
+    libffi
   ];
 
   preInstall = ''
