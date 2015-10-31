@@ -1,5 +1,5 @@
 { stdenv, fetchurl, pkgconfig, gtk, libxml2, gettext, libical, libnotify
-, libarchive, gtkspell, webkitgtk2, libgringotts }:
+, libarchive, gtkspell, webkitgtk, libgringotts }:
 
 stdenv.mkDerivation rec {
   name = "osmo-${version}";
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ pkgconfig gtk libxml2 gettext libical libnotify libarchive
-    gtkspell webkitgtk2 libgringotts ];
+    gtkspell webkitgtk libgringotts ];
 
   meta = with stdenv.lib; {
     description = "A handy personal organizer";
