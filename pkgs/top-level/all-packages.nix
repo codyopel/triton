@@ -8376,20 +8376,8 @@ let
     enableDocumentation = true;
   };
 
-  webkit = webkitgtk;
-
-  webkitgtk = callPackage ../development/libraries/webkitgtk {
-    gst-plugins-base = gst_all_1.gst-plugins-base;
-  };
-
-  webkitgtk24x = callPackage ../development/libraries/webkitgtk/2.4.nix {
-    gst-plugins-base = gst_all_1.gst-plugins-base;
-  };
-
-  webkitgtk2 = webkitgtk24x.override {
-    withGtk2 = true;
-    enableIntrospection = false;
-  };
+  webkitgtk_2_4 = callPackage ../development/libraries/webkitgtk/2.4.x.nix { };
+  webkitgtk = callPackage ../development/libraries/webkitgtk { };
 
   websocketpp = callPackage ../development/libraries/websocket++ { };
 
