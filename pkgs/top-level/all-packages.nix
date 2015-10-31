@@ -6500,8 +6500,9 @@ let
 
   gtk = pkgs.gtk2;
 
-  gtkmm = callPackage ../development/libraries/gtkmm/2.x.nix { };
-  gtkmm3 = callPackage ../development/libraries/gtkmm/3.x.nix { };
+  gtkmm_2 = callPackage ../development/libraries/gtkmm/2.x.nix { };
+  gtkmm_3 = callPackage ../development/libraries/gtkmm/3.x.nix { };
+  gtkmm = gtkmm_3;
 
   gtkmozembedsharp = callPackage ../development/libraries/gtkmozembed-sharp {
     gtksharp = gtk-sharp;
@@ -7302,10 +7303,9 @@ let
 
   libsearpc = callPackage ../development/libraries/libsearpc { };
 
-  libsigcxx_1_2 = callPackage ../development/libraries/libsigcxx/1.2.x.nix { };
-  libsigcxx_2_4 = callPackage ../development/libraries/libsigcxx/2.4.x.nix { };
-  libsigcxx_2_6 = callPackage ../development/libraries/libsigcxx/2.6.x.nix { };
-  libsigcxx = libsigcxx_2_6;
+  libsigcxx_1 = callPackage ../development/libraries/libsigcxx/1.x.nix { };
+  libsigcxx_2 = callPackage ../development/libraries/libsigcxx/2.x.nix { };
+  libsigcxx = libsigcxx_2;
 
   libsigsegv = callPackage ../development/libraries/libsigsegv { };
 
