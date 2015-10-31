@@ -13068,8 +13068,8 @@ let
   };
 
   bumblebee = callPackage ../tools/X11/bumblebee {
-    nvidia_x11 = linuxPackages.nvidia-drivers;
-    nvidia_x11_i686 =
+    nvidia-drivers = linuxPackages.nvidia-drivers;
+    nvidia-drivers_i686 =
       if system == "x86_64-linux" then
         pkgsi686Linux.linuxPackages.nvidia-drivers.override {
           buildConfig = "userspace";
