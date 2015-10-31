@@ -7831,21 +7831,24 @@ let
 
   policykit = callPackage ../development/libraries/policykit { };
 
-  poppler = callPackage ../development/libraries/poppler { lcms = lcms2; };
-
-  poppler_min = poppler.override { # TODO: maybe reduce even more
-    minimal = true;
-    suffix = "min";
-  };
-
   poppler_qt4 = poppler.override {
-    qt4Support = true;
     suffix = "qt4";
+    qt4 = qt4;
+    qt5 = null;
   };
-
-  poppler_qt5 = qt5Libs.popplerQt;
-
-  poppler_utils = poppler.override { suffix = "utils"; utils = true; };
+  poppler_qt5 = poppler.override {
+    suffix = "qt5";
+    qt4 = null;
+    qt5 = qt54;
+  };
+  poppler_utils = poppler.override {
+    suffix = "utils";
+    utils = true;
+  };
+  poppler = callPackage ../development/libraries/poppler {
+    qt4 = null;
+    qt5 = null;
+  };
 
   popt = callPackage ../development/libraries/popt { };
 
