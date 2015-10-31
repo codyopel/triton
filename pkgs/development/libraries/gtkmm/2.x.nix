@@ -1,6 +1,7 @@
 { stdenv, fetchurl
 , pkgconfig
-, gtk
+
+, gtk2
 , glibmm
 , cairomm
 , pangomm
@@ -18,15 +19,29 @@ stdenv.mkDerivation rec {
     sha256 = "1vpmjqv0aqb1ds0xi6nigxnhlr0c74090xzi15b92amlzkrjyfj4";
   };
 
+  patches = [
+    ./gtkmm-2.24.4-papersize.patch
+    ./gtkmm-2.24.4-missing-includes.patch
+    ./gtkmm-2.24.4-newer-glibmm.patch
+    ./gtkmm-2.24.4-add-list.m4.patch
+    ./gtkmm-2.24.4-fix-add-list.m4.patch
+    ./gtkmm-2.24.4-cpp11.patch
+    ./gtkmm-2.24.4-gdkpixbud-deprecation-warnings.patch
+  ];
+
+  NIX_CFLAGS_COMPILE = [
+    "-std=c++11"
+  ];
+
   nativeBuildInputs = [
     pkgconfig
   ];
 
-  buildInputs = [
-    glibmm
-    gtk
+  propagatedBuildInputs = [
     atkmm
     cairomm
+    glibmm
+    gtk2
     pangomm
   ];
 

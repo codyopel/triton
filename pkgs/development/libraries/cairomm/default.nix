@@ -15,9 +15,16 @@ stdenv.mkDerivation rec {
     sha256 = "1k3lb3jwnk5nm4s5cfm5kk8kl4b066chis4inws6k5yxdzn5lhsh";
   };
 
+  NIX_CFLAGS_COMPILE = [
+    "-std=c++11"
+  ];
+
+  propagatedBuildInputs = [
+    cairo
+  ];
+
   buildInputs = [
     pkgconfig
-    cairo
     xlibsWrapper
     fontconfig
     freetype

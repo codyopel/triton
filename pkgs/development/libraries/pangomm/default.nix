@@ -18,16 +18,20 @@ stdenv.mkDerivation rec {
     sha256 = "12xwjvqfxhqblcv7641k0l6r8n3qifnrx8w9571izn1nbd81iyzg";
   };
 
+  NIX_CFLAGS_COMPILE = [
+    "-std=c++11"
+  ];
+
   nativeBuildInputs = [
     pkgconfig
   ];
 
   propagatedBuildInputs = [
     cairomm
+    pango
   ];
 
   buildInputs = [
-    pango
     glibmm
     libpng
     cairo

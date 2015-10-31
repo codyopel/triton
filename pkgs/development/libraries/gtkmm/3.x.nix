@@ -20,20 +20,33 @@ stdenv.mkDerivation rec {
     sha256 = "0sxq700invkjpksn790gbnl8px8751kvgwn39663jx7dv89s37w2";
   };
 
+  configureFlags = [
+    "--disable-quartz-backend"
+    "--enable-x11-backend"
+    "--enable-wayland-backend"
+    "--disable-brodway-backend"
+    "--enable-api-atkmm"
+    "--enable-deprecated-api"
+  ];
+
+  NIX_CFLAGS_COMPILE = [
+    "-std=c++11"
+  ];
+
   nativeBuildInputs = [
     pkgconfig
   ];
 
-  buildInputs = [
-    glibmm
-    gtk3
-    cairomm
-    epoxy
-  ];
-
   propagatedBuildInputs = [
     atkmm
+    cairomm
+    glibmm
+    gtk3
     pangomm
+  ];
+
+  buildInputs = [
+    epoxy
   ];
 
   doCheck = true;

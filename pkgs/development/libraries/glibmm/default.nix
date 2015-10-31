@@ -16,6 +16,15 @@ stdenv.mkDerivation rec {
     sha256 = "1an4v1yk06svlmcyp1psk2a3bsn29s1a4gdx0ai2w788q6bfaiwn";
   };
 
+  configureFlags = [
+    "--disable-documentation"
+    "--enable-deprecated-api"
+  ];
+
+  NIX_CFLAGS_COMPILE = [
+    "-std=c++11"
+  ];
+
   nativeBuildInputs = [
     pkgconfig
   ];
