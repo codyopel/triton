@@ -1,41 +1,93 @@
-{ stdenv, fetchurl, pkgconfig, gettext, glib, atk, pango, cairo, perl, xorg
-, gdk_pixbuf, libintlOrEmpty, xlibsWrapper
-, xineramaSupport ? stdenv.isLinux
-, cupsSupport ? true, cups ? null
+{ stdenv, fetchurl
+, gettext
+, perl
+, pkgconfig
+
+, atk
+, cairo
+, cups
+, fontconfig
+, gdk_pixbuf
+, glib
+#, gobjectIntrospection
+, libintlOrEmpty
+, libxkbcommon
+, pango
+, xlibsWrapper
+, xorg
 }:
 
-assert xineramaSupport -> xorg.libXinerama != null;
-assert cupsSupport -> cups != null;
+let
+  inherit (stdenv.lib)
+    optionalString;
+in
 
 stdenv.mkDerivation rec {
-  name = "gtk+-2.24.28";
+  name = "gtk+-${version}";
+  versionMajor = "2.24";
+  versionMinor = "28";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/gtk+/2.24/${name}.tar.xz";
+    url = "mirror://gnome/sources/gtk+/${versionMajor}/${name}.tar.xz";
     sha256 = "0mj6xn40py9r9lvzg633fal81xfwfm89d9mvz7jk4lmwk0g49imj";
   };
 
-  enableParallelBuilding = true;
+  patchPhase = ''
+    # marshalers code was pre-generated with glib-2.31
+    # https://bugzilla.gnome.org/show_bug.cgi?id=662109
+    rm -v \
+      gdk/gdkmarshalers.c \
+      gtk/gtkmarshal.c \
+      gtk/gtkmarshalers.c \
+      perf/marshalers.c
+  '';
 
-  NIX_CFLAGS_COMPILE = stdenv.lib.optionalString (libintlOrEmpty != []) "-lintl";
+  configureFlags = [
+    "--enable-xkb"
+    "--enable-xinerama"
+    "--with-xinput=yes"
+    "--enable-cups"
+    #"--enable-papi"
+    "--enable-man"
+  ];
 
-  nativeBuildInputs = [ perl pkgconfig gettext ];
+  NIX_CFLAGS_COMPILE = optionalString (libintlOrEmpty != []) "-lintl";
 
-  propagatedBuildInputs = with xorg; with stdenv.lib;
-    [ glib cairo pango gdk_pixbuf atk ]
-    ++ optionals (stdenv.isLinux || stdenv.isDarwin) [
-         libXrandr libXrender libXcomposite libXi libXcursor
-       ]
-    ++ optionals stdenv.isDarwin [ xlibsWrapper libXdamage ]
-    ++ libintlOrEmpty
-    ++ optional xineramaSupport libXinerama
-    ++ optionals cupsSupport [ cups ];
+  nativeBuildInputs = [
+    gettext
+    perl
+    pkgconfig
+  ];
 
-  configureFlags = if stdenv.isDarwin
-    then "--disable-glibtest --disable-introspection --disable-visibility"
-    else "--with-xinput=yes";
+  buildInputs = [
+    cairo
+    cups
+    fontconfig
+    glib
+    libintlOrEmpty
+    libxkbcommon
+    xorg.inputproto
+    xorg.libX11
+    xorg.libXcomposite
+    xorg.libXcursor
+    xorg.libXext
+    xorg.libXfixes
+    xorg.libXi
+    xorg.libXinerama
+    xorg.libXrender
+    xorg.libXrandr
+  ];
+
+  propagatedBuildInputs = [
+    atk
+    gdk_pixbuf
+    pango
+  ];
 
   postInstall = "rm -rf $out/share/gtk-doc";
+
+  enableParallelBuilding = true;
 
   passthru = {
     gtkExeEnvPostBuild = ''
@@ -45,21 +97,10 @@ stdenv.mkDerivation rec {
   };
 
   meta = with stdenv.lib; {
-    description = "A multi-platform toolkit for creating graphical user interfaces";
-    homepage    = http://www.gtk.org/;
-    license     = licenses.lgpl2Plus;
-    maintainers = with maintainers; [ lovek323 raskin ];
-    platforms   = platforms.all;
-
-    longDescription = ''
-      GTK+ is a highly usable, feature rich toolkit for creating
-      graphical user interfaces which boasts cross platform
-      compatibility and an easy to use API.  GTK+ it is written in C,
-      but has bindings to many other popular programming languages
-      such as C++, Python and C# among others.  GTK+ is licensed
-      under the GNU LGPL 2.1 allowing development of both free and
-      proprietary software with GTK+ without any license fees or
-      royalties.
-    '';
+    description = "A toolkit for creating graphical user interfaces";
+    homepage = http://www.gtk.org/;
+    license = licenses.lgpl2Plus;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.linux;
   };
 }

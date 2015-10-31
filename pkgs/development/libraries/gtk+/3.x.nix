@@ -1,43 +1,87 @@
-{ stdenv, fetchurl, pkgconfig, gettext, perl
-, expat, glib, cairo, pango, gdk_pixbuf, atk, at_spi2_atk, gobjectIntrospection
-, xlibs, x11, wayland, libxkbcommon, epoxy
-, xineramaSupport ? stdenv.isLinux
-, cupsSupport ? stdenv.isLinux, cups ? null
+{ stdenv, fetchurl
+, pkgconfig
+, gettext
+, perl
+, gobjectIntrospection
+
+, at_spi2_atk
+, atk
+, cairo
+, cups
+, epoxy
+, expat
+, fontconfig
+, gdk_pixbuf
+, glib
+, libxkbcommon
+, pango
+, wayland
+, xlibsWrapper
+, xorg
+, gnome3
+, mesa_noglu
 }:
 
-assert xineramaSupport -> xlibs.libXinerama != null;
-assert cupsSupport -> cups != null;
-
-let
-  ver_maj = "3.18";
-  ver_min = "0";
-  version = "${ver_maj}.${ver_min}";
-in
 stdenv.mkDerivation rec {
-  name = "gtk+3-${version}";
+  name = "gtk+-${version}";
+  versionMajor = "3.18";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/gtk+/${ver_maj}/gtk+-${version}.tar.xz";
-    sha256 = "7fb8ae257403317d3852bad28d064d35f67e978b1fed8b71d5997e87204271b9";
+    url = "mirror://gnome/sources/gtk+/${versionMajor}/${name}.tar.xz";
+    sha256 = "0lp1hn0qydxx03bianzzr0a4maqzsvylrkzr7c3p0050qihwbgjx";
   };
 
-  nativeBuildInputs = [ pkgconfig gettext gobjectIntrospection perl ];
-
-  buildInputs = [ libxkbcommon epoxy ];
-  propagatedBuildInputs = with xlibs; with stdenv.lib;
-    [ expat glib cairo pango gdk_pixbuf atk at_spi2_atk libXrandr libXrender libXcomposite libXi libXcursor ]
-    ++ optionals stdenv.isLinux [ wayland ]
-    ++ optional xineramaSupport libXinerama
-    ++ optional cupsSupport cups;
-
-  NIX_LDFLAGS = if stdenv.isDarwin then "-lintl" else null;
-
-  # demos fail to install, no idea where's the problem
+  # demos fail to install, no idea where the problem is
   preConfigure = "sed '/^SRC_SUBDIRS /s/demos//' -i Makefile.in";
 
-  enableParallelBuilding = true;
+  configureFlags = [
+    "--enable-x11-backend"
+    "--enable-wayland-backend"
+  ];
+
+  nativeBuildInputs = [
+    gettext
+    gobjectIntrospection
+    perl
+    pkgconfig
+  ];
+
+  buildInputs = [
+    at_spi2_atk
+    cairo
+    cups
+    epoxy
+    expat
+    fontconfig
+    glib
+    libxkbcommon
+    mesa_noglu
+    wayland
+    xorg.inputproto
+    xorg.libICE
+    xorg.libSM
+    xorg.libX11
+    xorg.libXcomposite
+    xorg.libXcursor
+    xorg.libXext
+    xorg.libXfixes
+    xorg.libXi
+    xorg.libXinerama
+    xorg.libXrandr
+    xorg.libXrender
+  ];
+
+  propagatedBuildInputs = [
+    atk
+    gdk_pixbuf
+    pango
+  ];
 
   postInstall = "rm -rf $out/share/gtk-doc";
+
+  enableParallelBuilding = true;
 
   passthru = {
     gtkExeEnvPostBuild = ''
@@ -46,25 +90,11 @@ stdenv.mkDerivation rec {
     ''; # workaround for bug of nix-mode for Emacs */ '';
   };
 
-  meta = {
-    description = "A multi-platform toolkit for creating graphical user interfaces";
-
-    longDescription = ''
-      GTK+ is a highly usable, feature rich toolkit for creating
-      graphical user interfaces which boasts cross platform
-      compatibility and an easy to use API.  GTK+ it is written in C,
-      but has bindings to many other popular programming languages
-      such as C++, Python and C# among others.  GTK+ is licensed
-      under the GNU LGPL 2.1 allowing development of both free and
-      proprietary software with GTK+ without any license fees or
-      royalties.
-    '';
-
+  meta = with stdenv.lib; {
+    description = "A toolkit for creating graphical user interfaces";
     homepage = http://www.gtk.org/;
-
-    license = stdenv.lib.licenses.lgpl2Plus;
-
-    maintainers = with stdenv.lib.maintainers; [ urkud raskin vcunat lethalman ];
-    platforms = stdenv.lib.platforms.all;
+    license = licenses.lgpl2Plus;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.linux;
   };
 }

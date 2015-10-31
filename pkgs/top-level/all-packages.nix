@@ -6490,9 +6490,7 @@ let
 
   granite = callPackage ../development/libraries/granite { };
 
-  gtk2 = callPackage ../development/libraries/gtk+/2.x.nix {
-    cupsSupport = config.gtk2.cups or stdenv.isLinux;
-  };
+  gtk2 = callPackage ../development/libraries/gtk+/2.x.nix { };
 
   gtk3 = callPackage ../development/libraries/gtk+/3.x.nix {
     gettext = gettextWithExpat;
