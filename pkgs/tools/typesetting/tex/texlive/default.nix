@@ -2,9 +2,9 @@ args @ {
 builderDefs, zlib, bzip2, ncurses, libpng, ed, lesstif, ruby, potrace
 , gd, t1lib, freetype, icu, perl, expat, curl, xz, pkgconfig, zziplib, texinfo
 , libjpeg, bison, python, fontconfig, flex, poppler, libpaper, graphite2
-, makeWrapper, gmp, mpfr, xpdf, config
+, makeWrapper, gmp, mpfr, xpdf, config, harfbuzz
 , libXaw, libX11, xproto, libXt, libXpm
-, libXmu, libXext, xextproto, libSM, libICE
+, libXmu, libXext, xextproto, libSM, libICE, pixman
 , ... }: with args;
 
 rec {
@@ -123,7 +123,7 @@ rec {
     freetype t1lib gd libXaw icu ghostscript ed libXt libXpm libXmu libXext
     xextproto perl libSM ruby expat curl libjpeg python fontconfig xz pkgconfig
     poppler libpaper graphite2 lesstif zziplib harfbuzz texinfo potrace gmp mpfr
-    xpdf ]
+    xpdf pixman ]
     ++ stdenv.lib.optionals stdenv.isDarwin [ makeWrapper ]
     ;
 
