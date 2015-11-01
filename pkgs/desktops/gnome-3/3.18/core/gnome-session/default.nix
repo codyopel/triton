@@ -1,15 +1,51 @@
-{ fetchurl, stdenv, pkgconfig, gnome3, glib, dbus_glib, json_glib, upower
-, libxslt, intltool, makeWrapper, systemd, xorg }:
+{ fetchurl, stdenv
+, pkgconfig
+, glib
+, dbus_glib
+, json_glib
+, upower
+, libxslt
+, intltool
+, makeWrapper
+, systemd
+, xorg
+, gtk3
+, gnome3
+}:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-session-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1.2";
+  version = "${versionMajor}.${versionMinor}";
 
-  configureFlags = "--enable-systemd";
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-session/${versionMajor}/${name}.tar.xz";
+    sha256 = "0icajbzqf5llvp5s8nafwkhwz6a6jmwn4hhs81bk0bpzawyq4zdk";
+  };
 
-  buildInputs = with gnome3;
-    [ pkgconfig glib gnome_desktop gtk dbus_glib json_glib libxslt 
-      gnome3.gnome_settings_daemon xorg.xtrans gnome3.defaultIconTheme
-      gsettings_desktop_schemas upower intltool gconf makeWrapper systemd ];
+  configureFlags = [
+    "--enable-systemd"
+  ];
+
+  buildInputs = [
+    pkgconfig
+    glib
+    gnome3.gnome_desktop
+    gtk3
+    dbus_glib
+    json_glib
+    libxslt
+    gnome3.gnome_settings_daemon
+    xorg.xtrans
+    gnome3.defaultIconTheme
+    gnome3.gsettings_desktop_schemas
+    upower
+    intltool
+    gnome3.gconf
+    makeWrapper
+    systemd
+  ];
 
   preFixup = ''
     wrapProgram "$out/bin/gnome-session" \
@@ -18,8 +54,7 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with stdenv.lib; {
-    platforms = platforms.linux;
     maintainers = gnome3.maintainers;
+    platforms = platforms.linux;
   };
-
 }
