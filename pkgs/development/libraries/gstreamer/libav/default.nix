@@ -1,6 +1,7 @@
 { stdenv, fetchurl, pkgconfig, python, yasm
 , gst-plugins-base, orc, bzip2
 , withSystemLibav ? true, libav ? null
+, zlib
 }:
 
 assert withSystemLibav -> libav != null;
@@ -29,7 +30,7 @@ stdenv.mkDerivation rec {
     ;
 
   buildInputs = with stdenv.lib;
-    [ gst-plugins-base orc bzip2 ]
+    [ gst-plugins-base orc bzip2 zlib ]
     ++ optional withSystemLibav libav
     ;
 }
