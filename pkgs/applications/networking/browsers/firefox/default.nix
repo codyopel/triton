@@ -148,19 +148,21 @@ stdenv.mkDerivation rec {
     xorg.libXrender
     xorg.libXft
     xorg.libXt
+    xorg.libXScrnSaver
+    xorg.scrnsaverproto
+    xorg.pixman
+    xorg.libXext
+    xorg.xextproto
+    xorg.libXcomposite
+    xorg.libXdamage
     file
     alsaLib
     nspr
     nss
     libnotify
-    xorg.pixman
     yasm
     mesa
-    xorg.libXScrnSaver
-    xorg.scrnsaverproto
     pysqlite
-    xorg.libXext
-    xorg.xextproto
     sqlite
     unzip
     hunspell
