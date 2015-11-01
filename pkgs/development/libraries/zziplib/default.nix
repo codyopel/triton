@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
 
   doCheck = true;
 
-  enableParallelBuilding = true;
+  enableParallelBuilding = false;
 
   meta = with stdenv.lib; {
     description = "Library to extract data from files archived in a zip file";
