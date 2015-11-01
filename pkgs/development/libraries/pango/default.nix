@@ -15,12 +15,12 @@
 stdenv.mkDerivation rec {
   name = "pango-${version}";
   versionMajor = "1.38";
-  versionMinor = "0";
+  versionMinor = "1";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/pango/${versionMajor}/${name}.tar.xz";
-    sha256 = "0v12gi7f01iq3z852pclpnmkbcksbvpcmiazmklkx1dd9fbpakhx";
+    sha256 = "1dsf45m51i4rcyvh5wlxxrjfhvn5b67d5ckjc6vdcxbddjgmc80k";
   };
 
   nativeBuildInputs = [
@@ -31,12 +31,12 @@ stdenv.mkDerivation rec {
     cairo
     fontconfig
     freetype
+    glib
   ];
 
   buildInputs = [
     gobjectIntrospection
     xlibsWrapper
-    glib
     libpng
     harfbuzz
     libintlOrEmpty
