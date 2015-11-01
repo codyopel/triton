@@ -15,7 +15,7 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "baobab-3.18.0";
+  name = "baobab-${version}";
   versionMajor = "3.18";
   versionMinor = "1";
   version = "${versionMajor}.${versionMinor}";
