@@ -1,31 +1,136 @@
-{ fetchurl, stdenv, pkgconfig, gnome3, json_glib, libcroco, intltool, libsecret
-, python3, libsoup, polkit, clutter, networkmanager, docbook_xsl, docbook_xsl_ns, at_spi2_core
-, libstartup_notification, telepathy_glib, telepathy_logger, libXtst, p11_kit, unzip
-, sqlite, libgweather, libcanberra_gtk3
-, libpulseaudio, libical, libtool, nss, gobjectIntrospection, gstreamer, makeWrapper
-, accountsservice, gdk_pixbuf, gdm, upower, ibus, networkmanagerapplet, librsvg }:
+{ fetchurl, stdenv
+, pkgconfig
+, gnome3
+, json_glib
+, libcroco
+, intltool
+, libsecret
+, python3
+, libsoup
+, polkit
+, clutter
+, networkmanager
+, docbook_xsl
+, docbook_xsl_ns
+, at_spi2_core
+, libstartup_notification
+, telepathy_glib
+, telepathy_logger
+, libXtst
+, p11_kit
+, unzip
+, sqlite
+, libgweather
+, libcanberra
+, libpulseaudio
+, libical
+, libtool
+, nss
+, gobjectIntrospection
+, gstreamer
+, makeWrapper
+, accountsservice
+, gdk_pixbuf
+, gdm
+, upower
+, ibus
+, networkmanagerapplet
+, librsvg
+, spidermonkey_24
+, cogl
+, wayland
+, mesa_noglu
+, libxkbcommon
+, at_spi2_atk
+, xorg
+}:
 
 # http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/gnome-base/gnome-shell/gnome-shell-3.10.2.1.ebuild?revision=1.3&view=markup
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-shell-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
 
-  # Needed to find /etc/NetworkManager/VPN
-  configureFlags = [ "--sysconfdir=/etc" ];
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-shell/${versionMajor}/${name}.tar.xz";
+    sha256 = "0i9qpxr83xvaj0mj9jmib4icpa73cmjqmib99ywjb6p2ncam588l";
+  };
 
-  buildInputs = with gnome3;
-    [ gsettings_desktop_schemas gnome_keyring gnome-menus glib gcr json_glib accountsservice
-      libcroco intltool libsecret pkgconfig python3 libsoup polkit libcanberra gdk_pixbuf librsvg
-      clutter networkmanager libstartup_notification telepathy_glib docbook_xsl docbook_xsl_ns
-      libXtst p11_kit networkmanagerapplet gjs mutter libpulseaudio caribou evolution_data_server
-      libical libtool nss gobjectIntrospection gtk gstreamer makeWrapper gdm
-      libcanberra_gtk3 gnome_control_center
-      defaultIconTheme sqlite gnome3.gnome-bluetooth
-      libgweather # not declared at build time, but typelib is needed at runtime
-      gnome3.gnome-clocks # schemas needed
-      at_spi2_core upower ibus gnome_session gnome_desktop telepathy_logger gnome3.gnome_settings_daemon ];
+  configureFlags = [
+    # Needed to find /etc/NetworkManager/VPN
+    "--sysconfdir=/etc"
+    #"--disable-compile-warnings"
+  ];
 
-  installFlags = [ "keysdir=$(out)/share/gnome-control-center/keybindings" ];
+  buildInputs = with gnome3; [
+    at_spi2_atk
+    gsettings_desktop_schemas
+    gnome_keyring
+    gnome-menus
+    glib
+    gcr
+    json_glib
+    accountsservice
+    libcroco
+    intltool
+    libsecret
+    pkgconfig
+    python3
+    libsoup
+    polkit
+    libcanberra
+    gdk_pixbuf
+    librsvg
+    clutter
+    networkmanager
+    libstartup_notification
+    telepathy_glib
+    docbook_xsl
+    docbook_xsl_ns
+    libXtst
+    p11_kit
+    networkmanagerapplet
+    gjs
+    mutter
+    libpulseaudio
+    caribou
+    evolution_data_server
+    libical
+    libtool
+    nss
+    gobjectIntrospection
+    gtk
+    gstreamer
+    makeWrapper
+    gdm
+    gnome_control_center
+    defaultIconTheme
+    sqlite
+    gnome3.gnome-bluetooth
+    libgweather # not declared at build time, but typelib is needed at runtime
+    gnome3.gnome-clocks # schemas needed
+    spidermonkey_24
+    cogl
+    wayland
+    mesa_noglu
+    libxkbcommon
+    at_spi2_core
+    upower
+    ibus
+    gnome_session
+    gnome_desktop
+    telepathy_logger
+    gnome3.gnome_settings_daemon
+    xorg.libSM
+    xorg.libICE
+    xorg.libXinerama
+  ];
+
+  installFlags = [
+    "keysdir=$(out)/share/gnome-control-center/keybindings"
+  ];
 
   preBuild = ''
     patchShebangs src/data-to-c.pl
@@ -44,6 +149,8 @@ stdenv.mkDerivation rec {
 
     echo "${unzip}/bin" > $out/${passthru.mozillaPlugin}/extra-bin-path
   '';
+
+  enableParallelBuilding = true;
 
   passthru = {
     mozillaPlugin = "/lib/mozilla/plugins";
