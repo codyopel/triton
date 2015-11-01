@@ -10,7 +10,14 @@
 , libffi
 , pcre
 , libelf
+, check ? false
 }:
+
+with {
+  inherit (stdenv.lib)
+    enFlag
+    wtFlag;
+};
 
 # TODO:
 # * Add gio-module-fam
@@ -57,6 +64,27 @@ stdenv.mkDerivation rec {
 
   setupHook = ./setup-hook.sh;
 
+  configureFlags = [
+    #"selinux"
+    # fam for file system monitoring
+    (enFlag "fam" true null)
+    (enFlag "xattr" true null)
+    (enFlag "libelf" true null)
+    (enFlag "gtk-doc" false null)
+    (enFlag "gtk-doc-html" false null)
+    (enFlag "gtk-doc-pdf" false null)
+    (enFlag "man" false null)
+    (enFlag "dtrace" false null)
+    (enFlag "systemtap" false null)
+    (enFlag "coverage" false null)
+    #Bsymbolic
+    #znodelete
+    #compile-warnings
+    (wtFlag "python" true "${python.interpreter}")
+    (wtFlag "threads" true "posix")
+    (wtFlag "pcre" (pcre != null) "system")
+  ];
+
   nativeBuildInputs = [
     gettext
     perl
@@ -77,6 +105,7 @@ stdenv.mkDerivation rec {
     rm -rvf $out/share/gtk-doc
   '';
 
+  doCheck = false;
   enableParallelBuilding = true;
 
   DETERMINISTIC_BUILD = 1;
