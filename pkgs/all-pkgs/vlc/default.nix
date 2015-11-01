@@ -33,6 +33,7 @@
 , librsvg
 , libsamplerate
 , libtheora
+, libtiff
 , libtiger
 , libupnp
 , libv4l
@@ -125,6 +126,7 @@ stdenv.mkDerivation rec {
     librsvg
     libsamplerate
     libtheora
+    libtiff
     libtiger
     libupnp
     libv4l
