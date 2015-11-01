@@ -16,19 +16,19 @@
 , libxkbcommon
 , mesa
 , pango
+, wayland
 , xorg
-, wayland #
 }:
 
 stdenv.mkDerivation rec {
   name = "clutter-${version}";
-  versionMajor = "1.24";
-  versionMinor = "2";
+  versionMajor = "1.22";
+  versionMinor = "4";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/clutter/${versionMajor}/${name}.tar.xz";
-    sha256 = "0qyd0cw17wi8gl6y9z2j2lh2gwghxskfmsdvw4ayrgxwnj6cjccn";
+    sha256 = "07lydj33iwddzlspdl9zyrb534x12yk4zp003mx6d1sz08bcwxqx";
   };
 
   configureFlags = [

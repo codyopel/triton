@@ -5,7 +5,7 @@
 , atk
 , bzip2
 , cairo
-, cogl
+, cogl_1_16
 , fontconfig
 , freetype
 , gdk_pixbuf
@@ -17,18 +17,17 @@
 , mesa
 , pango
 , xorg
-, wayland #
 }:
 
 stdenv.mkDerivation rec {
   name = "clutter-${version}";
-  versionMajor = "1.24";
-  versionMinor = "2";
+  versionMajor = "1.16";
+  versionMinor = "4";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/clutter/${versionMajor}/${name}.tar.xz";
-    sha256 = "0qyd0cw17wi8gl6y9z2j2lh2gwghxskfmsdvw4ayrgxwnj6cjccn";
+    sha256 = "0r8vnlqv8639bfxjg8zp5wz1p20hfrbq9ybm7yvpfdahqmp86l6g";
   };
 
   configureFlags = [
@@ -44,7 +43,7 @@ stdenv.mkDerivation rec {
     atk
     bzip2
     cairo
-    cogl
+    cogl_1_16
     fontconfig
     freetype
     gdk_pixbuf
@@ -61,10 +60,9 @@ stdenv.mkDerivation rec {
   ];
 
   propagatedBuildInputs = [
-    cogl # pkg-config
+    cogl_1_16 # pkg-config
     json_glib # pkg-config
     libxkbcommon # pkg-config
-    wayland # pkg-config
     xorg.libXi # pkg-config
   ];
 

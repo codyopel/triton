@@ -6022,15 +6022,10 @@ let
 
   clucene_core = clucene_core_1;
 
+  clutter_1_16 = callPackage ../development/libraries/clutter/1.16.x.nix { };
+  clutter_1_22 = callPackage ../development/libraries/clutter/1.22.x.nix { };
   clutter = callPackage ../development/libraries/clutter { };
 
-  clutter_1_22 = callPackage ../development/libraries/clutter/1.22.nix {
-    cogl = cogl_1_20;
-  };
-
-  clutter_1_24 = callPackage ../development/libraries/clutter/1.24.nix {
-    cogl = cogl_1_22;
-  };
 
   clutter-gst = callPackage ../development/libraries/clutter-gst { };
 
