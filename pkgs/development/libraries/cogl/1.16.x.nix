@@ -7,7 +7,7 @@
 , gdk_pixbuf
 , glib
 , gobjectIntrospection
-, gst-plugins-base
+, gst_plugins_base
 , gstreamer
 , libdrm
 , libintlOrEmpty
@@ -47,7 +47,7 @@ stdenv.mkDerivation rec {
     glib
     gobjectIntrospection
     gstreamer
-    gst-plugins-base
+    gst_plugins_base
     libdrm
     pango
     xorg.libX11

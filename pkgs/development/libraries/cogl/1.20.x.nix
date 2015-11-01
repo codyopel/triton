@@ -7,8 +7,7 @@
 , gdk_pixbuf
 , glib
 , gobjectIntrospection
-, gst-plugins-base
-, gstreamer
+, gst_all_1
 , libdrm
 , libintlOrEmpty
 , mesa_noglu
@@ -47,8 +46,8 @@ stdenv.mkDerivation rec {
     gdk_pixbuf
     glib
     gobjectIntrospection
-    gstreamer
-    gst-plugins-base
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-base
     libdrm
     pango
     wayland
