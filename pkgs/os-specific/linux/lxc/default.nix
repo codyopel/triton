@@ -1,36 +1,38 @@
-{ stdenv, fetchFromGitHub, autoreconfHook, pkgconfig, perl, docbook2x
-, docbook_xml_dtd_45, python3Packages
+{ stdenv, fetchurl
+, pkgconfig
+, perl
+, docbook2x
+, docbook_xml_dtd_45
+, python3Packages
 
 # Optional Dependencies
-, libapparmor ? null, gnutls ? null, libselinux ? null, libseccomp ? null
-, cgmanager ? null, libnih ? null, dbus ? null, libcap ? null, systemd ? null
+, libapparmor ? null
+, gnutls ? null
+, libselinux ? null
+, libseccomp ? null
+, cgmanager ? null
+, libnih ? null
+, dbus ? null
+, libcap ? null
+, systemd ? null
 }:
 
 let
   enableCgmanager = cgmanager != null && libnih != null && dbus != null;
 in
+
 with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "lxc-1.1.3";
+  name = "lxc-1.1.4";
 
-  src = fetchFromGitHub {
-    owner = "lxc";
-    repo = "lxc";
-    rev = name;
-    sha256 = "109vpkxzkhixfvwfs6qphfbxb7pbk2qx22qc4zbk52d6gl78ygsb";
+  src = fetchurl {
+    url = "https://linuxcontainers.org/downloads/lxc/${name}.tar.gz";
+    sha256 = "1p75ff4lnkm7hq26zq09nqbdypl508csk0ix024l7j8v02i2w1wg";
   };
 
-  nativeBuildInputs = [
-    autoreconfHook pkgconfig perl docbook2x python3Packages.wrapPython
+  patches = [
+    ./support-db2x.patch
   ];
-  buildInputs = [
-    libapparmor gnutls libselinux libseccomp cgmanager libnih dbus libcap
-    python3Packages.python systemd
-  ];
-
-  patches = [ ./support-db2x.patch ];
-
-  XML_CATALOG_FILES = "${docbook_xml_dtd_45}/xml/dtd/docbook/catalog.xml";
 
   configureFlags = [
     "--localstatedir=/var"
@@ -50,7 +52,27 @@ stdenv.mkDerivation rec {
     "--with-rootfs-path=/var/lib/lxc/rootfs"
   ];
 
-  doCheck = false;
+  nativeBuildInputs = [
+    pkgconfig
+    perl
+    docbook2x
+    python3Packages.wrapPython
+  ];
+
+  buildInputs = [
+    libapparmor
+    gnutls
+    libselinux
+    libseccomp
+    cgmanager
+    libnih
+    dbus
+    libcap
+    python3Packages.python
+    systemd
+  ];
+
+  XML_CATALOG_FILES = "${docbook_xml_dtd_45}/xml/dtd/docbook/catalog.xml";
 
   installFlags = [
     "localstatedir=\${TMPDIR}"
@@ -64,20 +86,13 @@ stdenv.mkDerivation rec {
     wrapPythonPrograms
   '';
 
+  doCheck = false;
+
   meta = {
-    homepage = "http://lxc.sourceforge.net";
-    description = "userspace tools for Linux Containers, a lightweight virtualization system";
+    description = "Userspace tools for Linux Containers";
+    homepage = https://linuxcontainers.org/;
     license = licenses.lgpl21Plus;
-
-    longDescription = ''
-      LXC is the userspace control package for Linux Containers, a
-      lightweight virtual system mechanism sometimes described as
-      "chroot on steroids". LXC builds up from chroot to implement
-      complete virtual systems, adding resource management and isolation
-      mechanisms to Linux’s existing process management infrastructure.
-    '';
-
+    maintainers = with maintainers; [ ];
     platforms = platforms.linux;
-    maintainers = with maintainers; [ simons wkennington globin ];
   };
 }
