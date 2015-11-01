@@ -1,20 +1,82 @@
-{ fetchurl, stdenv, pkgconfig, gnome3, intltool, glib, libnotify, lcms2, libXtst
-, libxkbfile, libpulseaudio, libcanberra_gtk3, upower, colord, libgweather, polkit
-, geoclue2, librsvg, xf86_input_wacom, udev, libwacom, libxslt, libtool, networkmanager
-, docbook_xsl, docbook_xsl_ns, makeWrapper, ibus, xkeyboard_config }:
+{ fetchurl, stdenv
+, pkgconfig
+, gnome3
+, intltool
+, glib
+, libnotify
+, lcms2
+, libXtst
+, libxkbfile
+, libpulseaudio
+, libcanberra_gtk3
+, upower
+, colord
+, libgweather
+, polkit
+, geoclue2
+, librsvg
+, xf86_input_wacom
+, udev
+, libwacom
+, libxslt
+, libtool
+, networkmanager
+, docbook_xsl
+, docbook_xsl_ns
+, makeWrapper
+, ibus
+, xkeyboard_config
+}:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-settings-daemon-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
 
-  # fatal error: gio/gunixfdlist.h: No such file or directory
-  NIX_CFLAGS_COMPILE = "-I${glib}/include/gio-unix-2.0";
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-settings-daemon/${versionMajor}/${name}.tar.xz";
+    sha256 = "1h7jdmm8yfm5m8l1cr9y1rmsp7qasbdb080h8rhgwcniy4bilqps";
+  };
 
-  buildInputs = with gnome3;
-    [ intltool pkgconfig ibus gtk3 glib gsettings_desktop_schemas networkmanager
-      libnotify gnome_desktop lcms2 libXtst libxkbfile libpulseaudio
-      libcanberra_gtk3 upower colord libgweather xkeyboard_config
-      polkit geocode_glib geoclue2 librsvg xf86_input_wacom udev libwacom libxslt
-      libtool docbook_xsl docbook_xsl_ns makeWrapper gnome_themes_standard ];
+  NIX_CFLAGS_COMPILE = [
+    # fatal error: gio/gunixfdlist.h: No such file or directory
+    "-I${glib}/include/gio-unix-2.0"
+  ];
+
+  buildInputs = with gnome3; [
+    intltool
+    pkgconfig
+    ibus
+    gtk3
+    glib
+    gsettings_desktop_schemas
+    networkmanager
+    libnotify
+    gnome_desktop
+    lcms2
+    libXtst
+    libxkbfile
+    libpulseaudio
+    libcanberra_gtk3
+    upower
+    colord
+    libgweather
+    xkeyboard_config
+    polkit
+    geocode_glib
+    geoclue2
+    librsvg
+    xf86_input_wacom
+    udev
+    libwacom
+    libxslt
+    libtool
+    docbook_xsl
+    docbook_xsl_ns
+    makeWrapper
+    gnome_themes_standard
+  ];
 
   preFixup = ''
     wrapProgram "$out/libexec/gnome-settings-daemon-localeexec" \
@@ -24,8 +86,7 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with stdenv.lib; {
-    platforms = platforms.linux;
     maintainers = gnome3.maintainers;
+    platforms = platforms.linux;
   };
-
 }
