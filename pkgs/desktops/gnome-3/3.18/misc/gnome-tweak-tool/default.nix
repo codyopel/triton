@@ -1,4 +1,4 @@
-{ stdenv, intltool, fetchurl, python, pygobject3, atk
+{ stdenv, intltool, fetchurl, python, pygobject, atk
 , pkgconfig, gtk3, glib, libsoup
 , bash, makeWrapper, itstool, libxml2, python3Packages
 , gnome3, librsvg, gdk_pixbuf, file, libnotify }:
@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ pkgconfig gtk3 glib intltool itstool libxml2
                   gnome3.gsettings_desktop_schemas makeWrapper file
                   gdk_pixbuf gnome3.defaultIconTheme librsvg
-                  python pygobject3 libnotify gnome3.gnome_shell
+                  python pygobject libnotify gnome3.gnome_shell
                   libsoup gnome3.gnome_settings_daemon gnome3.nautilus
                   gnome3.gnome_desktop ];
 

@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ networkmanager ppp ]
-    ++ stdenv.lib.optionals withGnome [ gnome3.gtk gnome3.libgnome_keyring ];
+    ++ stdenv.lib.optionals withGnome [ gnome3.gtk3 gnome3.libgnome_keyring ];
 
   nativeBuildInputs = [ automake autoconf libtool intltool pkgconfig ];
 

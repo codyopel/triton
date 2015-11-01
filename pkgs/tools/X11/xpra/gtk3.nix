@@ -1,6 +1,6 @@
 { stdenv, fetchurl, buildPythonPackage
 , python, cython, pkgconfig
-, xorg, gtk3, glib, pango, cairo, gdk_pixbuf, atk, pygobject3, pycairo, gobjectIntrospection
+, xorg, gtk3, glib, pango, cairo, gdk_pixbuf, atk, pygobject, pycairo, gobjectIntrospection
 , makeWrapper, xkbcomp, xorgserver, getopt, xauth, utillinux, which, fontsConf, xkeyboard_config
 , ffmpeg, x264, libvpx, libwebp
 , libfakeXinerama }:
@@ -30,7 +30,7 @@ buildPythonPackage rec {
   ];
 
   propagatedBuildInputs = [
-    pygobject3 pycairo cython
+    pygobject pycairo cython
   ];
 
   postPatch = ''

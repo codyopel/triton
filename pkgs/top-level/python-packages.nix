@@ -141,9 +141,9 @@ let
 
   pycrypto = callPackage ../development/python-modules/pycrypto { };
 
-  pygobject = callPackage ../development/python-modules/pygobject { };
-
-  pygobject3 = callPackage ../development/python-modules/pygobject/3.nix { };
+  pygobject_2 = callPackage ../development/python-modules/pygobject/2.x.nix { };
+  pygobject_3 = callPackage ../development/python-modules/pygobject/3.x.nix { };
+  pygobject = pythonPackages.pygobject_3;
 
   pygtk = callPackage ../development/python-modules/pygtk { libglade = null; };
 

@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ vpnc networkmanager libsecret ]
-    ++ stdenv.lib.optionals withGnome [ gnome3.gtk gnome3.libgnome_keyring
+    ++ stdenv.lib.optionals withGnome [ gnome3.gtk3 gnome3.libgnome_keyring
                                         gnome3.networkmanagerapplet ];
 
   nativeBuildInputs = [ intltool pkgconfig ];

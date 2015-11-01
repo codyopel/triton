@@ -1,5 +1,5 @@
 { stdenv, intltool, fetchurl, gst_all_1
-, clutter_gtk, clutter-gst, pygobject3, shared_mime_info
+, clutter_gtk, clutter-gst, pygobject, shared_mime_info
 , pkgconfig, gtk3, glib
 , bash, makeWrapper, itstool, libxml2, dbus_glib
 , gnome3, librsvg, gdk_pixbuf, file }:
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
                   clutter_gtk clutter-gst gnome3.totem-pl-parser gnome3.grilo-plugins
                   gst_all_1.gstreamer gst_all_1.gst-plugins-base
                   gst_all_1.gst-plugins-good gst_all_1.gst-plugins-bad
-                  gnome3.libpeas pygobject3 shared_mime_info dbus_glib
+                  gnome3.libpeas pygobject shared_mime_info dbus_glib
                   gdk_pixbuf gnome3.defaultIconTheme librsvg gnome3.gnome_desktop
                   gnome3.gsettings_desktop_schemas makeWrapper file ];
 

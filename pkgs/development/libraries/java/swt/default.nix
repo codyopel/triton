@@ -2,7 +2,7 @@
 , libXtst
 , libXi
 , mesa
-, webkit
+, webkitgtk
 , libsoup
 }:
 
@@ -36,6 +36,6 @@ in stdenv.mkDerivation rec {
     sha256 = metadata.sha256;
   };
 
-  buildInputs = [unzip jdk pkgconfig gtk libXtst libXi mesa webkit libsoup];
+  buildInputs = [unzip jdk pkgconfig gtk libXtst libXi mesa webkitgtk libsoup];
   inherit jdk;
 }

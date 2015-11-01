@@ -1,6 +1,6 @@
 { stdenv, fetchurl, intltool, wirelesstools, pkgconfig, dbus_glib, xz
 , udev, libnl, libuuid, polkit, gnutls, ppp, dhcp, dhcpcd, iptables
-, libgcrypt, dnsmasq, avahi, bind, perl, bluez5, substituteAll, readline
+, libgcrypt, dnsmasq, avahi, bind, perl, bluez, substituteAll, readline
 , gobjectIntrospection, modemmanager, openresolv, libndp, newt, libsoup }:
 
 stdenv.mkDerivation rec {
@@ -45,7 +45,7 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [ wirelesstools udev libnl libuuid polkit ppp libndp
-                  xz bluez5 gobjectIntrospection modemmanager readline newt libsoup ];
+                  xz bluez gobjectIntrospection modemmanager readline newt libsoup ];
 
   propagatedBuildInputs = [ dbus_glib gnutls libgcrypt ];
 

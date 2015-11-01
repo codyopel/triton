@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
   NIX_CFLAGS_COMPILE = "-I${glib}/include/gio-unix-2.0";
 
   buildInputs = with gnome3;
-    [ intltool pkgconfig ibus gtk glib gsettings_desktop_schemas networkmanager
+    [ intltool pkgconfig ibus gtk3 glib gsettings_desktop_schemas networkmanager
       libnotify gnome_desktop lcms2 libXtst libxkbfile libpulseaudio
       libcanberra_gtk3 upower colord libgweather xkeyboard_config
       polkit geocode_glib geoclue2 librsvg xf86_input_wacom udev libwacom libxslt

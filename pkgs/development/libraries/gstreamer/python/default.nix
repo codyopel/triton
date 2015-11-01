@@ -1,5 +1,5 @@
 { fetchurl, stdenv, pkgconfig, python
-, gst-plugins-base, pygobject3
+, gst-plugins-base, pygobject
 , ncurses
 }:
 
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
     export configureFlags="$configureFlags --with-pygi-overrides-dir=$out/lib/${python.libPrefix}/site-packages/gi/overrides"
   '';
 
-  propagatedBuildInputs = [ gst-plugins-base pygobject3 ];
+  propagatedBuildInputs = [ gst-plugins-base pygobject ];
 
   meta = {
     homepage = http://gstreamer.freedesktop.org;

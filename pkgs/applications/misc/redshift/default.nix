@@ -1,6 +1,6 @@
 { fetchurl, stdenv, gettext, intltool, makeWrapper, pkgconfig
 , geoclue
-, guiSupport ? true, gtk3, python, pygobject3, pyxdg
+, guiSupport ? true, gtk3, python, pygobject, pyxdg
 , drmSupport ? true, libdrm
 , randrSupport ? true, libxcb
 , vidModeSupport ? true, libX11, libXxf86vm
@@ -18,7 +18,7 @@ stdenv.mkDerivation {
   };
 
   buildInputs = [ geoclue ]
-    ++ stdenv.lib.optionals guiSupport [ gtk3 python pygobject3 pyxdg ]
+    ++ stdenv.lib.optionals guiSupport [ gtk3 python pygobject pyxdg ]
     ++ stdenv.lib.optionals drmSupport [ libdrm ]
     ++ stdenv.lib.optionals randrSupport [ libxcb ]
     ++ stdenv.lib.optionals vidModeSupport [ libX11 libXxf86vm ];

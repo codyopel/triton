@@ -1,4 +1,4 @@
-{ stdenv, intltool, fetchurl, pkgconfig, gtkmm3, libxml2
+{ stdenv, intltool, fetchurl, pkgconfig, gtkmm, libxml2
 , bash, gtk3, glib, makeWrapper
 , itstool, gnome3, librsvg, gdk_pixbuf, libgtop }:
 
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
   propagatedUserEnvPkgs = [ gnome3.gnome_themes_standard ];
 
   buildInputs = [ bash pkgconfig gtk3 glib intltool itstool libxml2
-                  gtkmm3 libgtop makeWrapper
+                  gtkmm libgtop makeWrapper
                   gdk_pixbuf gnome3.defaultIconTheme librsvg
                   gnome3.gsettings_desktop_schemas ];
 

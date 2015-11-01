@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
         sha256 = "0n0h94i4xg46hfba95n3ypah93crwb80bhgsg00f6sms683lx8a3";
       }
     else
-      throw "libspotify does not support the `${system}' platform";
+      throw "libspotify does not support the `${stdenv.system}' platform";
 
   # no patch or build phase for darwin
   phases = [

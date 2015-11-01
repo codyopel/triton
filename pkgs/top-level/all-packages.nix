@@ -2824,7 +2824,6 @@ let
   redmine = callPackage ../applications/version-management/redmine { };
 
   rtmpdump = callPackage ../tools/video/rtmpdump { };
-  rtmpdump_gnutls = rtmpdump.override { gnutlsSupport = true; opensslSupport = false; };
 
   reaverwps = callPackage ../tools/networking/reaver-wps {};
 
@@ -4051,12 +4050,8 @@ let
 
   dotnetPackages = recurseIntoAttrs (callPackage ./dotnet-packages.nix {});
 
-  go_1_4 = callPackage ../development/compilers/go/1.4.nix {
-    inherit (darwin.apple_sdk.frameworks) Security;
-  };
-  go_1_5 = callPackage ../development/compilers/go/1.5.nix {
-    inherit (darwin.apple_sdk.frameworks) Security;
-  };
+  go_1_4 = callPackage ../development/compilers/go/1.4.nix { };
+  go_1_5 = callPackage ../development/compilers/go/1.5.nix { };
   go = go_1_5;
 
   go-repo-root = goPackages.go-repo-root.bin // { outputs = [ "bin" ]; };
@@ -6038,8 +6033,8 @@ let
 
   cminpack = callPackage ../development/libraries/cminpack { };
 
-  cogl_1_20 = callPackage ../development/libraries/cogl/1.20.nix { };
-  cogl_1_22 = callPackage ../development/libraries/cogl/1.22.nix { };
+  cogl_1_16 = callPackage ../development/libraries/cogl/1.16.x.nix { };
+  cogl_1_20 = callPackage ../development/libraries/cogl/1.20.x.nix { };
   cogl = callPackage ../development/libraries/cogl { };
 
   coin3d = callPackage ../development/libraries/coin3d { };
@@ -6455,7 +6450,7 @@ let
   };
 
   glib = callPackage ../development/libraries/glib { };
-  glib-tested = glib.override { doCheck = true; }; # checked version separate to break cycles
+  glib-tested = glib.override { check = true; }; # checked version separate to break cycles
   glibmm = callPackage ../development/libraries/glibmm { };
 
   glib_networking = callPackage ../development/libraries/glib-networking {};
@@ -6465,10 +6460,7 @@ let
 
   pixman = callPackage ../development/libraries/pixman { };
 
-  cairo = callPackage ../development/libraries/cairo {
-    glSupport = config.cairo.gl or (stdenv.isLinux &&
-      !stdenv.isArm && !stdenv.isMips);
-  };
+  cairo = callPackage ../development/libraries/cairo { };
   cairomm = callPackage ../development/libraries/cairomm { };
 
   pango = callPackage ../development/libraries/pango { };
@@ -7935,12 +7927,6 @@ let
       withQt5 = true;
     };
 
-    popplerQt = callPackage ../development/libraries/poppler {
-      lcms = lcms2;
-      qt5Support = true;
-      suffix = "qt5";
-    };
-
     qca-qt5 = callPackage ../development/libraries/qca-qt5 { };
 
     qmltermwidget = callPackage ../development/libraries/qmltermwidget { };
@@ -8737,9 +8723,11 @@ let
 
   pygame = callPackage ../development/python-modules/pygame { };
 
-  pygobject = pythonPackages.pygobject;
-
-  pygobject3 = pythonPackages.pygobject3;
+  pygobject_2 = pythonPackages.pygobject_2;
+  pygobject_3 = pythonPackages.pygobject_3;
+  pygobject = pygobject_3;
+  # Deprecated
+  pygobject3 = pygobject_3;
 
   pygtk = pythonPackages.pygtk;
 
@@ -13375,7 +13363,7 @@ let
   xpra = callPackage ../tools/X11/xpra { inherit (texFunctions) fontsConf; };
   libfakeXinerama = callPackage ../tools/X11/xpra/libfakeXinerama.nix { };
   #TODO: 'pil' is not available for python3, yet
-  xpraGtk3 = callPackage ../tools/X11/xpra/gtk3.nix { inherit (texFunctions) fontsConf; inherit (python3Packages) buildPythonPackage python cython pygobject3 pycairo; };
+  xpraGtk3 = callPackage ../tools/X11/xpra/gtk3.nix { inherit (texFunctions) fontsConf; inherit (python3Packages) buildPythonPackage python cython pygobject pycairo; };
 
   xrestop = callPackage ../tools/X11/xrestop { };
 
@@ -14112,7 +14100,7 @@ let
   };
 
   redshift = callPackage ../applications/misc/redshift {
-    inherit (python3Packages) python pygobject3 pyxdg;
+    inherit (python3Packages) python pygobject pyxdg;
     geoclue = geoclue2;
   };
 

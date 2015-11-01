@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
   configureFlags = [ "--sysconfdir=/etc" ];
 
   buildInputs = [
-    gnome3.gtk libglade networkmanager libnotify libsecret dbus_glib gsettings_desktop_schemas
+    gnome3.gtk3 libglade networkmanager libnotify libsecret dbus_glib gsettings_desktop_schemas
     polkit isocodes makeWrapper udev gnome3.gconf gnome3.libgnome_keyring
   ];
 
@@ -40,11 +40,11 @@ stdenv.mkDerivation rec {
   preFixup = ''
     wrapProgram "$out/bin/nm-applet" \
       --prefix GIO_EXTRA_MODULES : "${glib_networking}/lib/gio/modules:${gnome3.dconf}/lib/gio/modules" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gtk}/share:$out/share:$GSETTINGS_SCHEMAS_PATH" \
+      --prefix XDG_DATA_DIRS : "${gnome3.gtk3}/share:$out/share:$GSETTINGS_SCHEMAS_PATH" \
       --set GCONF_CONFIG_SOURCE "xml::~/.gconf" \
       --prefix PATH ":" "${gnome3.gconf}/bin"
     wrapProgram "$out/bin/nm-connection-editor" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gtk}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
+      --prefix XDG_DATA_DIRS : "${gnome3.gtk3}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
   '';
 
   meta = with stdenv.lib; {

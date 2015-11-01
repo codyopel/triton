@@ -25,7 +25,7 @@
 */
 
 { stdenv, lib, fetchurl, runCommand, buildEnv
-, callPackage, ghostscriptX, harfbuzz, poppler_min
+, callPackage, ghostscriptX, harfbuzz, poppler
 , makeWrapper, perl, python, ruby
 , useFixedHashes ? true
 , recurseIntoAttrs
@@ -33,7 +33,7 @@
 let
   # various binaries (compiled)
   bin = callPackage ./bin.nix {
-    poppler = poppler_min; # otherwise depend on various X stuff
+    poppler = poppler;
     ghostscript = ghostscriptX;
     harfbuzz = harfbuzz.override {
       withIcu = true; withGraphite2 = true;

@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, autoconf, cairo, opencv, pkgconfig }:
+{ stdenv, fetchurl, autoconf, cairo, opencv, pkgconfig, bzip2 }:
 
 stdenv.mkDerivation rec {
   name = "frei0r-plugins-${version}";
@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     sha256 = "0mxyhdp1p1a3ga8170ijygb870zwbww1dgp3kdr1nd4zvsmzqw44";
   };
 
-  buildInputs = [ autoconf cairo opencv pkgconfig ];
+  buildInputs = [ autoconf cairo opencv pkgconfig bzip2 ];
 
   meta = with stdenv.lib; {
     homepage = http://frei0r.dyne.org;

@@ -1,4 +1,5 @@
-{ fetchurl, stdenv, pkgconfig, gnome3, clutter, dbus, pythonPackages, libxml2, autoconf
+{ fetchurl, stdenv, pkgconfig, gnome3, clutter
+, dbus, pythonPackages, libxml2, autoconf
 , libxklavier, libXtst, gtk2, intltool, libxslt, at_spi2_core, automake114x }:
 
 let
@@ -13,8 +14,10 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = with gnome3;
-    [ glib pkgconfig gtk clutter at_spi2_core dbus pythonPackages.python automake114x
-      pythonPackages.pygobject3 libxml2 libXtst gtk2 intltool libxslt autoconf ];
+    [ glib pkgconfig gtk clutter at_spi2_core dbus
+    pythonPackages.python automake114x
+      pythonPackages.pygobject libxml2 libXtst
+      gtk2 intltool libxslt autoconf ];
 
   propagatedBuildInputs = [ gnome3.libgee libxklavier ];
 

@@ -1,6 +1,6 @@
 { fetchurl, stdenv, sqlite, pkgconfig, autoconf, automake
 , xapian, glib, gmime, texinfo , emacs, guile
-, gtk3, webkit, libsoup, icu, withMug ? false /* doesn't build with current gtk3 */ }:
+, gtk3, webkitgtk, libsoup, icu, withMug ? false /* doesn't build with current gtk3 */ }:
 
 stdenv.mkDerivation rec {
   version = "0.9.13";
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
   buildInputs =
     [ sqlite pkgconfig autoconf automake xapian
       glib gmime texinfo emacs guile libsoup icu ]
-    ++ stdenv.lib.optionals withMug [ gtk3 webkit ];
+    ++ stdenv.lib.optionals withMug [ gtk3 webkitgtk ];
 
   preConfigure = ''
     autoreconf -i
