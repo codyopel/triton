@@ -1,33 +1,121 @@
-{ fetchurl, stdenv, pkgconfig, gnome3, ibus, intltool, upower, makeWrapper
-, libcanberra, libcanberra_gtk3, accountsservice, libpwquality, libpulseaudio
-, gdk_pixbuf, librsvg, libxkbfile, libnotify
-, libxml2, polkit, libxslt, libgtop, libsoup, colord, colord-gtk
-, cracklib, python, libkrb5, networkmanagerapplet, networkmanager
-, libwacom, samba, shared_mime_info, tzdata, icu, libtool, udev
-, docbook_xsl, docbook_xsl_ns, modemmanager, clutter, clutter_gtk
-, fontconfig, sound-theme-freedesktop }:
+{ stdenv, fetchurl
+, pkgconfig
+, gnome3
+, ibus
+, intltool
+, upower
+, makeWrapper
+, libcanberra
+, accountsservice
+, libpwquality
+, libpulseaudio
+, gdk_pixbuf
+, librsvg
+, libxkbfile
+, libnotify
+, libxml2
+, polkit
+, libxslt
+, libgtop
+, libsoup
+, colord
+, colord-gtk
+, cracklib
+, python
+, libkrb5
+, networkmanagerapplet
+, networkmanager
+, libwacom
+, samba
+, shared_mime_info
+, tzdata
+, icu
+, libtool
+, udev
+, docbook_xsl
+, docbook_xsl_ns
+, modemmanager
+, clutter
+, clutter_gtk
+, fontconfig
+, sound-theme-freedesktop
+, cups
+, xorg
+}:
 
 # http://ftp.gnome.org/pub/GNOME/teams/releng/3.10.2/gnome-suites-core-3.10.2.modules
 # TODO: bluetooth, wacom, printers
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-control-center-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
 
-  propagatedUserEnvPkgs =
-    [ gnome3.gnome_themes_standard gnome3.libgnomekbd ];
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-control-center/${versionMajor}/${name}.tar.xz";
+    sha256 = "0hcbaydyj2ch5bd5067l5wjl70kxwgv37nb9lrskm1rxw0gyqncs";
+  };
 
-  # https://bugzilla.gnome.org/show_bug.cgi?id=752596
-  enableParallelBuilding = false;
+  patches = [
+    ./vpn_plugins_path.patch
+  ];
 
-  buildInputs = with gnome3;
-    [ pkgconfig intltool ibus gtk glib upower libcanberra gsettings_desktop_schemas
-      libxml2 gnome_desktop gnome_settings_daemon polkit libxslt libgtop gnome-menus
-      gnome_online_accounts libsoup colord libpulseaudio fontconfig colord-gtk libpwquality
-      accountsservice libkrb5 networkmanagerapplet libwacom samba libnotify libxkbfile
-      shared_mime_info icu libtool docbook_xsl docbook_xsl_ns gnome3.grilo
-      gdk_pixbuf gnome3.defaultIconTheme librsvg clutter clutter_gtk
-      gnome3.vino udev libcanberra_gtk3
-      networkmanager modemmanager makeWrapper gnome3.gnome-bluetooth ];
+  propagatedUserEnvPkgs = [
+    gnome3.gnome_themes_standard
+    gnome3.libgnomekbd
+  ];
+
+  buildInputs = with gnome3; [
+    pkgconfig
+    intltool
+    ibus
+    gtk
+    glib
+    upower
+    libcanberra
+    gsettings_desktop_schemas
+    libxml2
+    gnome_desktop
+    gnome_settings_daemon
+    polkit
+    libxslt
+    libgtop
+    gnome-menus
+    gnome_online_accounts
+    libsoup
+    colord
+    libpulseaudio
+    fontconfig
+    colord-gtk
+    libpwquality
+    accountsservice
+    libkrb5
+    networkmanagerapplet
+    libwacom
+    samba
+    libnotify
+    libxkbfile
+    shared_mime_info
+    icu
+    libtool
+    docbook_xsl
+    docbook_xsl_ns
+    gnome3.grilo
+    gdk_pixbuf
+    gnome3.defaultIconTheme
+    librsvg
+    clutter
+    clutter_gtk
+    gnome3.vino
+    udev
+    networkmanager
+    modemmanager
+    makeWrapper
+    gnome3.gnome-bluetooth
+    cups
+    xorg.libSM
+  ];
 
   preBuild = ''
     substituteInPlace tz.h --replace "/usr/share/zoneinfo/zone.tab" "${tzdata}/share/zoneinfo/zone.tab"
@@ -38,8 +126,6 @@ stdenv.mkDerivation rec {
     substituteInPlace panels/datetime/test-endianess.c --replace "/usr/share/locale/" "$out/share/locale/"
   '';
 
-  patches = [ ./vpn_plugins_path.patch ];
-
   preFixup = with gnome3; ''
     wrapProgram $out/bin/gnome-control-center \
       --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
@@ -48,6 +134,9 @@ stdenv.mkDerivation rec {
       substituteInPlace $i --replace "gnome-control-center" "$out/bin/gnome-control-center"
     done
   '';
+
+  # https://bugzilla.gnome.org/show_bug.cgi?id=752596
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Utilities to configure the GNOME desktop";
