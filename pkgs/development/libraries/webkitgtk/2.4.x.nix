@@ -20,7 +20,7 @@
 , enchant
 , fontconfig
 , freetype
-, geoclue
+, geoclue2
 , glib
 , gobjectIntrospection
 , gtk2
@@ -129,7 +129,7 @@ stdenv.mkDerivation rec {
     enchant
     fontconfig
     freetype
-    geoclue
+    geoclue2
     glib
     gobjectIntrospection
     gtk2
