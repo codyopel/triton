@@ -1,5 +1,10 @@
-{ stdenv, fetchurl
+{ stdenv, fetchFromGitHub
+, autoconf
+, automake
 , gettext
+, gtk_doc
+, intltool
+, libtool
 , perl
 , pkgconfig
 
@@ -9,18 +14,22 @@
 , fontconfig
 , gdk_pixbuf
 , glib
-#, gobjectIntrospection
+, gobjectIntrospection
 , libintlOrEmpty
 , libxkbcommon
 , pango
 , xlibsWrapper
 , xorg
+, libxcb
+, tests ? false
 }:
 
-let
+with {
   inherit (stdenv.lib)
+    enFlag
+    wtFlag
     optionalString;
-in
+};
 
 stdenv.mkDerivation rec {
   name = "gtk+-${version}";
@@ -28,49 +37,75 @@ stdenv.mkDerivation rec {
   versionMinor = "28";
   version = "${versionMajor}.${versionMinor}";
 
-  src = fetchurl {
-    url = "mirror://gnome/sources/gtk+/${versionMajor}/${name}.tar.xz";
-    sha256 = "0mj6xn40py9r9lvzg633fal81xfwfm89d9mvz7jk4lmwk0g49imj";
+  # Because there are a number of needed commits (patches) on the gtk+ 2.24
+  # branch, which also require running autoreconf, and the tarballs are missing
+  # files to do so.
+  src = fetchFromGitHub {
+    owner = "gnome";
+    repo = "gtk";
+    # Use the latest commit from the 2.24 branch of the upstream git repository.
+    rev = "3b65a6a42ed2d4d2ecdcec94163ce0b748e707fc";
+    sha256 = "112w10ywjcx6w4w0g19fsn9lj5xgpzzb6msms1b8vslbz142j8ji";
   };
 
-  patchPhase = ''
-    # marshalers code was pre-generated with glib-2.31
-    # https://bugzilla.gnome.org/show_bug.cgi?id=662109
-    rm -v \
-      gdk/gdkmarshalers.c \
-      gtk/gtkmarshal.c \
-      gtk/gtkmarshalers.c \
-      perf/marshalers.c
-  '';
+  postPatch =
+    optionalString (!tests) ''
+      # Don't build tests if disabled
+      sed -e 's|demos tests perf|demos perf|' -i ./Makefile.*
+      sed -e 's|$(gdktarget) . tests|$(gdktarget) .|' -i ./gdk/Makefile.*
+    '';
 
   configureFlags = [
-    "--enable-xkb"
-    "--enable-xinerama"
-    "--with-xinput=yes"
-    "--enable-cups"
-    #"--enable-papi"
+    (enFlag "shm" (xorg.libXext != null) null)
+    (enFlag "xkb" (libxkbcommon != null) null)
+    (enFlag "xinerama" (xorg.libXinerama != null) null)
+    "--enable-rebuilds"
+    "--enable-visibility"
+    (enFlag "glibtest" tests null)
+    "--enable-modules"
+    "--disable-quartz-relocation"
+    (enFlag "cups" (cups != null) null)
+    (enFlag "papi" false null)
+    (enFlag "test-print-backend" tests null)
+    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
     "--enable-man"
+    (wtFlag "xinput" (xorg.libXi != null) "yes")
+    (wtFlag "gdktarget" (true) "x11") # add xorg deps
+    #"--with-gdktarget=directfb"
+    (wtFlag "x" (xorg != null) null)
   ];
 
   NIX_CFLAGS_COMPILE = optionalString (libintlOrEmpty != []) "-lintl";
 
+  preConfigure = ''
+    ./autogen.sh
+  '';
+
   nativeBuildInputs = [
+    autoconf
+    automake
     gettext
+    gtk_doc
+    intltool
+    libtool
     perl
     pkgconfig
   ];
 
   buildInputs = [
-    cairo
     cups
     fontconfig
-    glib
+    gobjectIntrospection
     libintlOrEmpty
     libxkbcommon
     xorg.inputproto
     xorg.libX11
     xorg.libXcomposite
     xorg.libXcursor
+    xorg.libXdamage
     xorg.libXext
     xorg.libXfixes
     xorg.libXi
@@ -80,9 +115,11 @@ stdenv.mkDerivation rec {
   ];
 
   propagatedBuildInputs = [
-    atk
-    gdk_pixbuf
-    pango
+    atk # pkgconfig
+    cairo # pkgconfig
+    gdk_pixbuf # pkgconfig
+    glib # pkgconfig
+    pango # pkgconfig
   ];
 
   postInstall = "rm -rf $out/share/gtk-doc";
@@ -100,7 +137,7 @@ stdenv.mkDerivation rec {
     description = "A toolkit for creating graphical user interfaces";
     homepage = http://www.gtk.org/;
     license = licenses.lgpl2Plus;
-    maintainers = with maintainers; [ ];
+    maintainers = with maintainers; [ codyopel ];
     platforms = platforms.linux;
   };
 }
