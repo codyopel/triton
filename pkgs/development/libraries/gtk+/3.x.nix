@@ -1,26 +1,35 @@
 { stdenv, fetchurl
-, pkgconfig
 , gettext
-, perl
 , gobjectIntrospection
+, perl
+, pkgconfig
 
 , at_spi2_atk
 , atk
 , cairo
+, colord
 , cups
 , epoxy
 , expat
 , fontconfig
 , gdk_pixbuf
 , glib
+, gnome3
+, json_glib
 , libxkbcommon
+, mesa_noglu
 , pango
 , wayland
 , xlibsWrapper
 , xorg
-, gnome3
-, mesa_noglu
+, tests ? false
 }:
+
+with {
+  inherit (stdenv.lib)
+    enFlag
+    wtFlag;
+};
 
 stdenv.mkDerivation rec {
   name = "gtk+-${version}";
@@ -34,11 +43,40 @@ stdenv.mkDerivation rec {
   };
 
   # demos fail to install, no idea where the problem is
-  preConfigure = "sed '/^SRC_SUBDIRS /s/demos//' -i Makefile.in";
+  postPatch = "sed '/^SRC_SUBDIRS /s/demos//' -i Makefile.in";
 
   configureFlags = [
-    "--enable-x11-backend"
-    "--enable-wayland-backend"
+    (enFlag "xkb" (libxkbcommon != null) null)
+    (enFlag "xinerama" (xorg.libXinerama != null) null)
+    (enFlag "xrandr" (xorg.libXrandr != null) null)
+    (enFlag "xfixes" (xorg.libXfixes != null) null)
+    (enFlag "xcomposite" (xorg.libXcomposite != null) null)
+    (enFlag "xdamage" (xorg.libXdamage != null) null)
+    (enFlag "x11-backend" (true) null) # xorg deps
+    "--disable-win32-backend"
+    "--disable-quartz-backend"
+    (enFlag "broadway-backend" true null)
+    (enFlag "wayland-backend" (wayland != null) null)
+    (enFlag "mir-backend" false null)
+    "--disable-quartz-relocation"
+    #explicit-deps
+    (enFlag "glibtest" tests null)
+    "--enable-modules"
+    (enFlag "cups" (cups != null) null)
+    (enFlag "papi" false null)
+    # FIXME: not detecting rest
+    #(enFlag "cloudprint" (gnome3.rest != null && json_glib != null) null)
+    (enFlag "test-print-backend" tests null)
+    #compile-schemas
+    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    (enFlag "colord" (colord != null) null)
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--disable-man"
+    #doc-cross-reference
+    #Bsymbolic
+    (wtFlag "x" (xorg != null) null)
   ];
 
   nativeBuildInputs = [
@@ -50,12 +88,13 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     at_spi2_atk
-    cairo
+    colord
     cups
     epoxy
     expat
     fontconfig
-    glib
+    gnome3.rest
+    json_glib
     libxkbcommon
     mesa_noglu
     wayland
@@ -65,6 +104,7 @@ stdenv.mkDerivation rec {
     xorg.libX11
     xorg.libXcomposite
     xorg.libXcursor
+    xorg.libXdamage
     xorg.libXext
     xorg.libXfixes
     xorg.libXi
@@ -74,9 +114,11 @@ stdenv.mkDerivation rec {
   ];
 
   propagatedBuildInputs = [
-    atk
-    gdk_pixbuf
-    pango
+    atk # pkgconfig
+    cairo # pkgconfig
+    gdk_pixbuf # pkgconfig
+    glib # pkgconfig
+    pango # pkgconfig
   ];
 
   postInstall = "rm -rf $out/share/gtk-doc";
