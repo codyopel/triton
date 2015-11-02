@@ -1,19 +1,52 @@
-{ stdenv, fetchurl, pkgconfig, glib, libsoup, gobjectIntrospection, gnome3 }:
+{ stdenv, fetchurl
+, pkgconfig
+
+, glib
+, gobjectIntrospection
+, libsoup
+, libxml2
+}:
+
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
 
 stdenv.mkDerivation rec {
-  name = "rest-0.7.92";
+  name = "rest-${version}";
+  versionMajor = "0.7";
+  versionMinor = "93";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/rest/0.7/${name}.tar.xz";
-    sha256 = "07548c8785a3e743daf54a82b952ff5f32af94fee68997df4c83b00d52f9c0ec";
+    url = "mirror://gnome/sources/rest/${versionMajor}/${name}.tar.xz";
+    sha256 = "05mj10hhiik23ai8w4wkk5vhsp7hcv24bih5q3fl82ilam268467";
   };
 
-  buildInputs = [ pkgconfig glib libsoup gobjectIntrospection];
+  configureFlags = [
+    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    "--with-gnome"
+    "--with-ca-certificates=/etc/ssl/certs/ca-certificates.crt"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+  ];
 
-  configureFlags = "--with-ca-certificates=/etc/ssl/certs/ca-certificates.crt";
+  nativeBuildInputs = [
+    pkgconfig
+  ];
+
+  buildInputs = [
+    glib
+    gobjectIntrospection
+    libsoup
+    libxml2
+  ];
+
+  postInstall = "rm -rf $out/share/gtk-doc";
 
   meta = with stdenv.lib; {
-    platforms = platforms.linux;
     maintainers = gnome3.maintainers;
+    platforms = platforms.linux;
   };
 }
