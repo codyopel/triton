@@ -1,37 +1,78 @@
-{ stdenv, fetchurl, glib, libxml2, pkgconfig
-, gnomeSupport ? false, libgnome_keyring, sqlite, glib_networking, gobjectIntrospection
+{ stdenv, fetchurl
+, gettext
+, intltool
+, pkgconfig
+, python
+
+, glib
+, glib_networking
+, gobjectIntrospection
 , libintlOrEmpty
-, intltool, python }:
-let
-  majorVersion = "2.50";
-  version = "${majorVersion}.0";
-in
-stdenv.mkDerivation {
+, libxml2
+, sqlite
+}:
+
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
+
+stdenv.mkDerivation rec {
   name = "libsoup-${version}";
+  versionMajor = "2.53";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/libsoup/${majorVersion}/libsoup-${version}.tar.xz";
-    sha256 = "1e01365ac4af3817187ea847f9d3588c27eee01fc519a5a7cb212bb78b0f667b";
+    url = "mirror://gnome/sources/libsoup/${versionMajor}/${name}.tar.xz";
+    sha256 = "0ydvlv4v49kp7rxmvpirqqv4558sgagr9i12zz376ydf0zpaq1cb";
   };
 
-  patchPhase = ''
-    patchShebangs libsoup/
+  postPatch = ''
+    patchShebangs ./libsoup/
   '';
 
-  buildInputs = libintlOrEmpty ++ [ intltool python sqlite ];
-  nativeBuildInputs = [ pkgconfig ];
-  propagatedBuildInputs = [ glib libxml2 gobjectIntrospection ]
-    ++ stdenv.lib.optionals gnomeSupport [ libgnome_keyring ];
-  passthru.propagatedUserEnvPackages = [ glib_networking ];
-
   # glib_networking is a runtime dependency, not a compile-time dependency
-  configureFlags = "--disable-tls-check" + stdenv.lib.optionalString (!gnomeSupport) " --without-gnome";
+  configureFlags = [
+    "--enable-nls"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    "--disable-vala"
+    "--disable-tls-check"
+    "--with-gnome"
+  ];
 
-  NIX_CFLAGS_COMPILE = stdenv.lib.optionalString stdenv.isDarwin "-lintl";
+  nativeBuildInputs = [
+    gettext
+    intltool
+    pkgconfig
+    python
+  ];
+
+  buildInputs = [
+    glib_networking
+    libxml2
+    sqlite
+  ] ++ libintlOrEmpty;
+
+  propagatedBuildInputs = [
+    glib # pkgconfig
+    gobjectIntrospection # pkgconfig
+  ];
 
   postInstall = "rm -rf $out/share/gtk-doc";
 
+  passthru = {
+    propagatedUserEnvPackages = [
+      glib_networking
+    ];
+  };
+
   meta = {
-    inherit (glib.meta) maintainers platforms;
+    inherit (glib.meta)
+      maintainers
+      platforms;
   };
 }
