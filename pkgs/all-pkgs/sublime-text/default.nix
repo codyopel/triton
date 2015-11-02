@@ -48,14 +48,20 @@ let
           throw "Sublime Text is not supported on the `${system}` platform";
     };
 
-    nativeBuildInputs = [ makeWrapper ];
-
     patchPhase = ''
-      # Fix desktop entry executable path
+      # Fix paths
       sed \
-        -e 's,/opt/sublime_text/sublime_text,sublime_text,' \
+        -e 's,/opt/sublime_text/,,' \
+        -i sublime_text.desktop
+      # Fix filenames
+      sed \
+        -e 's,sublime-text,subl,' \
         -i sublime_text.desktop
     '';
+
+    nativeBuildInputs = [
+      makeWrapper
+    ];
 
     buildPhase = ''
       for i in sublime_text plugin_host crash_reporter ; do
@@ -78,22 +84,26 @@ let
 
     dontStrip = true;
     dontPatchELF = true;
+    enableParallelBuilding = true;
   };
 in
 
 stdenv.mkDerivation rec {
   name = "sublime-text-${version}";
 
-  phases = [ "installPhase" ];
+  phases = [
+    "installPhase"
+  ];
 
   installPhase = ''
     mkdir -p $out/bin
     ln -s ${sublime-text-bin}/sublime_text $out/bin/sublime_text
     ln -s ${sublime-text-bin}/sublime_text $out/bin/subl
 
-    mkdir -p $out/share
-    ln -s ${sublime-text-bin}/sublime_text.desktop $out/share/applications
-    ln -s ${sublime-text-bin}/Icon/256x256/sublime_text.png $out/share/icons
+    mkdir -p $out/share/applications
+    ln -s ${sublime-text-bin}/sublime_text.desktop $out/share/applications/subl.desktop
+    mkdir -p $out/share/icons
+    ln -s ${sublime-text-bin}/Icon/256x256/sublime_text.png $out/share/icons/subl.png
   '';
 
   enableParallelBuilding = true;
