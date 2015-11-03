@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://gnome/sources/dconf-editor/${versionMajor}/${name}.tar.xz";
-    sha256 = "0d150lnacipsbwsr4z0l7xdchm3hspiba0c3gnpaqs5h2srbhyb5";
+    sha256 = "04yvs48607jf6b5pkngiab17f57cxg2c2j2iscar1p67mi97ih9m";
   };
 
   buildInputs = [

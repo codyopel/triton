@@ -1,7 +1,9 @@
 { stdenv, intltool, fetchurl
 , pkgconfig, gtk3, glib
 , bash, makeWrapper, itstool
-, gnome3, librsvg, gdk_pixbuf }:
+, gnome3, librsvg, gdk_pixbuf
+, harfbuzz
+}:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
@@ -12,7 +14,9 @@ stdenv.mkDerivation rec {
 
   propagatedUserEnvPkgs = [ gnome3.gnome_themes_standard ];
 
-  buildInputs = [ pkgconfig gtk3 glib intltool itstool gnome3.gnome_desktop
+  buildInputs = [
+    harfbuzz
+    pkgconfig gtk3 glib intltool itstool gnome3.gnome_desktop
                   gdk_pixbuf gnome3.defaultIconTheme librsvg
                   gnome3.gsettings_desktop_schemas makeWrapper ];
 

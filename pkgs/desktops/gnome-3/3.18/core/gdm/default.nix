@@ -15,10 +15,14 @@ stdenv.mkDerivation rec {
                      "--with-systemd=yes"
                      "--with-systemdsystemunitdir=$(out)/etc/systemd/system" ];
 
-  buildInputs = [ pkgconfig glib itstool libxml2 intltool
-                  accountsservice gnome3.dconf systemd
-                  gobjectIntrospection libX11 gtk
-                  libcanberra_gtk3 pam libtool ];
+  buildInputs = [
+    pkgconfig glib itstool libxml2 intltool
+    accountsservice gnome3.dconf systemd
+    gobjectIntrospection libX11 gtk
+    libcanberra_gtk3 pam libtool
+    xorg.libXi
+    xorg.libXrandr
+  ];
 
   #enableParallelBuilding = true; # problems compiling
 

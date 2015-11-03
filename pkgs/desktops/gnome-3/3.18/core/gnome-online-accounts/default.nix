@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-online-accounts/${versionMajor}/${name}.tar.xz";
-    sha256 = "fc2dac96551746576759bd14f9b322bae1d40aeedc0e755065ddf5eaaefacd34";
+    sha256 = "1hn2fvkr1f4qh4gix03avnvk7pklvv5272ns8ws56v4kcq4nppkc";
   };
 
   NIX_CFLAGS_COMPILE = [

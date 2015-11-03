@@ -21,6 +21,7 @@
 , recentListSize ? null # 5 is not enough, allow passing a different number
 , gobjectIntrospection
 , poppler
+, xorg
 }:
 
 with {
@@ -36,7 +37,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://gnome/sources/evince/${versionMajor}/${name}.tar.xz";
-    sha256 = "96e8351f6a6fc5823bb8f51178cde1182bd664814f6fb09bf58a18b673cafa70";
+    sha256 = "0cccmbvl1b6d2976642iyfr8g3r69zf3mzl2ln6vjvvdbrv26l3v";
   };
 
   configureFlags = [
@@ -82,6 +83,8 @@ stdenv.mkDerivation rec {
     libsecret
     librsvg
     gnome3.adwaita-icon-theme
+    xorg.libXi
+    xorg.libXfixes
   ];
 
   preFixup = ''

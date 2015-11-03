@@ -1,6 +1,8 @@
 { stdenv, intltool, fetchurl, pkgconfig, gtk3
 , glib, desktop_file_utils, bash, appdata-tools
-, makeWrapper, gnome3, file, itstool, libxml2 }:
+, makeWrapper, gnome3, file, itstool, libxml2
+, gobjectIntrospection
+}:
 
 # TODO: icons and theme still does not work
 # use packaged gnome3.adwaita-icon-theme 
@@ -14,7 +16,9 @@ stdenv.mkDerivation rec {
 
   preConfigure = "substituteInPlace ./configure --replace /usr/bin/file ${file}/bin/file";
 
-  buildInputs = [ pkgconfig gtk3 intltool itstool glib appdata-tools
+  buildInputs = [
+    gobjectIntrospection
+    pkgconfig gtk3 intltool itstool glib appdata-tools
                   gnome3.yelp_tools libxml2 file desktop_file_utils
                   gnome3.gsettings_desktop_schemas makeWrapper ];
 

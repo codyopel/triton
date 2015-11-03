@@ -1,14 +1,37 @@
-{ stdenv, intltool, fetchurl, gtk3, glib, libsoup, pkgconfig, makeWrapper
-, gnome3, libnotify, file, telepathy_glib, dbus_glib }:
+{ stdenv, fetchurl
+, intltool
+, gtk3
+, glib
+, libsoup
+, pkgconfig
+, makeWrapper
+, gnome3
+, libnotify
+, file
+, telepathy_glib
+, dbus_glib
+, xorg
+}:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
   doCheck = true;
 
-  buildInputs = [ gtk3 intltool glib libsoup pkgconfig libnotify
-                  gnome3.defaultIconTheme dbus_glib telepathy_glib file
-                  makeWrapper ];
+  buildInputs = [
+    gtk3
+    intltool
+    glib
+    libsoup
+    pkgconfig
+    libnotify
+    gnome3.defaultIconTheme
+    dbus_glib
+    telepathy_glib
+    file
+    makeWrapper
+    xorg.libSM
+];
 
   preFixup = ''
     wrapProgram "$out/libexec/vino-server" \

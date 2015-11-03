@@ -26,6 +26,8 @@
 , makeWrapper
 , ibus
 , xkeyboard_config
+, xorg
+, cups
 }:
 
 stdenv.mkDerivation rec {
@@ -76,6 +78,9 @@ stdenv.mkDerivation rec {
     docbook_xsl_ns
     makeWrapper
     gnome_themes_standard
+    xorg.libXi
+    xorg.libXfixes
+    cups
   ];
 
   preFixup = ''

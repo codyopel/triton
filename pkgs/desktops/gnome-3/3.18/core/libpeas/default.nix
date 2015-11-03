@@ -5,6 +5,10 @@
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
+  propagatedBuildInputs = [
+    gobjectIntrospection
+  ];
+
   buildInputs =  [
    intltool pkgconfig glib gtk3 gobjectIntrospection python pygobject
    gnome3.defaultIconTheme

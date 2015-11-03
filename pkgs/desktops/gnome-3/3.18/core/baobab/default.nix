@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "mirror://gnome/sources/baobab/${versionMajor}/${name}.tar.xz";
-    sha256 = "0nhbfs4c1inr7sn1mqmpzanmkz1zz9q05hqf5xydk50fvm9lr4km";
+    sha256 = "1da4bdkw5bnxansl1xr4lb03d6f4h0a0qaba8i3p3rwhcd191b62";
   };
 
   NIX_CFLAGS_COMPILE = [

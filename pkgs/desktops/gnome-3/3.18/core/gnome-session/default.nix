@@ -8,9 +8,10 @@
 , intltool
 , makeWrapper
 , systemd
-, xorg
 , gtk3
 , gnome3
+, xorg
+, mesa_noglu
 }:
 
 stdenv.mkDerivation rec {
@@ -45,6 +46,9 @@ stdenv.mkDerivation rec {
     gnome3.gconf
     makeWrapper
     systemd
+    xorg.libSM
+    xorg.libXcomposite
+    mesa_noglu
   ];
 
   preFixup = ''
