@@ -8,6 +8,11 @@
 , atkmm
 }:
 
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
+
 stdenv.mkDerivation rec {
   name = "gtkmm-${version}";
   versionMajor = "2.24";
@@ -29,8 +34,19 @@ stdenv.mkDerivation rec {
     ./gtkmm-2.24.4-gdkpixbud-deprecation-warnings.patch
   ];
 
-  NIX_CFLAGS_COMPILE = [
-    "-std=c++11"
+  configureFlags = [
+    (enFlag "api-atkmm" (atkmm != null) null)
+    # Nokia maemo
+    (enFlag "api-maemo-extensions" true null)
+    # Requires deprecated api
+    "--enable-deprecated-api"
+    "--disable-documentation"
+    "--without-libstdc-doc"
+    "--without-libsigc-doc"
+    "--without-glibmm-doc"
+    "--without-cairomm-doc"
+    "--without-pangomm-doc"
+    "--without-atkmm-doc"
   ];
 
   nativeBuildInputs = [

@@ -1,17 +1,18 @@
 { stdenv, fetchurl
 , pkgconfig
-, gtk3
-, glibmm
-, cairomm
-, pangomm
+
 , atkmm
-, gnome3
+, cairomm
 , epoxy
+, glibmm
+, gnome3
+, gtk3
+, pangomm
 }:
 
 stdenv.mkDerivation rec {
   name = "gtkmm-${version}";
-  versionMajor = gnome3.version;
+  versionMajor = "3.18";
   versionMinor = "0";
   version = "${versionMajor}.${versionMinor}";
 
@@ -22,11 +23,17 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--disable-quartz-backend"
-    "--enable-x11-backend"
-    "--enable-wayland-backend"
-    "--disable-brodway-backend"
+    "--enable-x11-backend=yes"
+    "--enable-wayland-backend=yes"
+    "--enable-brodway-backend=yes"
     "--enable-api-atkmm"
+    # Requires glibmm deprecated api
     "--enable-deprecated-api"
+    "--without-libstdc-doc"
+    "--without-libsigc-doc"
+    "--without-cairomm-doc"
+    "--without-pangomm-doc"
+    "--without-atkmm-doc"
   ];
 
   NIX_CFLAGS_COMPILE = [
@@ -48,6 +55,12 @@ stdenv.mkDerivation rec {
   buildInputs = [
     epoxy
   ];
+
+  postInstall = ''
+    # gtkmm use C++11 features in headers, programs linking against gtkmm
+    # will also need C++11 enabled.
+    sed -e 's,Cflags:,Cflags: -std=c++11,' -i $out/lib/pkgconfig/*.pc
+  '';
 
   doCheck = true;
   enableParallelBuilding = true;
