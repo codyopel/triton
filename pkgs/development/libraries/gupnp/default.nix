@@ -1,28 +1,65 @@
-{ stdenv, fetchurl, pkgconfig, glib, gssdp, libsoup, libxml2, libuuid }:
+{ stdenv, fetchurl
+, pkgconfig
+
+, glib
+, gobjectIntrospection
+, gssdp
+, libsoup
+, libuuid
+, libxml2
+}:
+
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
  
 stdenv.mkDerivation rec {
   name = "gupnp-${version}";
-  majorVersion = "0.20";
-  version = "${majorVersion}.14";
+  versionMajor = "0.20";
+  versionMinor = "14";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/gupnp/${majorVersion}/gupnp-${version}.tar.xz";
-    sha256 = "77ffb940ba77c4a6426d09d41004c75d92652dcbde86c84ac1c847dbd9ad59bd";
+    url = "mirror://gnome/sources/gupnp/${versionMajor}/${name}.tar.xz";
+    sha256 = "1garmpcxniy8q55ci1nyrcnnb4jxqw211m09dm1adi3pp90bkzvp";
   };
 
-  nativeBuildInputs = [ pkgconfig ];
-  propagatedBuildInputs = [ glib gssdp libsoup libxml2 libuuid ];
+  configureFlags = [
+    "--enable-largefile"
+    "--disable-debug"
+    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    #--with-context-manager=[network-manager/connman/unix/linux]
+  ];
+
+  nativeBuildInputs = [
+    pkgconfig
+  ];
+
+  propagatedBuildInputs = [
+    glib
+    gobjectIntrospection
+    gssdp
+    libsoup
+    libxml2
+    libuuid
+  ];
 
   postInstall = ''
-    ln -sv ${libsoup}/include/*/libsoup $out/include
+    ln -sv ${libsoup}/include/libsoup-[0-9].[0-9]/libsoup $out/include
     ln -sv ${libxml2}/include/*/libxml $out/include
     ln -sv ${gssdp}/include/*/libgssdp $out/include
   '';
 
-  meta = {
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
     homepage = http://www.gupnp.org/;
     description = "An implementation of the UPnP specification";
-    license = stdenv.lib.licenses.gpl2;
-    platforms = stdenv.lib.platforms.linux;
+    license = licenses.gpl2;
+    platforms = platforms.linux;
   };
 }
