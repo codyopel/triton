@@ -4,9 +4,14 @@
 , perl
 
 , glib
-, libintlOrEmpty
 , gobjectIntrospection
+, libintlOrEmpty
 }:
+
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
 
 stdenv.mkDerivation rec {
   name = "atk-${version}";
@@ -19,6 +24,11 @@ stdenv.mkDerivation rec {
     sha256 = "0ay9s137x49f0akx658p7kznz0rdapfrd8ym54q0hlgrggblhv6f";
   };
 
+  configureFlags = [
+    "--enable-rebuilds"
+    (enFlag "introspection" (gobjectIntrospection != null) null)
+  ];
+
   nativeBuildInputs = [
     gettext
     perl
@@ -26,15 +36,17 @@ stdenv.mkDerivation rec {
   ];
 
   propagatedBuildInputs = [
-    glib
+    gobjectIntrospection # pkgconfig
   ];
 
   buildInputs = [
-    gobjectIntrospection
+    glib
     libintlOrEmpty
   ];
 
   postInstall = "rm -rf $out/share/gtk-doc";
+
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Accessibility toolkit";
