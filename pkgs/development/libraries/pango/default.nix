@@ -9,8 +9,15 @@
 , harfbuzz
 , libintlOrEmpty
 , libpng
-, xlibsWrapper
+, xorg
+#, LibThai
 }:
+
+with {
+  inherit (stdenv.lib)
+    enFlag
+    wtFlag;
+};
 
 stdenv.mkDerivation rec {
   name = "pango-${version}";
@@ -23,6 +30,19 @@ stdenv.mkDerivation rec {
     sha256 = "1dsf45m51i4rcyvh5wlxxrjfhvn5b67d5ckjc6vdcxbddjgmc80k";
   };
 
+  configureFlags = [
+    "--enable-rebuilds"
+    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--disable-doc-cross-reference"
+    "--enable-Bsymbolic"
+    "--disable-installed-tests"
+    (wtFlag "xft" (freetype != null) null)
+    (wtFlag "cairo" (cairo != null) null)
+  ];
+
   nativeBuildInputs = [
     pkgconfig
   ];
@@ -32,15 +52,15 @@ stdenv.mkDerivation rec {
     fontconfig
     freetype
     glib
+    xorg.libXft
   ];
 
   buildInputs = [
     gobjectIntrospection
-    xlibsWrapper
-    libpng
     harfbuzz
-    libintlOrEmpty
-  ];
+    libpng
+    xorg.libXrender
+  ] ++ libintlOrEmpty;
 
   enableParallelBuilding = true;
   doCheck = false;
