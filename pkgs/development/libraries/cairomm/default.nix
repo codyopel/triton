@@ -1,7 +1,7 @@
 { fetchurl, stdenv
 , pkgconfig
+
 , cairo
-, xlibsWrapper
 , fontconfig
 , freetype
 , libsigcxx
@@ -19,17 +19,30 @@ stdenv.mkDerivation rec {
     "-std=c++11"
   ];
 
-  propagatedBuildInputs = [
-    cairo
+  configureFlags = [
+    "--disable-documentation"
+    "--disable-tests"
+    "--enable-api-exceptions"
+    "--without-libstdc-doc"
+    "--without-libsigc-doc"
+    "--without-boost"
+    "--without-boost-unit-test-framework"
   ];
 
-  buildInputs = [
+  nativeBuildInputs = [
     pkgconfig
-    xlibsWrapper
-    fontconfig
-    freetype
+  ];
+
+  propagatedBuildInputs = [
+    cairo
     libsigcxx
   ];
+
+  postInstall = ''
+    # cairomm use C++11 features in headers, programs linking against cairomm
+    # will also need C++11 enabled.
+    sed -e 's,Cflags:,Cflags: -std=c++11,' -i $out/lib/pkgconfig/*.pc
+  '';
 
   enableParallelBuilding = true;
 
