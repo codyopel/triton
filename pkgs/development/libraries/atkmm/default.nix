@@ -1,7 +1,8 @@
 { stdenv, fetchurl
+, pkgconfig
+
 , atk
 , glibmm
-, pkgconfig
 }:
 
 stdenv.mkDerivation rec {
@@ -19,6 +20,14 @@ stdenv.mkDerivation rec {
     "-std=c++11"
   ];
 
+  configureFlags = [
+    "--enable-deprecated-api"
+    "--disable-documentation"
+    "--without-libstdc-doc"
+    "--without-libsigc-doc"
+    "--without-glibmm-doc"
+  ];
+
   nativeBuildInputs = [
     pkgconfig
   ];
@@ -27,6 +36,12 @@ stdenv.mkDerivation rec {
     atk
     glibmm
   ];
+
+  postInstall = ''
+    # atkmm use C++11 features in headers, programs linking against atkmm
+    # will also need C++11 enabled.
+    sed -e 's,Cflags:,Cflags: -std=c++11,' -i $out/lib/pkgconfig/*.pc
+  '';
 
   enableParallelBuilding = true;
 }
