@@ -49,18 +49,18 @@ let
   # Purity: Waf is normally downloaded by bootstrap.py, but
   # for purity reasons this behavior should be avoided.
   waf = fetchurl {
-    url = http://ftp.waf.io/pub/release/waf-1.8.5;
-    sha256 = "0gh266076pd9fzwkycskyd3kkv2kds9613blpxmn9w4glkiwmmh5";
+    url = http://ftp.waf.io/pub/release/waf-1.8.12;
+    sha256 = "12y9c352zwliw0zk9jm2lhynsjcf5jy0k1qch1c1av8hnbm2pgq1";
   };
 in
 
 stdenv.mkDerivation rec {
   name = "mpv-${version}";
-  version = "0.11.0";
+  version = "0.12.0";
 
   src = fetchurl {
     url = "https://github.com/mpv-player/mpv/archive/v${version}.tar.gz";
-    sha256 = "1njvmqzj8akan5y485gx4blynwiy52adw7zbbnnnvd3dwis725d2";
+    sha256 = "1i3cinyjg1k7rp93cgf641zi8j98hl6qd6al9ws51n29qx22096z";
   };
 
   patchPhase = ''
