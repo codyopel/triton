@@ -17,8 +17,12 @@ stdenv.mkDerivation rec {
   };
 
   configureFlags = [
+    "--enable-schemas-compile"
     "--disable-documentation"
+    # Compile errors if deprecated api is not enabled
     "--enable-deprecated-api"
+    "--without-libstdc-doc"
+    "--without-libsigc-doc"
   ];
 
   NIX_CFLAGS_COMPILE = [
@@ -33,6 +37,12 @@ stdenv.mkDerivation rec {
     glib
     libsigcxx
   ];
+
+  postInstall = ''
+    # glibmm use C++11 features in headers, programs linking against glibmm
+    # will also need C++11 enabled.
+    sed -e 's,Cflags:,Cflags: -std=c++11,' -i $out/lib/pkgconfig/*.pc
+  '';
 
   enableParallelBuilding = true;
 
