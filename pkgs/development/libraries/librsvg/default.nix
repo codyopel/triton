@@ -1,32 +1,46 @@
-{ lib, stdenv, fetchurl, pkgconfig, glib, gdk_pixbuf, pango, cairo, libxml2, libgsf
-, bzip2, libcroco, libintlOrEmpty
-, withGTK ? false, gtk3 ? null
-, gobjectIntrospection ? null, enableIntrospection ? false }:
+{ stdenv, fetchurl
+, pkgconfig
 
-# no introspection by default, it's too big
+, glib
+, gdk_pixbuf
+, pango
+, cairo
+, libxml2
+, libgsf
+, bzip2
+, libcroco
+, libintlOrEmpty
+, tools ? false, gtk3 ? null
+, gobjectIntrospection
+}:
+
+with {
+  inherit (stdenv.lib)
+    enFlag
+    optional;
+};
 
 stdenv.mkDerivation rec {
-  name = "librsvg-2.40.9";
+  name = "librsvg-${version}";
+  versionMajor = "2.40";
+  versionMinor = "11";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url    = "mirror://gnome/sources/librsvg/2.40/${name}.tar.xz";
-    sha256 = "0fplymmqqr28y24vcnb01szn62pfbqhk8p1ngns54x9m6mflr5hk";
+    url    = "mirror://gnome/sources/librsvg/${versionMajor}/${name}.tar.xz";
+    sha256 = "00ifd9wjjjsw0ybk5j6qs4yyh66jj34hjmggy6dhrgfy8ksw06k1";
   };
 
-  NIX_LDFLAGS = if stdenv.isDarwin then "-lintl" else null;
-
-  buildInputs = [ libxml2 libgsf bzip2 libcroco pango libintlOrEmpty ]
-    ++ stdenv.lib.optional enableIntrospection [ gobjectIntrospection ];
-
-  propagatedBuildInputs = [ glib gdk_pixbuf cairo ] ++ lib.optional withGTK gtk3;
-
-  nativeBuildInputs = [ pkgconfig ];
-
-  configureFlags = [ "--enable-introspection=auto" ]
-    ++ stdenv.lib.optional stdenv.isDarwin "--disable-Bsymbolic";
-
-  NIX_CFLAGS_COMPILE
-    = stdenv.lib.optionalString stdenv.isDarwin "-I${cairo}/include/cairo";
+  configureFlags = [
+    "--enable-pixbuf-loader"
+    "--enable-Bsymbolic"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    (enFlag "tools" (tools && gtk3 != null) null)
+    (enFlag "--enable-introspection" (gobjectIntrospection != null) "yes")
+    "--disable-vala"
+  ];
 
   # It wants to add loaders and update the loaders.cache in gdk-pixbuf
   # Patching the Makefiles to it creates rsvg specific loaders and the
@@ -44,10 +58,32 @@ stdenv.mkDerivation rec {
          -i gdk-pixbuf-loader/Makefile
   '';
 
+  nativeBuildInputs = [
+    pkgconfig
+  ];
+
+  propagatedBuildInputs = [
+    gdk_pixbuf
+    glib
+    cairo
+  ];
+
+  buildInputs = [
+    bzip2
+    gobjectIntrospection
+    libcroco
+    libgsf
+    libxml2
+    pango
+  ] ++ optional tools gtk3
+    ++ libintlOrEmpty;
+
   # Merge gdkpixbuf and librsvg loaders
   postInstall = ''
     mv $GDK_PIXBUF/loaders.cache $GDK_PIXBUF/loaders.cache.tmp
     cat ${gdk_pixbuf}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache $GDK_PIXBUF/loaders.cache.tmp > $GDK_PIXBUF/loaders.cache
     rm $GDK_PIXBUF/loaders.cache.tmp
   '';
+
+  enableParallelBuilding = true;
 }
