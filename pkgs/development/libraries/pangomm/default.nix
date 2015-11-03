@@ -1,10 +1,11 @@
 { stdenv, fetchurl
 , pkgconfig
-, pango
-, glibmm
-, cairomm
-, libpng
+
 , cairo
+, cairomm
+, glibmm
+, libpng
+, pango
 }:
 
 stdenv.mkDerivation rec {
@@ -18,6 +19,15 @@ stdenv.mkDerivation rec {
     sha256 = "12xwjvqfxhqblcv7641k0l6r8n3qifnrx8w9571izn1nbd81iyzg";
   };
 
+  configureFlags = [
+    "--disable-deprecated-api"
+    "--disable-documentation"
+    "--without-libstdc-doc"
+    "--without-libsigc-doc"
+    "--without-glibmm-doc"
+    "--without-cairomm-doc"
+  ];
+
   NIX_CFLAGS_COMPILE = [
     "-std=c++11"
   ];
@@ -28,14 +38,20 @@ stdenv.mkDerivation rec {
 
   propagatedBuildInputs = [
     cairomm
+    glibmm
     pango
   ];
 
   buildInputs = [
-    glibmm
-    libpng
     cairo
+    libpng
   ];
+
+  postInstall = ''
+    # pangomm use C++11 features in headers, programs linking against pangomm
+    # will also need C++11 enabled.
+    sed -e 's,Cflags:,Cflags: -std=c++11,' -i $out/lib/pkgconfig/*.pc
+  '';
 
   enableParallelBuilding = true;
 
