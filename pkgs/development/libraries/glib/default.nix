@@ -65,23 +65,31 @@ stdenv.mkDerivation rec {
   setupHook = ./setup-hook.sh;
 
   configureFlags = [
-    #"selinux"
-    # fam for file system monitoring
-    (enFlag "fam" true null)
-    (enFlag "xattr" true null)
-    (enFlag "libelf" true null)
-    (enFlag "gtk-doc" false null)
-    (enFlag "gtk-doc-html" false null)
-    (enFlag "gtk-doc-pdf" false null)
-    (enFlag "man" false null)
-    (enFlag "dtrace" false null)
-    (enFlag "systemtap" false null)
-    (enFlag "coverage" false null)
-    #Bsymbolic
+    "--disable-gc-friendly"
+    "--enable-mem-pools"
+    "--enable-rebuilds"
+    "--disable-installed-tests"
+    "--disable-always-build-tests"
+    "--enable-large-file"
+    # TODO: selinux support
+    #(enFlag "selinux" (selinux != null) null)
+    "--disable-selinux"
+    # use fam for file system monitoring
+    "--enable-fam"
+    "--enable-xattr"
+    (enFlag "libelf" (libelf != null) null)
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--disable-man"
+    "--disable-dtrace"
+    "--disable-systemtap"
+    "--disable-coverage"
+    "--enable-Bsymbolic"
     #znodelete
     #compile-warnings
-    (wtFlag "python" true "${python.interpreter}")
-    (wtFlag "threads" true "posix")
+    (wtFlag "python" (python != null) "${python.interpreter}")
+    "--with-threads=posix"
     (wtFlag "pcre" (pcre != null) "system")
   ];
 
@@ -96,18 +104,17 @@ stdenv.mkDerivation rec {
     libelf
     libffi
     libiconv
-    libintlOrEmpty
     pcre
     zlib
-  ];
+  ] ++ libintlOrEmpty;
 
   postInstall = ''
     rm -rvf $out/share/gtk-doc
   '';
 
+  # TODO: fix or disable failing tests
   doCheck = false;
   enableParallelBuilding = true;
-
   DETERMINISTIC_BUILD = 1;
 
   passthru = {
