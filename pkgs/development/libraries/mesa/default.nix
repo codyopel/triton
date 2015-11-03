@@ -1,13 +1,42 @@
-{ stdenv, fetchurl, fetchpatch, pkgconfig, intltool, flex, bison, autoreconfHook, substituteAll
-, python, libxml2Python, file, expat, makedepend, pythonPackages
-, libdrm, xorg, wayland, udev, llvmPackages, libffi, libomxil-bellagio
-, libvdpau, libelf, libva
+{ stdenv, fetchurl, fetchpatch
+, pkgconfig
+, intltool
+, flex
+, bison
+, autoreconfHook
+, substituteAll
+
+, python
+, libxml2Python
+, file
+, expat
+, makedepend
+, pythonPackages
+, libdrm
+, xorg
+, wayland
+, udev
+, llvmPackages
+, libffi
+, libomxil-bellagio
+, libvdpau
+, libelf
+, libva
 , grsecEnabled
-, enableTextureFloats ? false # Texture floats are patented, see docs/patents.txt
+# Texture floats are patented, see docs/patents.txt
+, enableTextureFloats ? false
 }:
 
+with {
+  inherit (stdenv.lib)
+    enFlag
+    optional
+    optionals
+    optionalString;
+};
+
 if ! stdenv.lib.lists.elem stdenv.system stdenv.lib.platforms.mesaPlatforms then
-  throw "unsupported platform for Mesa"
+  throw "Mesa does not support the `${stdenv.system}` platform"
 else
 
 /** Packaging design:
@@ -22,11 +51,10 @@ else
 */
 
 let
-  version = "10.6.8";
+  version = "11.0.4";
   # this is the default search path for DRI drivers
-  driverLink = "/run/opengl-driver" + stdenv.lib.optionalString stdenv.isi686 "-32";
+  driverLink = "/run/opengl-driver" + optionalString stdenv.isi686 "-32";
 in
-with { inherit (stdenv.lib) optional optionals optionalString; };
 
 stdenv.mkDerivation {
   name = "mesa-noglu-${version}";
@@ -36,15 +64,14 @@ stdenv.mkDerivation {
       "https://launchpad.net/mesa/trunk/${version}/+download/mesa-${version}.tar.xz"
       "ftp://ftp.freedesktop.org/pub/mesa/${version}/mesa-${version}.tar.xz"
     ];
-    sha256 = "e36ee5ceeadb3966fb5ce5b4cf18322dbb76a4f075558ae49c3bba94f57d58fd";
+    sha256 = "0ga8yl2hixwnib244g2f2mlndpdl3ss71s6zkrnjm8bgzkvin820";
   };
 
-  prePatch = "patchShebangs .";
-
   patches = [
-    ./glx_ro_text_segm.patch # fix for grsecurity/PaX
-   # TODO: revive ./dricore-gallium.patch when it gets ported (from Ubuntu),
-   #  as it saved ~35 MB in $drivers; watch https://launchpad.net/ubuntu/+source/mesa/+changelog
+    # fix for grsecurity/PaX
+    ./glx_ro_text_segm.patch
+    # TODO: revive ./dricore-gallium.patch when it gets ported (from Ubuntu),
+    #  as it saved ~35 MB in $drivers; watch https://launchpad.net/ubuntu/+source/mesa/+changelog
   ] ++ optional stdenv.isLinux
       (substituteAll {
         src = ./dlopen-absolute-paths.diff;
@@ -52,65 +79,115 @@ stdenv.mkDerivation {
       });
 
   postPatch = ''
+    patchShebangs .
+
     substituteInPlace src/egl/main/egldriver.c \
       --replace _EGL_DRIVER_SEARCH_DIR '"${driverLink}"'
   '';
 
-  outputs = ["out" "drivers" "osmesa"];
+  outputs = [ "out" "drivers" "osmesa" ];
 
   configureFlags = [
     "--sysconfdir=/etc"
     "--localstatedir=/var"
-    "--with-dri-driverdir=$(drivers)/lib/dri"
-    "--with-dri-searchpath=${driverLink}/lib/dri"
-
+    # slight performance degradation, enable only for grsec
+    (enFlag "glx-rts" grsecEnabled null)
+    "--disable-mangling"
+    (enFlag "texture-float" enableTextureFloats null)
+    "--enable-asm"
+    # TODO: add selinux support
+    "--disable-selinux"
+    "--enable-opengl"
     "--enable-gles1"
     "--enable-gles2"
     "--enable-dri"
-  ] ++ optional stdenv.isLinux "--enable-dri3"
-    ++ [
+    "--enable-dri3"
     "--enable-glx"
+    "--disable-osmesa"
     "--enable-gallium-osmesa" # used by wine
     "--enable-egl"
     "--enable-xa" # used in vmware driver
     "--enable-gbm"
-  ] ++ optional stdenv.isLinux "--enable-nine" # Direct3D in Wine
-    ++ [
+    "--enable-nine" # Direct3D in Wine
     "--enable-xvmc"
     "--enable-vdpau"
-    #"--enable-omx"
-    #"--enable-va"
+    # TODO: add libomxil-bellagio support
+    "--disable-omx"
+    # FIXME: fix libva detection
+    "--disable-va"
 
-    # TODO: Figure out how to enable opencl without having a runtime dependency on clang
+    # TODO: Figure out how to enable opencl without having a runtime
+    #       dependency on clang
     "--disable-opencl"
+    "--disable-opencl-icd"
 
-    "--with-gallium-drivers=svga,i915,ilo,r300,r600,radeonsi,nouveau,freedreno,swrast"
+    "--disable-xlib-glx"
+    "--disable-r600-llvm-compiler"
+    "--disable-gallium-tests"
     "--enable-shared-glapi"
     "--enable-sysfs"
     "--enable-driglx-direct" # seems enabled anyway
     "--enable-glx-tls"
-    "--with-dri-drivers=i915,i965,nouveau,radeon,r200,swrast"
-    "--with-egl-platforms=x11,wayland,drm"
-
+    "--disable-glx-read-only-text"
     "--enable-gallium-llvm"
     "--enable-llvm-shared-libs"
-  ] ++ optional enableTextureFloats "--enable-texture-float"
-    ++ optional grsecEnabled "--enable-glx-rts"; # slight performance degradation, enable only for grsec
 
-  nativeBuildInputs = [ pkgconfig python makedepend file flex bison pythonPackages.Mako ];
+    #gl-lib-name=GL
+    #osmesa-libname=OSMesa
+    "--with-gallium-drivers=svga,i915,ilo,r300,r600,radeonsi,nouveau,freedreno,swrast"
+    "--with-dri-driverdir=$(drivers)/lib/dri"
+    "--with-dri-searchpath=${driverLink}/lib/dri"
+    "--with-dri-drivers=i915,i965,nouveau,radeon,r200,swrast"
+    #osmesa-bits=8
+    #clang-libdir
+    "--with-egl-platforms=x11,wayland,drm"
+    #llvm-prefix
+    #xvmc-libdir
+    #vdpau-libdir
+    #omx-libdir
+    #va-libdir
+    #d3d-libdir
+  ];
 
-  propagatedBuildInputs = with xorg; [ libXdamage libXxf86vm ]
-    ++ optionals stdenv.isLinux [ libdrm ];
+  nativeBuildInputs = [
+    pkgconfig
+    python
+    makedepend
+    file
+    flex
+    bison
+    pythonPackages.Mako
+  ];
 
-  buildInputs = with xorg; [
-    autoreconfHook intltool expat libxml2Python llvmPackages.llvm
-    glproto dri2proto dri3proto presentproto
-    libX11 libXext libxcb libXt libXfixes libxshmfence
-    libffi wayland libvdpau libelf libXvMC /* libomxil-bellagio libva */
-  ] ++ optional stdenv.isLinux udev;
+  propagatedBuildInputs = [
+    xorg.libXdamage
+    xorg.libXxf86vm
+    libdrm
+  ];
 
-  enableParallelBuilding = true;
-  doCheck = false;
+  buildInputs = [
+    autoreconfHook
+    intltool
+    expat
+    libxml2Python
+    llvmPackages.llvm
+    xorg.glproto
+    xorg.dri2proto
+    xorg.dri3proto
+    xorg.presentproto
+    xorg.libX11
+    xorg.libXext
+    xorg.libxcb
+    xorg.libXt
+    xorg.libXfixes
+    xorg.libxshmfence
+    libffi
+    wayland
+    libvdpau
+    libelf
+    xorg.libXvMC /* libomxil-bellagio libva */
+    udev
+  ];
 
   installFlags = [
     "sysconfdir=\${out}/etc"
@@ -120,7 +197,7 @@ stdenv.mkDerivation {
   # move gallium-related stuff to $drivers, so $out doesn't depend on LLVM;
   #   also move libOSMesa to $osmesa, as it's relatively big
   # ToDo: probably not all .la files are completely fixed, but it shouldn't matter
-  postInstall = with stdenv.lib; ''
+  postInstall = ''
     mv -t "$drivers/lib/" \
       $out/lib/libXvMC* \
       $out/lib/d3d \
@@ -137,11 +214,11 @@ stdenv.mkDerivation {
     mv -t $osmesa/lib/pkgconfig/ \
       $out/lib/pkgconfig/osmesa.pc
 
-  '' + /* now fix references in .la files */ ''
+  '' + /* fix references in .la files */ ''
     sed "/^libdir=/s,$out,$osmesa," -i \
       $osmesa/lib/libOSMesa*.la
 
-  '' + /* work around bug #529, but maybe $drivers should also be patchelf-ed */ ''
+  '' + /* work around bug #529, but maybe $drivers should also be patchelf'd */ ''
     find $drivers/ $osmesa/ -type f -executable -print0 | xargs -0 strip -S || true
 
   '' + /* add RPATH so the drivers can find the moved libgallium and libdricore9 */ ''
@@ -157,13 +234,21 @@ stdenv.mkDerivation {
   '';
   #ToDo: @vcunat isn't sure if drirc will be found when in $out/etc/, but it doesn't seem important ATM
 
-  passthru = { inherit libdrm version driverLink; };
+  enableParallelBuilding = true;
+  doCheck = false;
+
+  passthru = {
+    inherit
+      libdrm
+      version
+      driverLink;
+  };
 
   meta = with stdenv.lib; {
     description = "An open source implementation of OpenGL";
     homepage = http://www.mesa3d.org/;
     license = "bsd";
+    maintainers = with maintainers; [ ];
     platforms = platforms.mesaPlatforms;
-    maintainers = with maintainers; [ eduarrrd simons vcunat ];
   };
 }
