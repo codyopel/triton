@@ -4,8 +4,7 @@
 , gtk3
 , glib
 , cogl
-, gstreamer
-, gst_plugins_base
+, gst_all_1
 }:
 
 stdenv.mkDerivation rec {
@@ -23,13 +22,16 @@ stdenv.mkDerivation rec {
     pkgconfig
   ];
 
-  buildInputs = [
+  propagatedBuildInputs = [
     clutter
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-base
+  ];
+
+  buildInputs = [
     gtk3
     glib
     cogl
-    gstreamer
-    gst_plugins_base
   ];
 
   postBuild = "rm -rf $out/share/gtk-doc";
