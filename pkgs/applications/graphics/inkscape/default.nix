@@ -62,10 +62,6 @@ stdenv.mkDerivation rec {
       --replace "#if __cplusplus >= 201103L" "#if true"
   '';
 
-  NIX_CFLAGS_COMPILE = [
-    "-std=c++11"
-  ];
-
   propagatedBuildInputs = [
     # Python is used at run-time to execute scripts, e.g., those from
     # the "Effects" menu.
