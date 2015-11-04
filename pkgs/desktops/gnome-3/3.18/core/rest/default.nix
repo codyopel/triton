@@ -36,11 +36,14 @@ stdenv.mkDerivation rec {
     pkgconfig
   ];
 
+  propagatedBuildInputs = [
+    glib # pkgconfig
+    libsoup # pkgconfig
+    libxml2 # pkgconfig
+  ];
+
   buildInputs = [
-    glib
     gobjectIntrospection
-    libsoup
-    libxml2
   ];
 
   postInstall = "rm -rf $out/share/gtk-doc";
