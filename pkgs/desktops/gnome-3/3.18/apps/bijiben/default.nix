@@ -2,7 +2,7 @@
 , evolution_data_server, evolution, sqlite
 , makeWrapper, itstool, desktop_file_utils
 , clutter_gtk, libuuid, webkitgtk, zeitgeist
-, gnome3, librsvg, gdk_pixbuf, libxml2 }:
+, gnome3, librsvg, gdk_pixbuf, libxml2, libsoup }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
                   gnome3.gnome_online_accounts zeitgeist desktop_file_utils
                   gnome3.gsettings_desktop_schemas makeWrapper
                   gdk_pixbuf gnome3.defaultIconTheme librsvg
-                  evolution_data_server evolution sqlite ];
+                  evolution_data_server evolution sqlite libsoup ];
 
   enableParallelBuilding = true;
 

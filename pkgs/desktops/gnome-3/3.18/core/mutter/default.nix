@@ -7,7 +7,12 @@
 }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "mutter-3.18.1";
+
+  src = fetchurl {
+    url = mirror://gnome/sources/mutter/3.18/mutter-3.18.1.tar.xz;
+    sha256 = "1ab959z5fgi4rq0ifxdqvpdbv99a2b1lfgvj327s9crdvk4ygpjg";
+  };
 
   patches = [
     ./x86.patch

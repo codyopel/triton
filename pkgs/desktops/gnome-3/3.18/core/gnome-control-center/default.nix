@@ -5,7 +5,7 @@
 , intltool
 , upower
 , makeWrapper
-, libcanberra
+, libcanberra_gtk3
 , accountsservice
 , libpwquality
 , libpulseaudio
@@ -73,7 +73,7 @@ stdenv.mkDerivation rec {
     gtk
     glib
     upower
-    libcanberra
+    libcanberra_gtk3
     gsettings_desktop_schemas
     libxml2
     gnome_desktop

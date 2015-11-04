@@ -1,7 +1,7 @@
 { stdenv, intltool, fetchurl, webkitgtk, pkgconfig, gtk3, glib
 , file, librsvg, gnome3, gdk_pixbuf
 , dbus_glib, dbus_libs, telepathy_glib, telepathy_farstream
-, clutter_gtk, clutter-gst, gst_all_1, cogl, gnome_online_accounts
+, clutter_gtk, clutter-gst_2, gst_all_1, cogl, gnome_online_accounts
 , gcr, libsecret, folks, libpulseaudio, telepathy_mission_control
 , telepathy_logger, libnotify, clutter, libsoup, gnutls
 , evolution_data_server
@@ -27,7 +27,7 @@ stdenv.mkDerivation rec {
                             telepathy_mission_control ];
   buildInputs = [ pkgconfig gtk3 glib webkitgtk intltool itstool
                   libxml2 libxslt icu file makeWrapper
-                  telepathy_glib clutter_gtk clutter-gst cogl
+                  telepathy_glib clutter_gtk clutter-gst_2 cogl
                   gst_all_1.gstreamer gst_all_1.gst-plugins-base
                   gcr libsecret libpulseaudio gnome3.yelp_xsl gdk_pixbuf
                   libnotify clutter libsoup gnutls libgee p11_kit

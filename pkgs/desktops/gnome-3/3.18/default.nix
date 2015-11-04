@@ -45,7 +45,18 @@ let
     hitori gnome-taquin
   ];
 
-  inherit (pkgs) glib gtk2 webkitgtk_2_4 gtk3 gtkmm libcanberra libsoup clutter cogl;
+  inherit (pkgs)
+    glib
+    gtk2
+    webkitgtk_2_4
+    gtk3
+    gtkmm
+    libcanberra
+    clutter-gst_2
+    libcanberra_gtk3
+    libsoup
+    clutter
+    cogl;
   inherit (pkgs.gnome2) ORBit2;
   libchamplain = pkgs.libchamplain.override { libsoup = libsoup; };
   orbit = ORBit2;
@@ -72,7 +83,6 @@ let
 
   empathy = callPackage ./core/empathy { 
     webkitgtk = webkitgtk24x;
-    clutter-gst = pkgs.clutter-gst;
   };
 
   epiphany = callPackage ./core/epiphany { };

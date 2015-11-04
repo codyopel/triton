@@ -5,7 +5,9 @@
 , evolution_data_server, gst_all_1, poppler
 , icu, taglib, libjpeg, libtiff, giflib, libcue
 , libvorbis, flac, exempi, networkmanager
-, libpng, libexif, libgsf, libuuid, bzip2 }:
+, libpng, libexif, libgsf, libuuid, bzip2
+, c-ares
+}:
 
 let
   majorVersion = "1.4";
@@ -31,7 +33,8 @@ stdenv.mkDerivation rec {
                   upower libnotify evolution_data_server gnome3.libgee
                   gst_all_1.gstreamer gst_all_1.gst-plugins-base flac
                   poppler icu taglib libjpeg libtiff giflib libvorbis
-                  exempi networkmanager libpng libexif libgsf libuuid ];
+                  exempi networkmanager libpng libexif libgsf libuuid
+                  c-ares ];
 
   preConfigure = ''
     substituteInPlace src/libtracker-sparql/Makefile.in --replace "--shared-library=libtracker-sparql" "--shared-library=$out/lib/libtracker-sparql"

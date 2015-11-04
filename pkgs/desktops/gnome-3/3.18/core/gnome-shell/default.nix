@@ -21,7 +21,7 @@
 , unzip
 , sqlite
 , libgweather
-, libcanberra
+, libcanberra_gtk3
 , libpulseaudio
 , libical
 , libtool
@@ -80,7 +80,7 @@ stdenv.mkDerivation rec {
     python3
     libsoup
     polkit
-    libcanberra
+    libcanberra_gtk3
     gdk_pixbuf
     librsvg
     clutter

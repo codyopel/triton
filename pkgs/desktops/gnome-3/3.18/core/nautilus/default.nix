@@ -1,13 +1,19 @@
 { stdenv, fetchurl, pkgconfig, libxml2, dbus_glib, shared_mime_info, libexif
 , gtk, gnome3, libunique, intltool, gobjectIntrospection
-, libnotify, makeWrapper, exempi, librsvg, tracker }:
+, libnotify, makeWrapper, exempi, librsvg, tracker
+, xorg
+}:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
-  buildInputs = [ pkgconfig libxml2 dbus_glib shared_mime_info libexif gtk libunique intltool exempi librsvg
-                  gnome3.gnome_desktop gnome3.adwaita-icon-theme
-                  gnome3.gsettings_desktop_schemas libnotify makeWrapper tracker ];
+  buildInputs = [
+    pkgconfig libxml2 dbus_glib shared_mime_info libexif gtk libunique intltool
+    exempi librsvg
+    gnome3.gnome_desktop gnome3.adwaita-icon-theme
+    gnome3.gsettings_desktop_schemas libnotify makeWrapper tracker
+    xorg.libICE xorg.libSM
+  ];
 
   preFixup = ''
     wrapProgram "$out/bin/nautilus" \
