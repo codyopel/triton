@@ -9601,7 +9601,7 @@ let
       ];
   };
 
-  linux_4_2 = callPackage ../os-specific/linux/kernel/linux-4.3.nix {
+  linux_4_2 = callPackage ../os-specific/linux/kernel/linux-4.2.nix {
     kernelPatches = [ kernelPatches.bridge_stp_helper ]
       ++ lib.optionals ((platform.kernelArch or null) == "mips")
       [ kernelPatches.mips_fpureg_emu
@@ -9610,7 +9610,7 @@ let
       ];
   };
 
-  linux_4_3 = callPackage ../os-specific/linux/kernel/linux-4.2.nix {
+  linux_4_3 = callPackage ../os-specific/linux/kernel/linux-4.3.nix {
     kernelPatches = [ kernelPatches.bridge_stp_helper ]
       ++ lib.optionals ((platform.kernelArch or null) == "mips")
       [ kernelPatches.mips_fpureg_emu
