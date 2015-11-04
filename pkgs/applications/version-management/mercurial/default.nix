@@ -1,6 +1,6 @@
 { stdenv, fetchurl, python, makeWrapper, docutils, unzip, hg-git, dulwich
 , guiSupport ? false, tk ? null, hg-crecord ? null, curses
-, ApplicationServices }:
+}:
 
 let
   version = "3.5.1";
@@ -19,8 +19,6 @@ stdenv.mkDerivation {
   pythonPackages = [ curses ];
 
   buildInputs = [ python makeWrapper docutils unzip ];
-
-  propagatedBuildInputs = stdenv.lib.optional stdenv.isDarwin ApplicationServices;
 
   makeFlags = "PREFIX=$(out)";
 
@@ -72,6 +70,6 @@ stdenv.mkDerivation {
     homepage = "http://mercurial.selenic.com/";
     downloadPage = "http://mercurial.selenic.com/release/";
     license = stdenv.lib.licenses.gpl2;
-    maintainers = [ stdenv.lib.maintainers.eelco ];
+    maintainers = [ ];
   };
 }

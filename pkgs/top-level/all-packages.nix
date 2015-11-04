@@ -654,12 +654,6 @@ let
 
   oracle-instantclient = callPackage ../development/libraries/oracle-instantclient { };
 
-  reattach-to-user-namespace = callPackage ../os-specific/darwin/reattach-to-user-namespace {};
-
-  setfile = callPackage ../os-specific/darwin/setfile { };
-
-  install_name_tool = callPackage ../os-specific/darwin/install_name_tool { };
-
   xcodeenv = callPackage ../development/mobile/xcodeenv { };
 
   titaniumenv = callPackage ../development/mobile/titaniumenv {
@@ -766,7 +760,7 @@ let
   brasero = callPackage ../tools/cd-dvd/brasero { };
 
   brltty = callPackage ../tools/misc/brltty {
-    alsaSupport = (!stdenv.isDarwin);
+    alsaSupport = true;
   };
   bro = callPackage ../applications/networking/ids/bro { };
 
@@ -1580,9 +1574,7 @@ let
 
   garmintools = callPackage ../development/libraries/garmintools {};
 
-  gawk = callPackage ../tools/text/gawk {
-    locale = darwin.adv_cmds;
-  };
+  gawk = callPackage ../tools/text/gawk { };
 
   gawkInteractive = appendToName "interactive"
     (gawk.override { readlineSupport = true; });
@@ -2050,29 +2042,18 @@ let
   ninka = callPackage ../development/tools/misc/ninka { };
 
   nodejs-4_1 = callPackage ../development/web/nodejs/v4_1_0.nix {
-    libtool = darwin.cctools;
     libuv = libuvVersions.v1_7_5;
-    openssl = openssl_1_0_2;
   };
 
-  nodejs-0_10 = callPackage ../development/web/nodejs/v0_10.nix {
-    libtool = darwin.cctools;
-    inherit (darwin.apple_sdk.frameworks) CoreServices ApplicationServices Carbon Foundation;
-  };
+  nodejs-0_10 = callPackage ../development/web/nodejs/v0_10.nix { };
 
-  nodejs = if stdenv.system == "armv5tel-linux" then
-    nodejs-0_10
-  else
-    nodejs-4_1;
+  nodejs = nodejs-4_1;
 
   nodePackages_4_1 = recurseIntoAttrs (callPackage ./node-packages.nix { self = nodePackages_4_1; nodejs = nodejs-4_1; });
 
   #nodePackages_0_10 = recurcallPackage ./node-packages.nix { self = nodePackages_0_10; nodejs = nodejs-0_10; };
 
-  nodePackages = if stdenv.system == "armv5tel-linux" then
-    nodePackages_0_10
-  else
-    nodePackages_4_1;
+  nodePackages = nodePackages_4_1;
 
   npm2nix = nodePackages.npm2nix;
 
@@ -3781,7 +3762,6 @@ let
   gccCrossStageStatic = let
     libcCross1 =
       if stdenv.cross.libc == "msvcrt" then windows.mingw_w64_headers
-      else if stdenv.cross.libc == "libSystem" then darwin.xcode
       else null;
     in wrapGCCCross {
       gcc = forceNativeDrv (gcc.cc.override {
@@ -3865,7 +3845,7 @@ let
     inherit noSysDirs;
 
     # PGO seems to speed up compilation by gcc by ~10%, see #445 discussion
-    profiledCompiler = with stdenv; (!isDarwin && (isi686 || isx86_64));
+    profiledCompiler = with stdenv; (isi686 || isx86_64);
 
     # When building `gcc.crossDrv' (a "Canadian cross", with host == target
     # and host != build), `cross' must be null but the cross-libc must still
@@ -3880,7 +3860,7 @@ let
     inherit noSysDirs;
 
     # PGO seems to speed up compilation by gcc by ~10%, see #445 discussion
-    profiledCompiler = with stdenv; (!isDarwin && (isi686 || isx86_64));
+    profiledCompiler = with stdenv; (isi686 || isx86_64);
 
     # When building `gcc.crossDrv' (a "Canadian cross", with host == target
     # and host != build), `cross' must be null but the cross-libc must still
@@ -3897,7 +3877,7 @@ let
     inherit noSysDirs;
 
     # PGO seems to speed up compilation by gcc by ~10%, see #445 discussion
-    profiledCompiler = with stdenv; (!isDarwin && (isi686 || isx86_64));
+    profiledCompiler = with stdenv; (isi686 || isx86_64);
 
     # When building `gcc.crossDrv' (a "Canadian cross", with host == target
     # and host != build), `cross' must be null but the cross-libc must still
@@ -3908,8 +3888,7 @@ let
     isl = isl_0_14;
   }));
 
-  gfortran = if !stdenv.isDarwin then gfortran49
-             else callPackage ../development/compilers/gcc/gfortran-darwin.nix {};
+  gfortran = gfortran49;
 
   gfortran48 = wrapCC (gcc48.cc.override {
     name = "gfortran";
@@ -4741,9 +4720,7 @@ let
   sdcc = callPackage ../development/compilers/sdcc { };
 
   smlnjBootstrap = callPackage ../development/compilers/smlnj/bootstrap.nix { };
-  smlnj = if stdenv.isDarwin
-            then callPackage ../development/compilers/smlnj { }
-            else callPackage_i686 ../development/compilers/smlnj { };
+  smlnj = callPackage_i686 ../development/compilers/smlnj { };
 
   sqldeveloper = callPackage ../development/tools/database/sqldeveloper { };
 
@@ -5045,7 +5022,6 @@ let
   };
   python27 = callPackage ../development/interpreters/python/2.7 {
     self = python27;
-    inherit (darwin) CF configd;
   };
   python32 = callPackage ../development/interpreters/python/3.2 {
     self = python32;
@@ -5307,8 +5283,7 @@ let
   });
 
   binutilsCross = assert crossSystem != null; lowPrio (forceNativeDrv (
-    if crossSystem.libc == "libSystem" then darwin.cctools_cross
-    else binutils.override {
+    binutils.override {
       noSysDirs = true;
       cross = crossSystem;
     }));
@@ -5393,15 +5368,8 @@ let
 
   ctodo = callPackage ../applications/misc/ctodo { };
 
-  cmake-2_8 = callPackage ../development/tools/build-managers/cmake/2.8.nix {
-    wantPS = stdenv.isDarwin;
-    ps     = null;
-  };
-
-  cmake = callPackage ../development/tools/build-managers/cmake {
-    wantPS = stdenv.isDarwin;
-    ps     = null;
-  };
+  cmake-2_8 = callPackage ../development/tools/build-managers/cmake/2.8.nix { };
+  cmake = callPackage ../development/tools/build-managers/cmake { };
 
   cmakeCurses = cmake.override { useNcurses = true; };
 
@@ -5478,7 +5446,6 @@ let
 
   doxygen = callPackage ../development/tools/documentation/doxygen {
     qt4 = null;
-    inherit (darwin.apple_sdk.frameworks) CoreServices;
   };
 
   doxygen_gui = lowPrio (doxygen.override { inherit qt4; });
@@ -6300,8 +6267,6 @@ let
   # We can choose:
   libcCrossChooser = name: if name == "glibc" then glibcCross
     else if name == "uclibc" then uclibcCross
-    else if name == "msvcrt" then windows.mingw_w64
-    else if name == "libSystem" then darwin.xcode
     else throw "Unknown libc";
 
   libcCross = assert crossSystem != null; libcCrossChooser crossSystem.libc;
@@ -6671,9 +6636,7 @@ let
 
   kinetic-cpp-client = callPackage ../development/libraries/kinetic-cpp-client { };
 
-  krb5Full = callPackage ../development/libraries/kerberos/krb5.nix {
-    inherit (darwin) bootstrap_cmds;
-  };
+  krb5Full = callPackage ../development/libraries/kerberos/krb5.nix { };
   libkrb5 = krb5Full.override { type = "lib"; };
 
   LASzip = callPackage ../development/libraries/LASzip { };
@@ -7367,11 +7330,9 @@ let
 
   liburcu = callPackage ../development/libraries/liburcu { };
 
-  libusb = callPackage ../development/libraries/libusb {};
+  libusb = callPackage ../development/libraries/libusb { };
 
-  libusb1 = callPackage ../development/libraries/libusb1 {
-    inherit (darwin) libobjc IOKit;
-  };
+  libusb1 = callPackage ../development/libraries/libusb1 { };
 
   libusbmuxd = callPackage ../development/libraries/libusbmuxd { };
 
@@ -7381,7 +7342,6 @@ let
 
   libuvVersions = recurseIntoAttrs (callPackage ../development/libraries/libuv {
     automake = automake113x; # fails with 14
-    inherit (darwin.apple_sdk.frameworks) ApplicationServices CoreServices;
   });
 
   libuv = libuvVersions.v1_7_5;
@@ -9325,8 +9285,6 @@ let
       libxslt expat libpng zlib perl mesa_drivers spice_protocol
       dbus libuuid openssl gperf m4 libevdev tradcpp libinput mcpp makeWrapper autoreconfHook
       autoconf automake libtool xmlto asciidoc flex bison python mtdev pixman;
-    inherit (darwin) apple_sdk libobjc CF;
-    bootstrap_cmds = null;
     mesa = mesa_noglu;
     udev = if stdenv.isLinux then udev else null;
     libdrm = if stdenv.isLinux then libdrm else null;
@@ -9443,43 +9401,6 @@ let
   cryptsetup = callPackage ../os-specific/linux/cryptsetup { };
 
   cramfsswap = callPackage ../os-specific/linux/cramfsswap { };
-
-  darwin = let
-    cmdline = callPackage ../os-specific/darwin/command-line-tools {};
-    apple-source-releases = callPackage ../os-specific/darwin/apple-source-releases { };
-  in apple-source-releases // rec {
-    cctools_cross = callPackage (forceNativeDrv (callPackage ../os-specific/darwin/cctools/port.nix {}).cross) {
-      cross = assert crossSystem != null; crossSystem;
-      inherit maloader;
-      xctoolchain = xcode.toolchain;
-    };
-
-    cctools = (callPackage ../os-specific/darwin/cctools/port.nix { inherit libobjc; }).native;
-
-    maloader = callPackage ../os-specific/darwin/maloader {
-      inherit opencflite;
-    };
-
-    opencflite = callPackage ../os-specific/darwin/opencflite {};
-
-    xcode = callPackage ../os-specific/darwin/xcode {};
-
-    osx_sdk = callPackage ../os-specific/darwin/osx-sdk {};
-    osx_private_sdk = callPackage ../os-specific/darwin/osx-private-sdk {};
-
-    security_tool = (newScope (darwin.apple_sdk.frameworks // darwin)) ../os-specific/darwin/security-tool { };
-
-    binutils = callPackage ../os-specific/darwin/binutils { inherit cctools; };
-
-    cmdline_sdk   = cmdline.sdk;
-    cmdline_tools = cmdline.tools;
-
-    apple_sdk = callPackage ../os-specific/darwin/apple-sdk {
-      inherit (darwin) CF;
-    };
-
-    libobjc = apple-source-releases.objc4;
-  };
 
   devicemapper = lvm2;
 
@@ -11069,8 +10990,6 @@ let
     imagemagick = null;
     acl = null;
     gpm = null;
-    inherit (darwin.apple_sdk.frameworks) AppKit Foundation;
-    inherit (darwin) libobjc;
   };
 
   emacs24-nox = lowPrio (appendToName "nox" (emacs24.override {
@@ -11078,17 +10997,6 @@ let
     withGTK2 = false;
     withGTK3 = false;
   }));
-
-  emacs24Macport_24_3 = lowPrio (callPackage ../applications/editors/emacs-24/macport-24.3.nix {
-    stdenv = pkgs.clangStdenv;
-  });
-  emacs24Macport_24_4 = lowPrio (callPackage ../applications/editors/emacs-24/macport-24.4.nix {
-    stdenv = pkgs.clangStdenv;
-  });
-  emacs24Macport_24_5 = lowPrio (callPackage ../applications/editors/emacs-24/macport-24.5.nix {
-    stdenv = pkgs.clangStdenv;
-  });
-  emacs24Macport = self.emacs24Macport_24_5;
 
   emacsPackagesGen = emacs: self: let callPackage = newScope self; in rec {
     inherit emacs;
@@ -12009,7 +11917,6 @@ let
 
   mercurial = callPackage ../applications/version-management/mercurial {
     inherit (pythonPackages) curses docutils hg-git dulwich;
-    inherit (darwin.apple_sdk.frameworks) ApplicationServices;
     guiSupport = false; # use mercurialFull to get hgk GUI
   };
 
@@ -12965,12 +12872,7 @@ let
     flup = pythonPackages.flup;
   };
 
-  vim = callPackage ../applications/editors/vim {
-    inherit (darwin.apple_sdk.frameworks) CoreServices Cocoa Foundation CoreData;
-    inherit (darwin) libobjc;
-  };
-
-  macvim = callPackage ../applications/editors/vim/macvim.nix { stdenv = clangStdenv; };
+  vim = callPackage ../applications/editors/vim { };
 
   vimHugeX = vim_configurable;
 
@@ -13074,9 +12976,7 @@ let
     graphicsSupport = false;
   };
 
-  weechat = callPackage ../applications/networking/irc/weechat {
-    inherit (darwin) libobjc;
-  };
+  weechat = callPackage ../applications/networking/irc/weechat { };
 
   westonLite = callPackage ../applications/window-managers/weston {
     pango = null;
@@ -14651,7 +14551,7 @@ let
 
   ghostscript = callPackage ../misc/ghostscript {
     x11Support = false;
-    cupsSupport = config.ghostscript.cups or (!stdenv.isDarwin);
+    cupsSupport = config.ghostscript.cups or true;
   };
 
   ghostscriptX = appendToName "with-X" (ghostscript.override {

@@ -21,10 +21,6 @@ composableDerivation {
       inherit sha256;
     };
 
-    # FIXME: adopt Darwin fixes from vim/default.nix, then chage meta.platforms.linux
-    # to meta.platforms.unix
-    preConfigure = assert (! stdenv.isDarwin); "";
-
     configureFlags = [ "--with-vim-name=qvim" "--enable-gui=qt" "--with-features=${args.features}" ];
 
     nativeBuildInputs
@@ -43,7 +39,6 @@ composableDerivation {
           '';
         };
       }
-      // edf { name = "darwin"; } #Disable Darwin (Mac OS X) support.
       // edf { name = "xsmp"; } #Disable XSMP session management
       // edf { name = "xsmp_interact"; } #Disable XSMP interaction
       // edf { name = "mzscheme"; } #Include MzScheme interpreter.
@@ -54,10 +49,6 @@ composableDerivation {
         feat = "pythoninterp";
         enable = {
           nativeBuildInputs = [ python ];
-        } // lib.optionalAttrs stdenv.isDarwin {
-          configureFlags
-            = [ "--enable-pythoninterp=yes"
-                "--with-python-config-dir=${python}/lib" ];
         };
       }
 
@@ -96,10 +87,6 @@ composableDerivation {
     multibyteSupport = config.vim.multibyte or false;
     cscopeSupport    = config.vim.cscope or false;
     netbeansSupport  = config.netbeans or true; # eg envim is using it
-
-    # by default, compile with darwin support if we're compiling on darwin, but
-    # allow this to be disabled by setting config.vim.darwin to false
-    darwinSupport    = stdenv.isDarwin && (config.vim.darwin or true);
 
     # add .nix filetype detection and minimal syntax highlighting support
     ftNixSupport     = config.vim.ftNix or true;

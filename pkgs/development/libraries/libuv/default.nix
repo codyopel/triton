@@ -1,6 +1,5 @@
 { stdenv, lib, fetchFromGitHub, autoconf, automake, libtool, pkgconfig
-
-, ApplicationServices, CoreServices }:
+}:
 
 let
   stable = "stable";
@@ -9,8 +8,8 @@ let
   meta = with lib; {
     description = "A multi-platform support library with a focus on asynchronous I/O";
     homepage    = https://github.com/libuv/libuv;
-    maintainers = with maintainers; [ cstrahan ];
-    platforms   = with platforms; linux ++ darwin;
+    maintainers = with maintainers; [ ];
+    platforms   = with platforms; linux;
   };
 
   mkName = stability: version:
@@ -29,11 +28,7 @@ let
   mkWithoutAutotools = stability: version: sha256: stdenv.mkDerivation {
     name = mkName stability version;
     src = mkSrc version sha256;
-    buildPhase = lib.optionalString stdenv.isDarwin ''
-      mkdir extrapath
-      ln -s /usr/sbin/dtrace extrapath/dtrace
-      export PATH=$PATH:`pwd`/extrapath
-    '' + ''
+    buildPhase = ''
       mkdir build
       make builddir_name=build
 
@@ -61,8 +56,7 @@ let
   mkWithAutotools = stability: version: sha256: stdenv.mkDerivation {
     name = mkName stability version;
     src = mkSrc version sha256;
-    buildInputs = [ automake autoconf libtool pkgconfig ]
-      ++ stdenv.lib.optionals stdenv.isDarwin [ ApplicationServices CoreServices ];
+    buildInputs = [ automake autoconf libtool pkgconfig ];
     preConfigure = ''
       LIBTOOLIZE=libtoolize ./autogen.sh
     '';

@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, fixDarwinDylibNames }:
+{ stdenv, fetchurl }:
 
 let
   pname = "icu4c";
@@ -13,13 +13,6 @@ stdenv.mkDerivation {
     sha256 = "0ys5f5spizg45qlaa31j2lhgry0jka2gfha527n4ndfxxz5j4sz1";
   };
 
-  makeFlags = stdenv.lib.optionalString stdenv.isDarwin
-    "CXXFLAGS=-headerpad_max_install_names";
-
-  # FIXME: This fixes dylib references in the dylibs themselves, but
-  # not in the programs in $out/bin.
-  buildInputs = stdenv.lib.optional stdenv.isDarwin fixDarwinDylibNames;
-
   postUnpack = ''
     sourceRoot=''${sourceRoot}/source
     echo Source root reset to ''${sourceRoot}
@@ -29,20 +22,14 @@ stdenv.mkDerivation {
     sed -i -e "s|/bin/sh|${stdenv.shell}|" configure
   '';
 
-  configureFlags = "--disable-debug" +
-    stdenv.lib.optionalString stdenv.isDarwin " --enable-rpath";
-
-  # remove dependency on bootstrap-tools in early stdenv build
-  postInstall = stdenv.lib.optionalString stdenv.isDarwin ''
-    sed -i 's/INSTALL_CMD=.*install/INSTALL_CMD=install/' $out/lib/icu/${version}/pkgdata.inc
-  '';
+  configureFlags = "--disable-debug";
 
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Unicode and globalization support library";
     homepage = http://site.icu-project.org/;
-    maintainers = with maintainers; [ raskin urkud ];
+    maintainers = with maintainers; [ ];
     platforms = platforms.all;
   };
 }

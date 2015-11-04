@@ -8,8 +8,6 @@
 , tcl ? null, tk ? null, xlibsWrapper ? null, libX11 ? null, x11Support ? !stdenv.isCygwin
 , zlib ? null, zlibSupport ? true
 , expat, libffi
-
-, CF, configd
 }:
 
 assert zlibSupport -> zlib != null;
@@ -44,17 +42,6 @@ let
       ./deterministic-build.patch
 
       ./properly-detect-curses.patch
-    ] ++ optionals stdenv.isCygwin [
-      ./2.5.2-ctypes-util-find_library.patch
-      ./2.5.2-tkinter-x11.patch
-      ./2.6.2-ssl-threads.patch
-      ./2.6.5-export-PySignal_SetWakeupFd.patch
-      ./2.6.5-FD_SETSIZE.patch
-      ./2.6.5-ncurses-abi6.patch
-      ./2.7.3-dbm.patch
-      ./2.7.3-dylib.patch
-      ./2.7.3-getpath-exe-extension.patch
-      ./2.7.3-no-libm.patch
     ];
 
   preConfigure = ''
@@ -66,40 +53,22 @@ let
       for i in Lib/plat-*/regen; do
         substituteInPlace $i --replace /usr/include/ ${stdenv.cc.libc}/include/
       done
-    '' + optionalString stdenv.isDarwin ''
-      substituteInPlace configure --replace '`/usr/bin/arch`' '"i386"'
     '';
 
   configureFlags = [
     "--enable-shared"
     "--with-threads"
     "--enable-unicode=ucs4"
-  ] ++ optionals stdenv.isCygwin [
-    "--with-system-ffi"
-    "--with-system-expat"
-    "ac_cv_func_bind_textdomain_codeset=yes"
-  ] ++ optionals stdenv.isDarwin [
-    "--disable-toolbox-glue"
   ];
-
-  postConfigure = if stdenv.isCygwin then ''
-    sed -i Makefile -e 's,PYTHONPATH="$(srcdir),PYTHONPATH="$(abs_srcdir),'
-  '' else null;
 
   buildInputs =
     optional (stdenv ? cc && stdenv.cc.libc != null) stdenv.cc.libc ++
     [ bzip2 openssl ]
-    ++ optionals stdenv.isCygwin [ expat libffi ]
     ++ optionals includeModules (
         [ db gdbm ncurses sqlite readline
         ] ++ optionals x11Support [ tcl tk xlibsWrapper libX11 ]
     )
-    ++ optional zlibSupport zlib
-
-    # depend on CF and configd only if purity is an issue
-    # the impure bootstrap compiler can't build CoreFoundation currently. it requires
-    # <mach-o/dyld.h> which is in our pure bootstrapTools, but not in the system headers.
-    ++ optionals (stdenv.isDarwin && !stdenv.cc.nativeLibc) [ CF configd ];
+    ++ optional zlibSupport zlib;
 
   # Build the basic Python interpreter without modules that have
   # external dependencies.
@@ -110,11 +79,10 @@ let
     inherit majorVersion version src patches buildInputs preConfigure
             configureFlags;
 
-    LDFLAGS = stdenv.lib.optionalString (!stdenv.isDarwin) "-lgcc_s";
+    LDFLAGS = stdenv.lib.optionalString stdenv.cc.isGNU "-lgcc_s";
     C_INCLUDE_PATH = concatStringsSep ":" (map (p: "${p}/include") buildInputs);
     LIBRARY_PATH = concatStringsSep ":" (map (p: "${p}/lib") buildInputs);
 
-    NIX_CFLAGS_COMPILE = optionalString stdenv.isDarwin "-msse2";
     DETERMINISTIC_BUILD = 1;
 
     setupHook = ./setup-hook.sh;
@@ -167,7 +135,7 @@ let
       '';
       license = stdenv.lib.licenses.psfl;
       platforms = stdenv.lib.platforms.all;
-      maintainers = with stdenv.lib.maintainers; [ simons chaoflow iElectric ];
+      maintainers = with stdenv.lib.maintainers; [ ];
     };
   };
 
@@ -190,9 +158,7 @@ let
       LIBRARY_PATH = concatStringsSep ":" (map (p: "${p}/lib") buildInputs);
 
       # non-python gdbm has a libintl dependency on i686-cygwin, not on x86_64-cygwin
-      buildPhase = (if (stdenv.system == "i686-cygwin" && moduleName == "gdbm") then ''
-          sed -i setup.py -e "s:libraries = \['gdbm'\]:libraries = ['gdbm', 'intl']:"
-      '' else '''') + ''
+      buildPhase = ''
           substituteInPlace setup.py --replace 'self.extensions = extensions' \
             'self.extensions = [ext for ext in self.extensions if ext.name in ["${internalName}"]]'
 
@@ -204,7 +170,7 @@ let
         ''
           dest=$out/lib/${python.libPrefix}/site-packages
           mkdir -p $dest
-          cp -p $(find . -name "*.${if stdenv.isCygwin then "dll" else "so"}") $dest/
+          cp -p $(find . -name "*.so") $dest/
         '';
     };
 
@@ -237,7 +203,7 @@ let
     gdbm = buildInternalPythonModule {
       moduleName = "gdbm";
       internalName = "gdbm";
-      deps = [ gdbm ] ++ stdenv.lib.optional stdenv.isCygwin gettext;
+      deps = [ gdbm ];
     };
 
     sqlite3 = buildInternalPythonModule {
@@ -247,10 +213,10 @@ let
 
   } // optionalAttrs x11Support {
 
-    tkinter = if stdenv.isCygwin then null else (buildInternalPythonModule {
+    tkinter = buildInternalPythonModule {
       moduleName = "tkinter";
       deps = [ tcl tk xlibsWrapper libX11 ];
-    });
+    };
 
   } // {
 

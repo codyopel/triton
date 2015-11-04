@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, perl, yacc, bootstrap_cmds
+{ stdenv, fetchurl, pkgconfig, perl, yacc
 
 # Optional Dependencies
 , libedit ? null, readline ? null, ncurses ? null, libverto ? null
@@ -64,9 +64,7 @@ stdenv.mkDerivation rec {
     sha256 = "1qbdzyrws7d0q4filsibh28z54pd5l987jr0ygv43iq9085w6a75";
   };
 
-  nativeBuildInputs = [ pkgconfig perl yacc ]
-    # Provides the mig command used by the build scripts
-    ++ stdenv.lib.optional stdenv.isDarwin bootstrap_cmds;
+  nativeBuildInputs = [ pkgconfig perl yacc ];
   buildInputs = [ optOpenssl optLibverto optOpenldap ]
     ++ cryptoInputs ++ tlsInputs ++ lineParserInputs;
 

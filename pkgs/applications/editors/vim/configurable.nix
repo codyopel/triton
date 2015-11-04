@@ -63,12 +63,6 @@ composableDerivation {
 
     prePatch = "cd src";
 
-    # if darwin support is enabled, we want to make sure we're not building with
-    # OS-installed python framework
-    patches = stdenv.lib.optionals
-      (stdenv.isDarwin && (config.vim.darwin or true))
-      [ ./python_framework.patch ];
-
     configureFlags
       = [ "--enable-gui=${args.gui}" "--with-features=${args.features}" ];
 
@@ -88,7 +82,6 @@ composableDerivation {
           '';
         };
       }
-      // edf { name = "darwin"; } #Disable Darwin (Mac OS X) support.
       // edf { name = "xsmp"; } #Disable XSMP session management
       // edf { name = "xsmp_interact"; } #Disable XSMP interaction
       // edf { name = "mzscheme"; feat = "mzschemeinterp";} #Include MzScheme interpreter.
@@ -99,10 +92,6 @@ composableDerivation {
         feat = "pythoninterp";
         enable = {
           nativeBuildInputs = [ python ];
-        } // lib.optionalAttrs stdenv.isDarwin {
-          configureFlags
-            = [ "--enable-pythoninterp=yes"
-                "--with-python-config-dir=${python}/lib" ];
         };
       }
 
@@ -111,11 +100,6 @@ composableDerivation {
         feat = "python3interp";
         enable = {
           nativeBuildInputs = [ pkgs.python3 ];
-        } // lib.optionalAttrs stdenv.isDarwin {
-          configureFlags
-            = [ "--enable-python3interp=yes"
-                "--with-python3-config-dir=${pkgs.python3}/lib"
-                "--disable-pythoninterp" ];
         };
       }
 
@@ -155,10 +139,6 @@ composableDerivation {
     multibyteSupport = config.vim.multibyte or false;
     cscopeSupport    = config.vim.cscope or true;
     netbeansSupport  = config.netbeans or true; # eg envim is using it
-
-    # by default, compile with darwin support if we're compiling on darwin, but
-    # allow this to be disabled by setting config.vim.darwin to false
-    darwinSupport    = stdenv.isDarwin && (config.vim.darwin or true);
 
     # add .nix filetype detection and minimal syntax highlighting support
     ftNixSupport     = config.vim.ftNix or true;
