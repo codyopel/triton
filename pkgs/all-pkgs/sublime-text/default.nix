@@ -10,21 +10,17 @@
 , xorg
 }:
 
-let
+with {
   inherit (stdenv)
     system
     is64bit;
   inherit (stdenv.lib)
     makeLibraryPath
     optionalString;
+};
+
+let
   version = "3083";
-  libPath = makeLibraryPath [
-    cairo
-    glib
-    gtk2
-    pango
-    xorg.libX11
-  ];
 in
 
 let
@@ -55,12 +51,20 @@ let
         -i sublime_text.desktop
       # Fix filenames
       sed \
-        -e 's,sublime-text,subl,' \
+        -e 's,sublime-text,sublime_text,' \
         -i sublime_text.desktop
     '';
 
     nativeBuildInputs = [
       makeWrapper
+    ];
+
+    libPath = makeLibraryPath [
+      cairo
+      glib
+      gtk2
+      pango
+      xorg.libX11
     ];
 
     buildPhase = ''
@@ -97,13 +101,13 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out/bin
-    ln -s ${sublime-text-bin}/sublime_text $out/bin/sublime_text
-    ln -s ${sublime-text-bin}/sublime_text $out/bin/subl
+    ln -sv ${sublime-text-bin}/sublime_text $out/bin/sublime_text
+    ln -sv ${sublime-text-bin}/sublime_text $out/bin/subl
 
     mkdir -p $out/share/applications
-    ln -s ${sublime-text-bin}/sublime_text.desktop $out/share/applications/subl.desktop
+    ln -sv ${sublime-text-bin}/sublime_text.desktop $out/share/applications
     mkdir -p $out/share/icons
-    ln -s ${sublime-text-bin}/Icon/256x256/sublime_text.png $out/share/icons/subl.png
+    ln -sv ${sublime-text-bin}/Icon/256x256/sublime_text.png $out/share/icons
   '';
 
   enableParallelBuilding = true;
