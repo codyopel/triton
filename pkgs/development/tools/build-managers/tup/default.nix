@@ -46,6 +46,6 @@ stdenv.mkDerivation rec {
     '';
     homepage = http://gittup.org/tup/;
     license = licenses.gpl2;
-    platforms = platforms.linux ++ platforms.darwin;
+    platforms = platforms.linux;
   };
 }

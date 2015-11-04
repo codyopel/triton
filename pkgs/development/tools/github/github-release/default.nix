@@ -3,8 +3,7 @@
 let
   linuxPredicate = stdenv.system == "x86_64-linux";
   bsdPredicate = stdenv.system == "x86_64-freebsd";
-  darwinPredicate = stdenv.system == "x86_64-darwin";
-  metadata = assert linuxPredicate || bsdPredicate || darwinPredicate;
+  metadata = assert linuxPredicate || bsdPredicate;
     if linuxPredicate then
       { arch = "linux-amd64";
         sha256 = "0b3h0d0qsrjx99kcd2cf71xijh44wm5rpm2sr54snh3f7macj2p1";
@@ -14,9 +13,7 @@ let
         sha256 = "1yydm4ndkh80phiwk41kcf6pizvwrfhsfk3jwrrgr42wsnkkgj0q";
         archiveBinaryPath = "freebsd/amd64"; }
     else
-      { arch = "darwin-amd64";
-        sha256 = "1dj74cf1ahihia2dr9ii9ky0cpmywn42z2iq1vkbrrcggjvyrnlf";
-        archiveBinaryPath = "darwin/amd64"; };
+      throw "unsupported platform";
 in stdenv.mkDerivation rec {
   shortname = "github-release";
   name = "${shortname}-${version}";

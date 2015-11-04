@@ -11,10 +11,6 @@ let snapshotHash = if stdenv.system == "i686-linux"
       then "g2h9l35123r72hqdwayd9h79kspfb4y9"
       else if stdenv.system == "x86_64-linux"
       then "fnx2rf1j8zvrplcc7xzf89czn0hf3397"
-      else if stdenv.system == "i686-darwin"
-      then "3viz3fi2jx18qjwrc90nfhm9cik59my6"
-      else if stdenv.system == "x86_64-darwin"
-      then "h2bf3db4vwz5cjjkn98lxayivdc6dflp"
       else throw "no snapshot for platform ${stdenv.system}";
     snapshotName = "cargo-nightly-${platform}.tar.gz";
 in

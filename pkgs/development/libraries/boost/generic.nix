@@ -1,5 +1,5 @@
-{ stdenv, icu, expat, zlib, bzip2, python, fixDarwinDylibNames
-, toolset ? if stdenv.isDarwin then "clang" else null
+{ stdenv, icu, expat, zlib, bzip2, python
+, toolset ? if stdenv.cc.isClang then "clang" else null
 , enableRelease ? true
 , enableDebug ? false
 , enableSingleThreaded ? false
@@ -123,7 +123,7 @@ stdenv.mkDerivation {
     license = stdenv.lib.licenses.boost;
 
     platforms = platforms.unix;
-    maintainers = with maintainers; [ simons wkennington ];
+    maintainers = with maintainers; [ wkennington ];
   };
 
   preConfigure = ''
@@ -138,13 +138,9 @@ stdenv.mkDerivation {
     EOF
   '';
 
-  NIX_CFLAGS_LINK = stdenv.lib.optionalString stdenv.isDarwin
-                      "-headerpad_max_install_names";
-
   enableParallelBuilding = true;
 
-  buildInputs = [ icu expat zlib bzip2 python ]
-    ++ stdenv.lib.optional stdenv.isDarwin fixDarwinDylibNames;
+  buildInputs = [ icu expat zlib bzip2 python ];
 
   configureScript = "./bootstrap.sh";
   configureFlags = commonConfigureFlags ++ [

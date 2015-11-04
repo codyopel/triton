@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, openssl, kerberos, db, gettext, pam, fixDarwinDylibNames }:
+{ lib, stdenv, fetchurl, openssl, kerberos, db, gettext, pam }:
 
 with stdenv.lib;
 stdenv.mkDerivation rec {
@@ -11,8 +11,7 @@ stdenv.mkDerivation rec {
 
   buildInputs =
     [ openssl db gettext kerberos ]
-    ++ lib.optional stdenv.isLinux pam
-    ++ lib.optional stdenv.isDarwin fixDarwinDylibNames;
+    ++ lib.optional stdenv.isLinux pam;
 
   patches = [ ./missing-size_t.patch ]; # https://bugzilla.redhat.com/show_bug.cgi?id=906519
   patchFlags = "-p0";
@@ -30,12 +29,10 @@ stdenv.mkDerivation rec {
                         )
   '';
 
-  installFlags = lib.optional stdenv.isDarwin [ "framedir=$(out)/Library/Frameworks/SASL2.framework" ];
-
   meta = {
     homepage = "http://cyrusimap.web.cmu.edu/";
     description = "library for adding authentication support to connection-based protocols";
     platforms = platforms.unix;
-    maintainers = with maintainers; [ simons ];
+    maintainers = with maintainers; [ ];
   };
 }

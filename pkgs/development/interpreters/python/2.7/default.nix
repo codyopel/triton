@@ -5,7 +5,7 @@
 
 , db, gdbm, ncurses, sqlite, readline
 
-, tcl ? null, tk ? null, xlibsWrapper ? null, libX11 ? null, x11Support ? !stdenv.isCygwin
+, tcl ? null, tk ? null, xlibsWrapper ? null, libX11 ? null, x11Support ? true
 , zlib ? null, zlibSupport ? true
 , expat, libffi
 }:
@@ -76,8 +76,14 @@ let
     name = "python-${version}";
     pythonVersion = majorVersion;
 
-    inherit majorVersion version src patches buildInputs preConfigure
-            configureFlags;
+    inherit
+      majorVersion
+      version
+      src
+      patches
+      buildInputs
+      preConfigure
+      configureFlags;
 
     LDFLAGS = stdenv.lib.optionalString stdenv.cc.isGNU "-lgcc_s";
     C_INCLUDE_PATH = concatStringsSep ":" (map (p: "${p}/include") buildInputs);
@@ -150,7 +156,7 @@ let
     if includeModules then null else stdenv.mkDerivation rec {
       name = "python-${moduleName}-${python.version}";
 
-      inherit src patches preConfigure postConfigure configureFlags;
+      inherit src patches preConfigure configureFlags;
 
       buildInputs = [ python ] ++ deps;
 

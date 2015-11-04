@@ -9275,11 +9275,6 @@ let
 
   zookeeper_mt = callPackage ../development/libraries/zookeeper_mt { };
 
-  xquartz = callPackage ../servers/x11/xquartz { };
-  quartz-wm = callPackage ../servers/x11/quartz-wm {
-    stdenv = clangStdenv;
-  };
-
   xorg = recurseIntoAttrs (lib.callPackagesWith pkgs ../servers/x11/xorg/default.nix {
     inherit clangStdenv fetchurl fetchgit fetchpatch stdenv pkgconfig intltool freetype fontconfig
       libxslt expat libpng zlib perl mesa_drivers spice_protocol
