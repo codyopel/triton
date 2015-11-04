@@ -49,8 +49,9 @@ in
     inherit (xorg) xorgcffiles;
     x11BuildHook = ./imake.sh;
     patches = [./imake.patch];
-    CFLAGS = [ "-DIMAKE_COMPILETIME_CPP=\"gcc\""
-    ];
+    setupHook = null;
+    CFLAGS = [ "-DIMAKE_COMPILETIME_CPP=\\\"${"gcc"}\\\"" ];
+    tradcpp = null;
   };
 
   mkfontdir = attrs: attrs // {
