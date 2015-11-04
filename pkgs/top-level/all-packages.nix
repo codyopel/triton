@@ -3785,8 +3785,6 @@ let
     stripped = false;
   }));
 
-  gccApple = throw "gccApple is no longer supported";
-
   gccCrossStageStatic = let
     libcCross1 =
       if stdenv.cross.libc == "msvcrt" then windows.mingw_w64_headers
