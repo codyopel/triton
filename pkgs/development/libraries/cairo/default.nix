@@ -69,8 +69,9 @@ stdenv.mkDerivation rec {
     "--disable-gallium"
     (enFlag "png" (libpng != null) "yes")
     # Prefer gles over gl
-    "--disable-gl"
-    (enFlag "glesv2" true "yes")
+    #"--disable-gl"
+    "--enable-gl"
+    (enFlag "glesv2" false "yes")
     # FIXME: cogl recursion
     #(enFlag "cogl" (cogl != null) "yes")
     "--disable-cogl"
@@ -79,7 +80,7 @@ stdenv.mkDerivation rec {
     "--disable-directfb"
     "--disable-vg"
     (enFlag "egl" true "yes")
-    "--disable-glx"
+    "--enable-glx"
     "--disable-wgl"
     (enFlag "script" true "yes")
     (enFlag "ft" true "yes")
@@ -141,7 +142,9 @@ stdenv.mkDerivation rec {
     xorg.libXrender
   ];
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = ''
+    rm -rf $out/share/gtk-doc
+  '' + glib.flattenInclude;
 
   enableParallelBuilding = true;
 
