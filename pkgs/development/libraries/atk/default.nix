@@ -41,8 +41,7 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     glib
-    libintlOrEmpty
-  ];
+  ] ++ libintlOrEmpty;
 
   postInstall = "rm -rf $out/share/gtk-doc";
 
