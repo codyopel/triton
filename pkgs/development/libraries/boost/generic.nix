@@ -126,6 +126,10 @@ stdenv.mkDerivation {
     maintainers = with maintainers; [ wkennington ];
   };
 
+  NIX_CFLAGS_COMPILE = [
+    "-std=c++11"
+  ];
+
   preConfigure = ''
     NIX_LDFLAGS="$(echo $NIX_LDFLAGS | sed "s,$out,$lib,g")"
     if test -f tools/build/src/tools/clang-darwin.jam ; then
