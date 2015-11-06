@@ -4,7 +4,10 @@ stdenv.mkDerivation rec {
   name = "socat-1.7.3.0";
 
   src = fetchurl {
-    url = "http://www.dest-unreach.org/socat/download/${name}.tar.bz2";
+    urls = [
+      "mirror://gentoo/distfiles/${name}.tar.bz2"
+      "http://www.dest-unreach.org/socat/download/${name}.tar.bz2"
+    ];
     sha256 = "011ydc0x8camplf8l6mshs3v5fswarld8v0wf7grz6rjq18fhrq7";
   };
 
