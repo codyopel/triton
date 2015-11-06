@@ -56,41 +56,46 @@ with {
 
 let
   libOnly = prefix == "lib";
+  ifFull =
+    a:
+    if libOnly then
+      null
+    else
+      a;
 
   hasXlibs = xorg != null;
 
   optLibcap = shouldUsePkg libcap;
   hasCaps = optLibcap != null || stdenv.isFreeBSD; # Built-in on FreeBSD
 
-  optOss = if libOnly then null else shouldUsePkg oss;
+  optOss = ifFull (shouldUsePkg oss);
   hasOss = optOss != null || stdenv.isFreeBSD; # Built-in on FreeBSD
 
-  optCoreaudio = if libOnly then null else shouldUsePkg coreaudio;
-  optAlsaLib = if libOnly then null else shouldUsePkg alsaLib;
-  optEsound = if libOnly then null else shouldUsePkg esound;
+  optCoreaudio = ifFull (shouldUsePkg coreaudio);
+  optAlsaLib = ifFull (shouldUsePkg alsaLib);
+  optEsound = ifFull (shouldUsePkg esound);
   optGlib = shouldUsePkg glib;
-  optGtk3 = if libOnly || !hasXlibs then null else shouldUsePkg gtk3;
-  optGconf = if libOnly then null else shouldUsePkg gconf;
-  optAvahi = if libOnly then null else shouldUsePkg avahi;
-  optLibjack2 = if libOnly then null else shouldUsePkg libjack2;
+  optGtk3 = ifFull (shouldUsePkg gtk3);
+  optGconf = ifFull (shouldUsePkg gconf);
+  optAvahi = ifFull (shouldUsePkg avahi);
+  optLibjack2 = ifFull (shouldUsePkg libjack2);
   optLibasyncns = shouldUsePkg libasyncns;
-  optLirc = if libOnly then null else shouldUsePkg lirc;
+  optLirc = ifFull (shouldUsePkg lirc);
   optDbus = shouldUsePkg dbus;
-  optSbc = if libOnly then null else shouldUsePkg sbc;
-  optBluez = if optDbus == null || optSbc == null then null
-    else shouldUsePkg bluez;
-  optUdev = if libOnly then null else shouldUsePkg udev;
-  optOpenssl = if libOnly then null else shouldUsePkg openssl;
-  optFftw = shouldUsePkg fftw;
-  optSpeexdsp = shouldUsePkg speexdsp;
-  optSoxr = if libOnly then null else shouldUsePkg soxr;
-  optSystemd = shouldUsePkg systemd;
-  optWebrtc-audio-processing =
-    if libOnly then
+  optSbc = ifFull (shouldUsePkg sbc);
+  optBluez =
+    if optDbus == null || optSbc == null then
       null
     else
-      shouldUsePkg webrtc-audio-processing;
-  hasWebrtc = if libOnly then null else optWebrtc-audio-processing != null;
+      shouldUsePkg bluez;
+  optUdev = ifFull (shouldUsePkg udev);
+  optOpenssl = ifFull (shouldUsePkg openssl);
+  optFftw = shouldUsePkg fftw;
+  optSpeexdsp = shouldUsePkg speexdsp;
+  optSoxr = ifFull (shouldUsePkg soxr);
+  optSystemd = shouldUsePkg systemd;
+  optWebrtc-audio-processing = ifFull (shouldUsePkg webrtc-audio-processing);
+  hasWebrtc = ifFull (optWebrtc-audio-processing != null);
 
   # Pick a database to use
   databaseName = if tdb != null then "tdb" else
@@ -117,8 +122,8 @@ stdenv.mkDerivation rec {
   ];
 
   configureFlags = [
-    (otFlag "localstatedir" "/var")
-    (otFlag "sysconfdir" "/etc")
+    (otFlag "localstatedir" true "/var")
+    (otFlag "sysconfdir" true "/etc")
     (enFlag "atomic-arm-memory-barrier" false null) # TODO: Enable on armv8
     (enFlag "neon-opt" false null) # TODO: Enable on armv8
     (enFlag "x11" hasXlibs null)
