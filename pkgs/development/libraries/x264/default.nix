@@ -1,29 +1,50 @@
-{stdenv, fetchurl, yasm, enable10bit ? false}:
+{ stdenv, fetchurl
+, yasm
+
+, enable10bit ? false
+}:
+
+with {
+  inherit (stdenv)
+    isi686
+    is64bit;
+  inherit (stdenv.lib)
+    enFlag
+    otFlag;
+};
+
+assert enable10bit -> is64bit;
 
 stdenv.mkDerivation rec {
-  version = "snapshot-20141218-2245-stable";
-  name = "x264-20141218-2245";
+  name = "x264-${version}";
+  version = "20151105";
 
   src = fetchurl {
-    url = "ftp://ftp.videolan.org/pub/videolan/x264/snapshots/x264-${version}.tar.bz2";
-    sha256 = "1gp1f0382vh2hmgc23ldqyywcfljg8lsgl2849ymr14r6gxfh69m";
+    url = "http://ftp.videolan.org/pub/videolan/x264/snapshots/" +
+          "x264-snapshot-${version}-2245-stable.tar.bz2";
+    sha256 = "1gp1f0382vh2hmgc23lxqyywcfljg8lsgl2849ymr14r6gxfh69m";
   };
 
-  patchPhase = ''
-    sed -i s,/bin/bash,${stdenv.shell}, configure version.sh
+  postPatch = ''
+    patchShebangs ./configure
+    patchShebangs ./version.sh
   '';
 
-  configureFlags = [ "--enable-shared" ]
-    ++ stdenv.lib.optional (!stdenv.isi686) "--enable-pic"
-    ++ stdenv.lib.optional (enable10bit) "--bit-depth=10";
+  configureFlags = [
+    "--enable-shared"
+    (enFlag "pic" (!isi686) null)
+    (otFlag "bit-depth" (enable10bit && is64bit) "10")
+  ];
 
-  buildInputs = [ yasm ];
+  nativeBuildInputs = [
+    yasm
+  ];
 
   meta = with stdenv.lib; {
-    description = "library for encoding H264/AVC video streams";
-    homepage    = http://www.videolan.org/developers/x264.html;
-    license     = licenses.gpl2;
-    platforms   = platforms.unix;
-    maintainers = [ maintainers.spwhitt ];
+    description = "Library for encoding h.264/AVC video streams";
+    homepage = http://www.videolan.org/developers/x264.html;
+    license = licenses.gpl2;
+    maintainers = [ ];
+    platforms = platforms.unix;
   };
 }
