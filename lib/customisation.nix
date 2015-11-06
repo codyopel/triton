@@ -228,9 +228,13 @@ rec {
   wtFlag = atFlag "with-" "without-";
   otFlag =
     flag:
+    bool:
     value:
 
-    atFlag "" "" flag true value;
+    if bool then
+      atFlag "" "" flag bool value
+    else
+      null;
 
   cmFlag =
     flag:
