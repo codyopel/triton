@@ -1,5 +1,5 @@
 { stdenv, fetchurl, cmake, ncurses, zlib, openssl, pcre, boost, judy, bison, libxml2
-, libaio, libevent, groff, jemalloc, perl, fixDarwinDylibNames
+, libaio, libevent, groff, jemalloc, perl
 }:
 
 with stdenv.lib;
@@ -13,8 +13,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [ cmake ncurses openssl zlib pcre libxml2 boost judy bison libevent ]
-    ++ stdenv.lib.optionals stdenv.isLinux [ jemalloc libaio ]
-    ++ stdenv.lib.optionals stdenv.isDarwin [ perl fixDarwinDylibNames ];
+    ++ stdenv.lib.optionals stdenv.isLinux [ jemalloc libaio ];
 
   patches = stdenv.lib.optional stdenv.isDarwin ./my_context_asm.patch;
 
@@ -116,7 +115,7 @@ stdenv.mkDerivation rec {
     description = "An enhanced, drop-in replacement for MySQL";
     homepage    = https://mariadb.org/;
     license     = stdenv.lib.licenses.gpl2;
-    maintainers = with stdenv.lib.maintainers; [ thoughtpolice wkennington ];
+    maintainers = with stdenv.lib.maintainers; [ wkennington ];
     platforms   = stdenv.lib.platforms.all;
   };
 }
