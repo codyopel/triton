@@ -17,7 +17,7 @@ let
       pkgs.gst_all.gstPluginsUgly
       pkgs.gst_all.gstPluginsBad
       pkgs.gst_all.gstFfmpeg # for mp3 playback
-      pkgs.phonon_qt5_backend_gstreamer
+      pkgs.phonon_backend_gstreamer_qt5
       pkgs.gst_all_1.gstreamer
       pkgs.gst_all_1.gst-plugins-base
       pkgs.gst_all_1.gst-plugins-good
