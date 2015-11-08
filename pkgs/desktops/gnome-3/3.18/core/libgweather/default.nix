@@ -1,7 +1,9 @@
 { stdenv, fetchurl
+, gettext
 , intltool
 , pkgconfig
 
+, glib
 , libxml2
 , gtk3
 , libsoup
@@ -15,25 +17,29 @@
 }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "libgweather-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/libgweather/${versionMajor}/${name}.tar.xz";
+    sha256 = "1l3sra84k5dnavbdbjyf1ar84xmjszpnnldih6mf45kniwpjkcll";
+  };
 
   configureFlags = [
     "--enable-nls"
     "--enable-introspection=yes"
     "--with-zoneinfo-dir=${tzdata}/share/zoneinfo"
   ];
-
-  makeFlags = [
-    "INTROSPECTION_GIRDIR=$(out)/share/gir-1.0/"
-    "INTROSPECTION_TYPELIBDIR=$(out)/lib/girepository-1.0"
-  ];
-
   nativeBuildInputs = [
-    pkgconfig
+    gettext
     intltool
+    pkgconfig
   ];
 
   propagatedBuildInputs = [
+    glib
     libxml2
     gtk3
     libsoup
