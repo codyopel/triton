@@ -22,7 +22,7 @@ stdenv.mkDerivation rec {
   src = fetchurl {
     url = "http://ftp.videolan.org/pub/videolan/x264/snapshots/" +
           "x264-snapshot-${version}-2245-stable.tar.bz2";
-    sha256 = "1gp1f0382vh2hmgc23lxqyywcfljg8lsgl2849ymr14r6gxfh69m";
+    sha256 = "1b39plz7lzmv4mrkpa3rsyc9c5sv2afjmkys6nfryg24wpn0ik9b";
   };
 
   postPatch = ''
