@@ -9,8 +9,8 @@ stdenv.mkDerivation rec {
   };
 
   meta = {
+    description = "A POSIX-compliant implementation of /bin/sh";
     homepage = http://gondor.apana.org.au/~herbert/dash/;
-    description = "A POSIX-compliant implementation of /bin/sh that aims to be as small as possible";
     hydraPlatforms = stdenv.lib.platforms.linux;
   };
 }
