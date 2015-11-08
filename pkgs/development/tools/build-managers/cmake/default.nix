@@ -11,10 +11,15 @@
   , qt4
 }:
 
-with stdenv.lib;
+with {
+  inherit (stdenv.lib)
+    concatStringsSep
+    optional
+    optionalString;
+};
 
 let
-  os = stdenv.lib.optionalString;
+  os = optionalString;
   majorVersion = "3.3";
   minorVersion = "2";
   version = "${majorVersion}.${minorVersion}";
@@ -26,50 +31,56 @@ stdenv.mkDerivation rec {
   inherit majorVersion;
 
   src = fetchurl {
-    url = "${meta.homepage}files/v${majorVersion}/cmake-${version}.tar.gz";
+    url = "http://www.cmake.org/files/v${majorVersion}/cmake-${version}.tar.gz";
     sha256 = "08pwy9ip9cgwgynhn5vrjw8drw29gijy1rmziq22n65zds6ifnp7";
   };
 
-  enableParallelBuilding = true;
+  setupHook = ./setup-hook.sh;
 
   patches =
     # Don't search in non-Nix locations such as /usr, but do search in
     # Nixpkgs' Glibc.
     optional (stdenv ? glibc) ./search-path-3.2.patch;
 
-  buildInputs =
-    [ bzip2 curl expat libarchive xz zlib ]
-    ++ optional useNcurses ncurses
-    ++ optional useQt4 qt4;
-
-  CMAKE_PREFIX_PATH = stdenv.lib.concatStringsSep ":" buildInputs;
-
-  configureFlags =
-    [ "--docdir=/share/doc/${name}"
-      "--mandir=/share/man"
-      "--no-system-jsoncpp"
-      "--system-libs"
-    ]
-    ++ optional useQt4 "--qt-gui"
+  configureFlags = [
+    "--docdir=/share/doc/${name}"
+    "--mandir=/share/man"
+    "--no-system-jsoncpp"
+    "--system-libs"
+  ] ++ optional useQt4 "--qt-gui"
     ++ ["--"]
     ++ optional (!useNcurses) "-DBUILD_CursesDialog=OFF";
 
-  setupHook = ./setup-hook.sh;
+  preConfigure = optionalString (stdenv ? glibc) ''
+    source $setupHook
+    fixCmakeFiles .
+    substituteInPlace Modules/Platform/UnixPaths.cmake \
+      --subst-var-by glibc ${stdenv.glibc}
+  '';
+
+  buildInputs = [
+    bzip2
+    curl
+    expat
+    libarchive
+    xz
+    zlib
+  ] ++ optional useNcurses ncurses
+    ++ optional useQt4 qt4;
+
+  CMAKE_PREFIX_PATH = concatStringsSep ":" buildInputs;
 
   dontUseCmakeConfigure = true;
+  enableParallelBuilding = true;
 
-  preConfigure = optionalString (stdenv ? glibc)
-    ''
-      source $setupHook
-      fixCmakeFiles .
-      substituteInPlace Modules/Platform/UnixPaths.cmake \
-        --subst-var-by glibc ${stdenv.glibc}
-    '';
-
-  meta = {
-    homepage = http://www.cmake.org/;
+  meta = with stdenv.lib; {
     description = "Cross-Platform Makefile Generator";
-    platforms = if useQt4 then qt4.meta.platforms else stdenv.lib.platforms.all;
-    maintainers = with stdenv.lib.maintainers; [ ];
+    homepage = http://www.cmake.org/;
+    maintainers = with maintainers; [ ];
+    platforms =
+      if useQt4 then
+        qt4.meta.platforms
+      else
+        platforms.all;
   };
 }
