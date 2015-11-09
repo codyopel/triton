@@ -1,5 +1,7 @@
 { stdenv, fetchurl
 , pkgconfig
+, gettext
+
 , python
 , libxml2Python
 , libxslt
@@ -29,30 +31,47 @@ stdenv.mkDerivation rec {
     sha256 = "0avpmyhzz5b3pyfpkp8iq5ym5r5w7zs3a396hqkdpdsiym0vrazc";
   };
 
-  # this should probably be setuphook for glib
+  configureFlags = [
+    "--enable-nls"
+    "--disable-date-in-gnome-version"
+    "--enable-compile-warnings"
+    "--enable-introspection"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--with-x"
+  ];
+
   NIX_CFLAGS_COMPILE = [
+    # this should probably be setuphook for glib
     "-I${glib}/include/gio-unix-2.0"
   ];
 
-  buildInputs = [
+  nativeBuildInputs = [
+    gettext
     pkgconfig
-    python
-    libxml2Python
     libxslt
     which
-    libX11
-    xkeyboard_config
+    intltool
+  ];
+
+  buildInputs = [
+    glib
+    gnome_doc_utils
+    gobjectIntrospection
+    gtk3
     isocodes
     itstool
-    wayland
-    gtk3
-    glib
-    intltool
-    gnome_doc_utils
     libxkbfile
-    gobjectIntrospection
+    libxml2Python
+    python
+    wayland
+    xkeyboard_config
+    xorg.libX11
     xorg.libXext
     xorg.libXrandr
+    xorg.xproto
+    xorg.randrproto
   ];
 
   propagatedBuildInputs = [
