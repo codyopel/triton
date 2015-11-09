@@ -476,6 +476,8 @@ let
     qt4 = null;
   };
 
+  libgudev = callPackage ../all-pkgs/libgudev { };
+
   lightdm_gtk = callPackage ../all-pkgs/lightdm {
     qt5 = null;
   };
