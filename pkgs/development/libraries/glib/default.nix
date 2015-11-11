@@ -4,35 +4,22 @@
 , pkgconfig
 , python
 
+, attr
+#, fam
 , libiconv
 , libintlOrEmpty
 , zlib
 , libffi
 , pcre
 , libelf
+
 , check ? false
 }:
 
 with {
   inherit (stdenv.lib)
-    enFlag
-    wtFlag;
+    enFlag;
 };
-
-# TODO:
-# * Add gio-module-fam
-#     Problem: cyclic dependency on gamin
-#     Possible solution: build as a standalone module, set env. vars
-# * Make it build without python
-#     Problem: an example (test?) program needs it.
-#     Possible solution: disable compilation of this example somehow
-#     Reminder: add 'sed -e 's@python2\.[0-9]@python@' -i
-#       $out/bin/gtester-report' to postInstall if this is solved
-# * Use --enable-installed-tests for GNOME-related packages,
-#     and use them as a separately installed tests run by Hydra
-#     (they should test an already installed package)
-#     https://wiki.gnome.org/GnomeGoals/InstalledTests
-# * Support org.freedesktop.Application, including D-Bus activation from desktop files
 
 let
   # Some packages don't get "Cflags" from pkgconfig correctly
@@ -40,7 +27,7 @@ let
   # This is intended to be run in postInstall of any package
   # which has $out/include/ containing just some disjunct directories.
   flattenInclude = ''
-    for dir in "$out"/include/*; do
+    for dir in "$out"/include/* ; do
       cp -r "$dir"/* "$out/include/"
       rm -r "$dir"
       ln -s . "$dir"
@@ -54,28 +41,23 @@ assert stdenv.cc.isGNU;
 stdenv.mkDerivation rec {
   name = "glib-${version}";
   versionMajor = "2.46";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/glib/${versionMajor}/${name}.tar.xz";
-    sha256 = "1yzxr1ip3l0m9ydk5nq32piq70c9f17p5f0jyvlsghzbaawh67ss";
+    sha256 = "1nrkswmqcmn16fs79q7iy72f89n3yxncqqwil30ijrq36wp74cah";
   };
 
   setupHook = ./setup-hook.sh;
 
   configureFlags = [
-    "--disable-gc-friendly"
-    "--enable-mem-pools"
-    "--enable-rebuilds"
-    "--disable-installed-tests"
-    "--disable-always-build-tests"
-    "--enable-large-file"
-    # TODO: selinux support
-    #(enFlag "selinux" (selinux != null) null)
+    "--enable-shared"
+    # Static is necessary for qemu-nix to support static userspace translators
+    "--enable-static"
     "--disable-selinux"
     # use fam for file system monitoring
-    "--enable-fam"
+    "--disable-fam"
     "--enable-xattr"
     (enFlag "libelf" (libelf != null) null)
     "--disable-gtk-doc"
@@ -86,11 +68,10 @@ stdenv.mkDerivation rec {
     "--disable-systemtap"
     "--disable-coverage"
     "--enable-Bsymbolic"
-    #znodelete
-    #compile-warnings
-    (wtFlag "python" (python != null) "${python.interpreter}")
+    "--enable-compile-warnings"
     "--with-threads=posix"
-    (wtFlag "pcre" (pcre != null) "system")
+    # TODO: cite issue external pcre
+    "--with-pcre=internal"
   ];
 
   nativeBuildInputs = [
@@ -101,19 +82,19 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
+    attr
+    #fam
     libelf
-    libffi
     libiconv
-    pcre
+    libffi
     zlib
   ] ++ libintlOrEmpty;
 
-  postInstall = ''
-    rm -rvf $out/share/gtk-doc
-  '';
+  postInstall = "rm -rvf $out/share/gtk-doc";
 
   # TODO: fix or disable failing tests
   doCheck = false;
+  dontDisableStatic = true;
   enableParallelBuilding = true;
   DETERMINISTIC_BUILD = 1;
 
