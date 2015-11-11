@@ -29,49 +29,49 @@
 stdenv.mkDerivation rec {
   name = "gvfs-${version}";
   versionMajor = "1.26";
-  versionMinor = "1.1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gvfs/${versionMajor}/${name}.tar.xz";
-    sha256 = "0vf0dm4hsm2na5ws4cfby0zaj2xk69a8l5vv01zivnv4wj3gkb9d";
+    sha256 = "064dsjrdjcbi38zl38jhh4r9jcpiygg7x4c8s6s2rb757l7nwnv9";
   };
 
   nativeBuildInputs = [
-    pkgconfig
+    docbook_xsl
     intltool
     libtool
+    libxslt
+    makeWrapper
+    pkgconfig
   ];
 
   buildInputs = [
-    makeWrapper
-    glib
+    avahi
     dbus.libs
-    udev udisks2
+    fuse
+    glib
+    gnome3.gcr
+    libarchive
+    libcdio
     libgcrypt
     libgphoto2
-    avahi
-    libarchive
-    fuse
-    libcdio
-    libxml2
-    libxslt
-    docbook_xsl
-    samba
     libmtp
-    gnome3.gcr
+    libxml2
+    samba
+    udev
+    udisks2
   ] ++ stdenv.lib.optionals gnomeSupport [
-    gtk3
-    # ToDo: a ligther version of libsoup to have FTP/HTTP support?
-    gnome.libsoup
-    libgnome_keyring
     gconf
-    # ToDo: not working and probably useless until gnome3 from x-updates
+    gnome.libsoup
+    gtk3
+    libgnome_keyring
   ];
 
   # ToDo: one probably should specify schemas for samba and others here
   preFixup = ''
-    wrapProgram $out/libexec/gvfsd --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
+    wrapProgram $out/libexec/gvfsd \
+      --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
   '';
 
   enableParallelBuilding = true;
