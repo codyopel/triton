@@ -22,6 +22,7 @@
 , wayland
 , xlibsWrapper
 , xorg
+
 , tests ? false
 }:
 
@@ -34,12 +35,12 @@ with {
 stdenv.mkDerivation rec {
   name = "gtk+-${version}";
   versionMajor = "3.18";
-  versionMinor = "2";
+  versionMinor = "3";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gtk+/${versionMajor}/${name}.tar.xz";
-    sha256 = "0lp1hn0qydxx03bianzzr0a4maqzsvylrkzr7c3p0050qihwbgjx";
+    sha256 = "0iimb57g3qj24ka5rgx9l1srh2vk0wqghxinn1hf4l9zz68ngizk";
   };
 
   # demos fail to install, no idea where the problem is
@@ -59,23 +60,22 @@ stdenv.mkDerivation rec {
     (enFlag "wayland-backend" (wayland != null) null)
     (enFlag "mir-backend" false null)
     "--disable-quartz-relocation"
-    #explicit-deps
-    (enFlag "glibtest" tests null)
+    "--enable-explicit-deps"
+    "--enable-glibtest"
     "--enable-modules"
     (enFlag "cups" (cups != null) null)
     (enFlag "papi" false null)
-    # FIXME: not detecting rest
-    #(enFlag "cloudprint" (gnome3.rest != null && json_glib != null) null)
-    (enFlag "test-print-backend" tests null)
-    #compile-schemas
-    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    (enFlag "cloudprint" (gnome3.rest != null && json_glib != null) null)
+    (enFlag "test-print-backend" (cups != null) null)
+    "--enable-schemas-compile"
+    (enFlag "introspection" (gobjectIntrospection != null) null)
     (enFlag "colord" (colord != null) null)
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
     "--disable-man"
-    #doc-cross-reference
-    #Bsymbolic
+    "--disable-doc-cross-references"
+    "--enable-Bsymbolic"
     (wtFlag "x" (xorg != null) null)
   ];
 
@@ -121,8 +121,10 @@ stdenv.mkDerivation rec {
     pango # pkgconfig
   ];
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = "rm -rvf $out/share/gtk-doc";
 
+  # TODO: disable unnecessary tests
+  doCheck = false;
   enableParallelBuilding = true;
 
   passthru = {
