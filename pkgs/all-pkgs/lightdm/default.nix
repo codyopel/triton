@@ -25,13 +25,13 @@ with {
 
 stdenv.mkDerivation rec {
   name = "lightdm-${version}";
-  versionMajor = "1.16";
-  versionMinor = "3";
+  versionMajor = "1.17";
+  versionMinor = "1";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "https://launchpad.net/lightdm/${versionMajor}/${version}/+download/${name}.tar.xz";
-    sha256 = "0jsvpg86nzwzacnr1bfzw81432j6m6lg2daqgy04ywj976k0x2y8";
+    sha256 = "0asf4r09cix6n912jpgz3y6ricwchkv6dp38f1lrzb82al0ciba2";
   };
 
   patches = [
@@ -39,15 +39,21 @@ stdenv.mkDerivation rec {
   ];
 
   configureFlags = [
-    (enFlag "liblightdm-qt" false null)
+    "--sysconfdir=/etc"
+    "--localstatedir=/var"
+    (enFlag "introspection" (gobjectIntrospection != null) null)
+    (enFlag "vala" (vala != null) null)
+    "--disable-liblightdm-qt"
     (enFlag "liblightdm-qt5" (qt5 != null) null)
-    (enFlag "libaudit" true null)
-    (enFlag "tests" true null)
+    (enFlag "libaudit" (libaudit != null) null)
+    (enFlag "tests" doCheck null)
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-nls"
     #--with-user-session
     #--with-greeter-session
     #--with-greeter-user
-    "--localstatedir=/var"
-    "--sysconfdir=/etc"
   ];
 
   nativeBuildInputs = [
@@ -79,6 +85,7 @@ stdenv.mkDerivation rec {
     "localstatedir=\${TMPDIR}"
   ];
 
+  doCheck = false;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
