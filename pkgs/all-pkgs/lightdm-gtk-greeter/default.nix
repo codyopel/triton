@@ -26,13 +26,17 @@ stdenv.mkDerivation rec {
   };
 
   configureFlags = [
+    "--sysconfdir=/etc"
+    "--localstatedir=/var"
+    "--enable-introspection"
+    "--enable-compile-warnings"
     #"--enable-libindicator"
     #"--enable-libido"
-    "--with-libxklavier"
-    "--enable-at-spi"
+    #"--enable-at-spi-command=command"
+    #"--enable-indicator-services-command=command"
     "--disable-kill-on-sigterm"
-    "--localstatedir=/var"
-    "--sysconfdir=/etc"
+    "--enable-nls"
+    "--with-libxklavier"
   ];
 
   nativeBuildInputs = [
@@ -59,10 +63,12 @@ stdenv.mkDerivation rec {
   postInstall = ''
     substituteInPlace "$out/share/xgreeters/lightdm-gtk-greeter.desktop" \
       --replace "Exec=lightdm-gtk-greeter" "Exec=$out/sbin/lightdm-gtk-greeter"
+
     wrapProgram "$out/sbin/lightdm-gtk-greeter" \
       --prefix XDG_DATA_DIRS ":" "${hicolor_icon_theme}/share"
   '';
 
+  doCheck = true;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
