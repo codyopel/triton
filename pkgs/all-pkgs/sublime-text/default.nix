@@ -24,7 +24,7 @@ let
 in
 
 let
-  sublime-text-bin = stdenv.mkDerivation {
+  sublime-text-bin = stdenv.mkDerivation rec {
     name = "sublime-text-bin-${version}";
 
     src = fetchurl {
