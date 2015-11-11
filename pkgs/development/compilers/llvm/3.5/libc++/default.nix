@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchurl, cmake, libcxxabi, fixDarwinDylibNames }:
+{ lib, stdenv, fetchurl, cmake, libcxxabi }:
 
 let version = "3.5.2"; in
 
@@ -20,9 +20,7 @@ stdenv.mkDerivation rec {
                 '"${libcxxabi}/lib/libc++abi.dylib"'
   '';
 
-  patches = [ ./darwin.patch ];
-
-  buildInputs = [ cmake libcxxabi ] ++ lib.optional stdenv.isDarwin fixDarwinDylibNames;
+  buildInputs = [ cmake libcxxabi ];
 
   cmakeFlags =
     [ "-DCMAKE_BUILD_TYPE=Release"
