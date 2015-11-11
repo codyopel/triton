@@ -13,27 +13,44 @@
 stdenv.mkDerivation rec {
   name = "gdk-pixbuf-${version}";
   versionMajor = "2.32";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gdk-pixbuf/${versionMajor}/${name}.tar.xz";
-    sha256 = "1g7kjxv67jcdasi14n7jan4icrnnppd1m99wrdmpv32k4m7vfcj4";
+    sha256 = "0ib1jap60xkv74ndha06y8ziglpspp77fz62skzfy4rv2by0dayk";
   };
 
   setupHook = ./setup-hook.sh;
 
   configureFlags = [
+    "--enable-gio-sniffing"
+    "--enable-rebuilds"
+    "--enable-nls"
+    "--enable-rpath"
+    "--enable-glibtest"
+    "--enable-modules"
+    "--enable-introspection"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--disable-man"
+    "--enable-Bsymbolic"
+    "--disable-installed-tests"
+    "--disable-always-build-tests"
+    "--disable-coverage"
+    "--enable-relocations"
+    "--with-libpng"
+    "--with-libjpeg"
     "--with-libjasper"
+    "--without-gdiplus"
     "--with-x11"
-    "--enable-introspection=yes"
   ];
 
   nativeBuildInputs = [
     gobjectIntrospection
-    libintlOrEmpty
     pkgconfig
-  ];
+  ] ++ libintlOrEmpty;
 
   buildInputs = [
     glib
@@ -44,7 +61,7 @@ stdenv.mkDerivation rec {
     libX11
   ];
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = "rm -rvf $out/share/gtk-doc";
 
   enableParallelBuilding = true;
 
