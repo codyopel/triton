@@ -1,22 +1,57 @@
-{stdenv, fetchurl, gtk3, aspell, pkgconfig, enchant, intltool}:
+{stdenv, fetchurl
+, intltool
+, pkgconfig
+
+, aspell
+, enchant
+, gobjectIntrospection
+, gtk3
+, xorg
+}:
 
 stdenv.mkDerivation rec {
-  name = "gtkspell-${version}";
-  version = "3.0.7";
+  name = "gtkspell3-3.0.7";
 
   src = fetchurl {
-    url = "mirror://sourceforge/gtkspell/gtkspell3-${version}.tar.gz";
+    url = "mirror://sourceforge/gtkspell/${name}.tar.gz";
     sha256 = "1hiwzajf18v9ik4nai3s7frps4ccn9s20nggad1c4k2mwb9ydwhk";
   };
 
-  buildInputs = [ aspell pkgconfig gtk3 enchant intltool ];
-  propagatedBuildInputs = [ enchant ];
+  configureFlags = [
+    "--disable-gtk2"
+    "--enable-gtk3"
+    "--enable-introspection"
+    "--disable-vala"
+    "--enable-nls"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-iso-codes"
+  ];
 
-  meta = {
-    homepage = "http://gtkspell.sourceforge.net/";
+  nativeBuildInputs = [
+    intltool
+    pkgconfig
+  ];
+
+  propagatedBuildInputs = [
+    enchant
+  ];
+
+  buildInputs = [
+    aspell
+    enchant
+    gobjectIntrospection
+    gtk3
+    xorg.libICE
+    xorg.libSM
+  ];
+
+  meta = with stdenv.lib; {
     description = "Word-processor-style highlighting GtkTextView widget";
-    license = stdenv.lib.licenses.gpl2Plus;
-    platforms = stdenv.lib.platforms.unix;
-    maintainers = with stdenv.lib.maintainers; [ fuuzetsu ];
+    homepage = http://gtkspell.sourceforge.net/;
+    license = licenses.gpl2Plus;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.unix;
   };
 }
