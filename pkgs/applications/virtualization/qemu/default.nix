@@ -21,7 +21,7 @@
 with stdenv;
 with stdenv.lib;
 let
-  n = "qemu-2.4.0";
+  n = "qemu-2.4.1";
 
   isKvmOnly = type == "kvm-only";
   isNix = type == "nix";
@@ -110,7 +110,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "http://wiki.qemu.org/download/${n}.tar.bz2";
-    sha256 = "0836gqv5zcl0xswwjcns3mlkn18lyz2fiq8rl1ihcm6cpf8vkc3j";
+    sha256 = "0xx1wc7lj5m3r2ab7f0axlfknszvbd8rlclpqz4jk48zid6czmg3";
   };
 
   nativeBuildInputs = [ pkgconfig libtool perl texinfo flex bison gettext makeWrapper ];
