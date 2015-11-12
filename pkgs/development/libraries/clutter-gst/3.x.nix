@@ -1,22 +1,31 @@
 { fetchurl, stdenv
 , pkgconfig
+
 , clutter
-, gtk3
-, glib
 , cogl
+, glib
+, gobjectIntrospection
+, gtk3
 , gst_all_1
 }:
 
 stdenv.mkDerivation rec {
   name = "clutter-gst-${version}";
   versionMajor = "3.0";
-  versionMinor = "10";
+  versionMinor = "14";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/clutter-gst/${versionMajor}/${name}.tar.xz";
-    sha256 = "130l8bpggqnyvwas8yad1s0zb0dpyrhlqsgivfxq89p9j8rbrg9d";
+    sha256 = "1qidm0q28q6w8gjd0gpqnk8fzqxv39dcp0vlzzawlncp8zfagj7p";
   };
+
+  configureFlags = [
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-introspection"
+  ];
 
   nativeBuildInputs = [
     pkgconfig
@@ -24,14 +33,15 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     clutter
-    gtk3
-    glib
     cogl
+    glib
+    gobjectIntrospection
+    gtk3
     gst_all_1.gstreamer
     gst_all_1.gst-plugins-base
   ];
 
-  postBuild = "rm -rf $out/share/gtk-doc";
+  postBuild = "rm -rvf $out/share/gtk-doc";
 
   enableParallelBuilding = true;
 
