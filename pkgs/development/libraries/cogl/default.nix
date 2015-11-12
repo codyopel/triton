@@ -2,19 +2,28 @@
 , gettext
 , pkgconfig
 
+, atk
 , bzip2
 , cairo
 , gdk_pixbuf
 , glib
 , gobjectIntrospection
 , gst_all_1
+, json_glib
 , libdrm
 , libintlOrEmpty
+, libxkbcommon
 , mesa_noglu
 , pango
 , wayland
 , xorg
 }:
+
+with {
+  inherit (stdenv.lib)
+    enFlag
+    optionalString;
+};
 
 stdenv.mkDerivation rec {
   name = "cogl-${version}";
@@ -27,26 +36,58 @@ stdenv.mkDerivation rec {
     sha256 = "14daxqrid5039xmq9yl4pk86awng1n9zgl6ysblhc4gw2ifzp7b8";
   };
 
+  postPatch = ''
+    # Do not build examples
+    sed -e "s/^\(SUBDIRS +=.*\)examples\(.*\)$/\1\2/" \
+      -i Makefile.am Makefile.in
+  '' + optionalString (!doCheck) ''
+    # For some reason the configure switch will not completely disable
+    # tests being built
+    sed -e "s/^\(SUBDIRS =.*\)test-fixtures\(.*\)$/\1\2/" \
+      -e "s/^\(SUBDIRS +=.*\)tests\(.*\)$/\1\2/" \
+      -e "s/^\(.*am__append.* \)tests\(.*\)$/\1\2/" \
+      -i Makefile.am Makefile.in || die
+  '';
+
   configureFlags = [
-    "--disable-examples-install"
-    "--disable-maintainer-flags"
+    "--disable-installed-tests"
+    #"--enable-emscripten"
+    "--disable-standalone"
+    "--disable-debug"
+    (enFlag "unit-tests" doCheck null)
     "--enable-cairo"
+    "--disable-profile"
+    "--disable-maintainer-flags"
     "--enable-deprecated"
-    "--enable-gdk-pixbuf"
+    "--enable-glibtest"
     "--enable-glib"
-    "--enable-glx"
-    "--enable-gl"
-    "--enable-cogl-gles2"
-    "--enable-xlib-egl-platform"
-    "--enable-introspection"
-    "--enable-kms-egl-platform"
+    "--enable-cogl-pango"
     "--enable-cogl-gst"
+    "--enable-cogl-path"
+    "--enable-gdk-pixbuf"
+    "--disable-quartz-image"
+    "--disable-examples-install"
     "--enable-gles1"
     "--enable-gles2"
-    "--enable-cogl-pango"
+    "--enable-gl"
+    "--enable-cogl-gles2"
+    "--enable-glx"
+    "--disable-wgl"
+    "--enable-null-egl-platform"
+    "--disable-gdl-egl-platform"
     "--enable-wayland-egl-platform"
+    "--enable-kms-egl-platform"
     "--enable-wayland-egl-server"
-    "--disable-profile"
+    "--disable-android-egl-platform"
+    "--disable-mir-egl-platform"
+    "--enable-xlib-egl-platform"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-nls"
+    "--enable-rpath"
+    "--enable-introspection"
+    "--with-x"
   ];
 
   nativeBuildInputs = [
@@ -56,26 +97,33 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     bzip2
-    cairo
     gdk_pixbuf
-    glib
     gobjectIntrospection
     gst_all_1.gstreamer
     gst_all_1.gst-plugins-base
     libdrm
-    pango
-    wayland
-    xorg.libX11
-    xorg.libXdamage
     xorg.libXfixes
   ];
 
   propagatedBuildInputs = [
-    mesa_noglu # pkg-config
-    xorg.libXcomposite # pkg-config
-    xorg.libXext # pkg-config
-    xorg.libXrandr # pkg-config
+    atk # pkgconfig
+    cairo # pkgconfig
+    glib # pkgconfig
+    json_glib
+    libxkbcommon
+    mesa_noglu # pkgconfig
+    pango
+    wayland
+    xorg.libX11
+    xorg.libXcomposite # pkgconfig
+    xorg.libXdamage
+    xorg.libXext # pkgconfig
+    xorg.libXi
+    xorg.libXrandr # pkgconfig
   ];
+
+  doCheck = false;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Library for using 3D graphics hardware for rendering";
