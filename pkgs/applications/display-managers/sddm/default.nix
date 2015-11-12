@@ -4,7 +4,7 @@
 }:
 
 let
-  version = "0.11.0";
+  version = "0.13.0";
 in
 stdenv.mkDerivation rec {
   name = "sddm-${version}";
@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
     owner = "sddm";
     repo = "sddm";
     rev = "v${version}";
-    sha256 = "1s1gm0xvgwzrpxgni3ngdj8phzg21gkk1jyiv2l2i5ayl0jdm7ig";
+    sha256 = "0c3q8lpb123m9k5x3i71mm8lmyzhknw77zxh89yfl8qmn6zd61i1";
   };
 
   nativeBuildInputs = [ cmake pkgconfig qttools ];
