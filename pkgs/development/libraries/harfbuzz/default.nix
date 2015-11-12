@@ -6,33 +6,48 @@
 , fontconfig
 , freetype
 , glib
+, gobjectIntrospection
 , graphite2
 , icu
 }:
 
 stdenv.mkDerivation rec {
-  name = "harfbuzz-1.0.4";
+  name = "harfbuzz-1.0.6";
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/harfbuzz/release/${name}.tar.bz2";
-    sha256 = "10a3yw6h6saqv17d2k74qk1zmpimrmpmxw90g4x0vh77aws3fc5h";
+    sha256 = "09ivk5m4y09ar4zi9r6db7gp234cy05h0ach7w22g9kqvkxsf5pn";
   };
 
   configureFlags = [
-    "--with-graphite2=yes"
-    "--with-icu=yes"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-introspection"
+    "--with-glib"
+    "--with-gobject"
+    "--with-cairo"
+    "--with-fontconfig"
+    "--with-icu"
+    "--with-graphite2"
+    "--with-freetype"
+    "--without-uniscribe"
+    "--without-coretext"
   ];
 
   nativeBuildInputs = [
-    libintlOrEmpty
     pkgconfig
+  ] ++ libintlOrEmpty;
+
+  propagatedBuildInputs = [
+    glib
   ];
 
   buildInputs = [
     cairo
     fontconfig
     freetype
-    glib
+    gobjectIntrospection
     graphite2
     icu
   ];
