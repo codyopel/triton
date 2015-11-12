@@ -12,12 +12,29 @@
 , perl
 , gnome3
 , gobjectIntrospection
+, xorg
 }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gtksourceview-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gtksourceview/${versionMajor}/${name}.tar.xz";
+    sha256 = "1rpdg8rcjlqv8yk13vsh5148mads0zbfih8cak3hm7wb0spmzsbv";
+  };
+
+  patches = [
+    ./nix_share_path.patch
+  ];
 
   configureFlags = [
+    "--disable-maintainer-mode"
+    "--enable-compile-warnings"
+    "--enable-Werror"
+    "--enable-deprecations"
     "--enable-completion-providers"
     "--disable-glade-catalog"
     "--enable-nls"
@@ -25,13 +42,9 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
     "--disable-installed-tests"
-    "--enable-introspection=yes"
-    #"--enable-code-coverage"
-    "--enable-vala=no"
-  ];
-
-  patches = [
-    ./nix_share_path.patch
+    "--enable-introspection"
+    "--disable-code-coverage"
+    "--disable-vala"
   ];
 
   nativeBuildInputs = [
@@ -52,6 +65,8 @@ stdenv.mkDerivation rec {
     libxml2Python
     perl
     gobjectIntrospection
+    xorg.libICE
+    xorg.libSM
   ];
 
   preBuild = ''
