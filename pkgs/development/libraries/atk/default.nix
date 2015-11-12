@@ -26,7 +26,11 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--enable-rebuilds"
+    "--enable-glibtest"
     (enFlag "introspection" (gobjectIntrospection != null) null)
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
   ];
 
   nativeBuildInputs = [
@@ -36,14 +40,14 @@ stdenv.mkDerivation rec {
   ];
 
   propagatedBuildInputs = [
-    gobjectIntrospection # pkgconfig
+    glib # pkgconfig
   ];
 
   buildInputs = [
-    glib
+    gobjectIntrospection
   ] ++ libintlOrEmpty;
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = "rm -rvf $out/share/gtk-doc";
 
   enableParallelBuilding = true;
 
