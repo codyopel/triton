@@ -1,13 +1,16 @@
 { stdenv, fetchurl
+, coreutils
+, gettext
+, gobjectIntrospection
+, libintlOrEmpty
 , pkgconfig
+
 , glib
 , libtiff
 , libjpeg
 , libpng
 , libX11
 , jasper
-, libintlOrEmpty
-, gobjectIntrospection
 }:
 
 stdenv.mkDerivation rec {
@@ -24,7 +27,7 @@ stdenv.mkDerivation rec {
   setupHook = ./setup-hook.sh;
 
   configureFlags = [
-    "--enable-gio-sniffing"
+    "--disable-gio-sniffing"
     "--enable-rebuilds"
     "--enable-nls"
     "--enable-rpath"
@@ -43,17 +46,22 @@ stdenv.mkDerivation rec {
     "--with-libpng"
     "--with-libjpeg"
     "--with-libjasper"
-    "--without-gdiplus"
+    "--with-gdiplus"
     "--with-x11"
   ];
 
   nativeBuildInputs = [
+    coreutils
+    gettext
     gobjectIntrospection
     pkgconfig
   ] ++ libintlOrEmpty;
 
-  buildInputs = [
+  propagatedBuildInputs = [
     glib
+  ];
+
+  buildInputs = [
     jasper
     libjpeg
     libpng
@@ -63,6 +71,7 @@ stdenv.mkDerivation rec {
 
   postInstall = "rm -rvf $out/share/gtk-doc";
 
+  doCheck = false;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
