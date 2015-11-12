@@ -1,16 +1,40 @@
-{ fetchurl, stdenv, pkgconfig, gnome3, intltool, gobjectIntrospection
-, upower, cairo
-, pango, cogl, clutter, libstartup_notification, libcanberra, zenity
+{ fetchurl, stdenv
+, gettext
+, intltool
+, libtool
+, makeWrapper
+, pkgconfig
+
+, glib
+, gnome3
+, gobjectIntrospection
+, upower
+, cairo
+, pango
+, cogl
+, clutter
+, libstartup_notification
+, libcanberra
+, zenity
 , libcanberra_gtk3
-, libtool, makeWrapper, xkeyboard_config, libxkbfile, libxkbcommon
+, xkeyboard_config
+, libxkbfile
+, libxkbcommon
+, libinput
+, systemd
+, wayland
 , xorg
+, gtk3
 }:
 
 stdenv.mkDerivation rec {
   name = "mutter-3.18.1";
+  versionMajor = "3.18";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = mirror://gnome/sources/mutter/3.18/mutter-3.18.1.tar.xz;
+    url = "mirror://gnome/sources/mutter/${versionMajor}/${name}.tar.xz";
     sha256 = "1ab959z5fgi4rq0ifxdqvpdbv99a2b1lfgvj327s9crdvk4ygpjg";
   };
 
@@ -19,23 +43,76 @@ stdenv.mkDerivation rec {
     ./math.patch
   ];
 
-  # fatal error: gio/gunixfdlist.h: No such file or directory
-  NIX_CFLAGS_COMPILE = "-I${gnome3.glib}/include/gio-unix-2.0";
-
-  configureFlags = "--with-x --disable-static --enable-shape --enable-sm --enable-startup-notification --enable-xsync --enable-verbose-mode --with-libcanberra"; 
-
-  buildInputs = with gnome3; [
-    pkgconfig intltool glib gobjectIntrospection gtk gsettings_desktop_schemas
-    upower
-    gnome_desktop cairo pango cogl clutter zenity libstartup_notification
-    libcanberra
-    gnome3.geocode_glib
-    libcanberra_gtk3 zenity libtool makeWrapper xkeyboard_config libxkbfile
-    libxkbcommon
-    xorg.libXcursor
-    xorg.libXinerama
-    xorg.libSM
+  NIX_CFLAGS_COMPILE = [
+    # fatal error: gio/gunixfdlist.h: No such file or directory
+    "-I${gnome3.glib}/include/gio-unix-2.0"
   ];
+
+  configureFlags = [
+    "--enable-nls"
+    "--enable-glibtest"
+    "--enable-schemas-compile"
+    "--enable-verbose-mode"
+    "--enable-sm"
+    "--enable-startup-notification"
+    "--disable-installed-tests"
+    "--enable-introspection"
+    # TODO: requires clutter wayland support
+    "--enable-native-backend"
+    # TODO: requires clutter wayland support
+    "--enable-wayland"
+    "--disable-debug"
+    "--enable-compile-warnings"
+    "--with-libcanberra"
+    "--with-x"
+  ];
+
+  nativeBuildInputs = [
+    gettext
+    pkgconfig
+    intltool
+    libtool
+    makeWrapper
+  ];
+
+  buildInputs = [
+    cairo
+    clutter
+    cogl
+    glib
+    gnome3.geocode_glib
+    gnome3.gnome_desktop
+    gobjectIntrospection
+    gnome3.gsettings_desktop_schemas
+    gtk3
+    libcanberra
+    libcanberra_gtk3
+    libinput
+    libstartup_notification
+    libxkbcommon
+    libxkbfile
+    pango
+    systemd
+    upower
+    wayland
+    xkeyboard_config
+    xorg.libICE
+    xorg.libSM
+    xorg.libX11
+    xorg.libxcb
+    xorg.libXcomposite
+    xorg.libXcursor
+    xorg.libXdamage
+    xorg.libXext
+    xorg.libXfixes
+    xorg.libXi
+    xorg.libXinerama
+    xorg.libXrandr
+    xorg.libXrender
+    zenity
+  ];
+
+  
 
   preFixup = ''
     wrapProgram "$out/bin/mutter" \
@@ -43,8 +120,8 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with stdenv.lib; {
-    platforms = platforms.linux;
     maintainers = gnome3.maintainers;
+    platforms = platforms.linux;
   };
 
 }
