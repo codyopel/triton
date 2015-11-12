@@ -8,6 +8,12 @@ stdenv.mkDerivation rec {
     sha256 = "04gligbgr0phipjkwc0dyk1vr9306r6s4dbj85z7fxxk1n1ircv1";
   };
      
+  
+  patches = [
+    # https://github.com/zeromq/libzmq/commit/479db2113643e459c11db392e0fefd6400657c9e
+    ./sodium_warning.patch
+  ];
+     
   # Fix zeromq-4.1.3 with libsodium-1.0.6
   postPatch = ''
     sed -i 's/libzmq_werror="yes"/libzmq_werror="no"/' configure
