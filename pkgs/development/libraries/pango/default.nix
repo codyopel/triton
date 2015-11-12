@@ -62,10 +62,10 @@ stdenv.mkDerivation rec {
     xorg.libXrender
   ] ++ libintlOrEmpty;
 
-  enableParallelBuilding = true;
   doCheck = false;
+  enableParallelBuilding = true;
 
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = "rm -rvf $out/share/gtk-doc";
 
   meta = with stdenv.lib; {
     description = "A library for laying out and rendering of text";
