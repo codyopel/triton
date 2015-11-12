@@ -1,10 +1,10 @@
 {
   stable = {
-    version = "41.0.2";
-    sha256 = "03lpn5hi8ijyg4xfg5hcxc05hr53c1skdamknxg4rx9g9ngnh07z";
+    version = "42.0";
+    sha256 = "1bm37p1ydxvnflh7kb52g6wfblxqc0kbgjn09sv7g0i9k5k38jlr";
   };
   esr = {
-    version = "38.3.0esr";
-    sha256 = "0dzwmwa76y4nhb5brp5a1kxgxjr71czd8vj218qmrlwm54i85gc7";
+    version = "38.4.0esr";
+    sha256 = "1izj0zi4dhp3957ya1nlh0mp6gyb7gvmwnlfv6q1cc3bw5y1z2h2";
   };
 }

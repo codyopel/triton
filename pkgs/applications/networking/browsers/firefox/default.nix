@@ -120,7 +120,11 @@ stdenv.mkDerivation rec {
   preConfigure = ''
     mkdir ../objdir
     cd ../objdir
-    configureScript=../mozilla-*/configure
+    if [ -e ../${name} ] ; then
+      configureScript=../${name}/configure
+    else
+      configureScript=../mozilla-*/configure
+    fi
   '';
 
   nativeBuildInputs = [
