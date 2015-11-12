@@ -9,6 +9,7 @@
 , fontconfig
 , freetype
 , glib
+, libdrm
 , libpng
 #, librsvg
 , lzo
@@ -16,15 +17,13 @@
 #, poppler
 , mesa_noglu
 #, qt4
-, udev
 , xorg
 , zlib
 }:
 
 with {
   inherit (stdenv.lib)
-    enFlag
-    wtFlag;
+    enFlag;
 };
 
 stdenv.mkDerivation rec {
@@ -39,17 +38,14 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
-    #largefile
-    #atomic
     "--disable-gcov"
     "--disable-valgrind"
-    (enFlag "xlib" (xorg.libX11 != null && xorg.libXext != null) "yes")
-    (enFlag "xlib-xrender" (xorg.libXrender != null) "yes")
-    (enFlag "xcb" (xorg.libxcb != null) "yes")
-    (enFlag "xlib-xcb" (xorg.libxcb != null) "yes")
-    (enFlag "xcb-shm" (xorg.libxcb != null) "yes")
+    (enFlag "xlib" (xorg.libX11 != null && xorg.libXext != null) null)
+    (enFlag "xlib-xrender" (xorg.libXrender != null) null)
+    (enFlag "xcb" (xorg.libxcb != null) null)
+    (enFlag "xlib-xcb" (xorg.libxcb != null) null)
+    (enFlag "xcb-shm" (xorg.libxcb != null) null)
     # TODO: qt
-    #(enFlag "qt" (qt4 != null) "yes")
     "--disable-qt"
     "--disable-quartz"
     "--disable-quartz-font"
@@ -57,52 +53,45 @@ stdenv.mkDerivation rec {
     "--disable-win32"
     "--disable-win32-font"
     # TODO: package skia
-    #(enFlag "skia")
     "--disable-skia"
     "--disable-os2"
     "--disable-beos"
-    # FIXME: intel failures
-    #(enFlag "drm" (udev != null) "yes")
+    (enFlag "drm" (libdrm != null) null)
     "--disable-drm"
     # TODO: gallium support
-    #(enFlag "gallium" true "yes")
     "--disable-gallium"
-    (enFlag "png" (libpng != null) "yes")
-    # Prefer gles over gl
-    #"--disable-gl"
+    (enFlag "png" (libpng != null) null)
     "--enable-gl"
-    (enFlag "glesv2" false "yes")
+    "--disable-glesv2"
     # FIXME: cogl recursion
-    #(enFlag "cogl" (cogl != null) "yes")
     "--disable-cogl"
     # FIXME: fix directfb mirroring
-    #(enFlag "directfb" (directfb != null) "yes")
     "--disable-directfb"
     "--disable-vg"
-    (enFlag "egl" true "yes")
+    "--enable-egl"
     "--enable-glx"
     "--disable-wgl"
-    (enFlag "script" true "yes")
-    (enFlag "ft" true "yes")
-    (enFlag "fc" true "yes")
+    "--enable-script"
+    "--enable-ft"
+    "--enable-fc"
     # TODO: requires libspectre
-    #(enFlag "ps" true "yes")
-    (enFlag "pdf" true "yes")
-    (enFlag "svg" true "yes")
-    (enFlag "test-surfaces" false "yes")
-    (enFlag "tee" true "yes")
-    (enFlag "xml" true "yes")
-    (enFlag "pthread" true "yes")
+    "--disable-ps"
+    "--enable-pdf"
+    "--enable-svg"
+    "--disable-test-surfaces"
+    "--enable-tee"
+    "--enable-xml"
+    "--enable-pthread"
     (enFlag "gobject" (glib != null) "yes")
-    (enFlag "full-testing" false "yes")
-    (enFlag "trace" false "yes")
-    (enFlag "interpreter" true "yes")
-    (enFlag "synbol-lookup" false "yes")
-    "--enable-some-floating-point"
-    (wtFlag "x" (xorg != null) null)
+    "--disable-full-testing"
+    "--disable-trace"
+    "--enable-interpreter"
+    "--disable-symbol-lookup"
+    #"--enable-some-floating-point"
+    "--with-x"
     #(wtFlag "skia" true "yes")
     #(wtFlag "skia-build-type" true "Release")
-    (wtFlag "gallium" true "${mesa_noglu}")
+    "--with-gallium=${mesa_noglu}"
   ];
 
   preConfigure = ''
@@ -117,19 +106,6 @@ stdenv.mkDerivation rec {
     libiconv
   ] ++ libintlOrEmpty;
 
-  buildInputs = [
-    #cogl
-    #directfb
-    expat
-    #librsvg
-    lzo
-    pixman
-    #poppler
-    udev
-    xorg.xcbutil
-    zlib
-  ];
-
   propagatedBuildInputs = [
     fontconfig
     freetype
@@ -142,8 +118,21 @@ stdenv.mkDerivation rec {
     xorg.libXrender
   ];
 
+  buildInputs = [
+    #cogl
+    #directfb
+    expat
+    libdrm
+    #librsvg
+    lzo
+    pixman
+    #poppler
+    xorg.xcbutil
+    zlib
+  ];
+
   postInstall = ''
-    rm -rf $out/share/gtk-doc
+    rm -rvf $out/share/gtk-doc
   '' + glib.flattenInclude;
 
   enableParallelBuilding = true;
