@@ -1,6 +1,21 @@
-{ stdenv, fetchzip, fetchgit, bashCompletion
-, glib, polkit, pkgconfig, intltool, gusb, libusb1, lcms2, sqlite, systemd, dbus
-, automake, autoconf, libtool, gtk_doc, which, gobjectIntrospection, argyllcms }:
+{ stdenv, fetchzip
+, autoconf
+, automake
+, intltool
+, pkgconfig
+
+, argyllcms
+, bashCompletion
+, dbus
+, glib
+, gobjectIntrospection
+, gusb
+, lcms2
+, libusb1
+, polkit
+, sqlite
+, systemd
+}:
 
 stdenv.mkDerivation rec {
   name = "colord-1.2.12";
@@ -10,28 +25,68 @@ stdenv.mkDerivation rec {
     sha256 = "0rvvbpxd5x479v4p6pck317mlf3j29s154i1n8hlx8n4znhwrb0k";
   };
 
-  enableParallelBuilding = true;
-
   configureFlags = [
-    "--with-udevrulesdir=$out/lib/udev/rules.d"
-    "--with-systemdsystemunitdir=$(out)/etc/systemd/system"
+    "--enable-introspection"
+    "--enable-schemas-compile"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-nls"
+    "--disable-strict"
+    "--enable-rpath"
+    "--enable-gusb"
+    "--enable-udev"
     "--disable-bash-completion"
+    "--enable-polkit"
+    "--enable-libcolordcompat"
+    "--enable-systemd-login"
+    "--disable-examples"
+    "--enable-argyllcms-sensor"
+    "--disable-reverse"
+    "--disable-sane"
+    "--disable-vala"
+    "--disable-session-example"
+    "--enable-print-profiles"
+    "--disable-installed-tests"
+    "--with-systemdsystemunitdir=$(out)/etc/systemd/system"
+    "--with-udevrulesdir=$out/lib/udev/rules.d"
+    #"--with-daemon-user"
   ];
 
-  buildInputs = [ glib polkit pkgconfig intltool gusb libusb1 lcms2 sqlite systemd dbus gobjectIntrospection
-                  bashCompletion argyllcms automake autoconf ];
+  nativeBuildInputs = [
+    autoconf
+    automake
+    intltool
+    pkgconfig
+  ];
+
+  buildInputs = [
+    argyllcms
+    bashCompletion
+    dbus
+    glib
+    gobjectIntrospection
+    gusb
+    lcms2
+    libusb1
+    polkit
+    sqlite
+    systemd
+  ];
 
   postInstall = ''
-    rm -fr $out/var/lib/colord
+    rm -rvf $out/var/lib/colord
     mkdir -p $out/etc/bash_completion.d
-    cp -v data/colormgr $out/etc/bash_completion.d
+    cp -v ./data/colormgr $out/etc/bash_completion.d
   '';
 
-  meta = {
-    description = "system service that makes it easy to manage, install and generate color profiles to accurately color manage input and output devices";
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
+    description = "Accurately color manage input and output devices";
     homepage = http://www.freedesktop.org/software/colord/intro.html;
-    license = stdenv.lib.licenses.lgpl2Plus;
-    maintainers = [stdenv.lib.maintainers.marcweber];
-    platforms = stdenv.lib.platforms.linux;
+    license = licenses.lgpl2Plus;
+    maintainers = [ ];
+    platforms = platforms.linux;
   };
 }
