@@ -2581,7 +2581,6 @@ let
 
   pitivi = callPackage ../applications/video/pitivi {
     gst = gst_all_1;
-    clutter-gtk = clutter_gtk;
   };
 
   p0f = callPackage ../tools/security/p0f { };
@@ -5983,11 +5982,8 @@ let
   clutter-gst_3 = callPackage ../development/libraries/clutter-gst/3.x.nix { };
   clutter-gst = clutter-gst_3;
 
-  clutter_gtk = callPackage ../development/libraries/clutter-gtk { };
-  clutter_gtk_0_10 = callPackage ../development/libraries/clutter-gtk/0.10.8.nix { };
-  clutter_gtk_1_6 = callPackage ../development/libraries/clutter-gtk/1.6.nix {
-    clutter = clutter_1_22;
-  };
+  clutter-gtk = callPackage ../development/libraries/clutter-gtk { };
+  clutter_gtk = clutter-gtk;
 
   cminpack = callPackage ../development/libraries/cminpack { };
 

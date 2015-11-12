@@ -1,26 +1,59 @@
-{ fetchurl, stdenv, pkgconfig, gobjectIntrospection, clutter, gtk3 }:
+{ fetchurl, stdenv
+, gobjectIntrospection
+, pkgconfig
+
+, clutter
+, cogl
+, gtk3
+, xorg
+}:
 
 stdenv.mkDerivation rec {
-  name = "clutter-gtk-1.4.4";
+  name = "clutter-gtk-${version}";
+  versionMajor = "1.6";
+  versionMinor = "6";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/clutter-gtk/1.4/${name}.tar.xz";
-    sha256 = "bc3108594a01a08bb6d9b538afe995e4fd78634a8356064ee8137d87aad51b2e";
+    url = "mirror://gnome/sources/clutter-gtk/${versionMajor}/${name}.tar.xz";
+    sha256 = "0a2a8ci6in82l43zak3zj3cyms23i5rq6lzk1bz013gm023ach4l";
   };
 
-  propagatedBuildInputs = [ clutter gtk3 ];
-  nativeBuildInputs = [ pkgconfig gobjectIntrospection ];
+  configureFlags = [
+    "--disable-maintainer-flags"
+    "--enable-deprecated"
+    "--disable-debug"
+    "--enable-nls"
+    "--enable-rpath"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-introspection"
+  ];
 
-  postBuild = "rm -rf $out/share/gtk-doc";
+  nativeBuildInputs = [
+    gobjectIntrospection
+    pkgconfig
+  ];
 
-  meta = {
+  buildInputs = [
+    cogl
+    xorg.libICE
+    xorg.libSM
+  ];
+
+  propagatedBuildInputs = [
+    clutter
+    gtk3
+  ];
+
+  postBuild = "rm -rvf $out/share/gtk-doc";
+
+  meta = with stdenv.lib; {
     description = "Clutter-GTK";
-
     homepage = http://www.clutter-project.org/;
-
-    license = stdenv.lib.licenses.lgpl2Plus;
-
-    maintainers = with stdenv.lib.maintainers; [ urkud ];
-    platforms = stdenv.lib.platforms.gnu;  # arbitrary choice
+    license = licenses.lgpl2Plus;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.linux;
   };
 }
