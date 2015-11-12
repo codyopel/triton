@@ -8,6 +8,7 @@
 , libffi
 , libintlOrEmpty
 , python
+, pythonPackages
 }:
 
 stdenv.mkDerivation rec {
@@ -35,7 +36,13 @@ stdenv.mkDerivation rec {
   '';
 
   configureFlags = [
-    "--with-cairo"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-doctool"
+    "--enable-Bsymbolic"
+    # Tests require cairo
+    "--without-cairo"
   ];
 
   nativeBuildInputs = [
@@ -45,21 +52,17 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    cairo
-    glib
-    libintlOrEmpty
+    #cairo
     python
-  ];
+    pythonPackages.Mako
+  ] ++ libintlOrEmpty;
 
   propagatedBuildInputs = [
+    glib
     libffi
   ];
 
-  preInstall = ''
-    mkdir -p $out/share/gir-1.0/g-ir-scanner
-  '';
-
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = "rm -rvf $out/share/gtk-doc";
 
   enableParallelBuilding = true;
 
