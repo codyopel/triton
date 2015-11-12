@@ -19,13 +19,13 @@ with {
 
 stdenv.mkDerivation rec {
   name = "libsoup-${version}";
-  versionMajor = "2.53";
-  versionMinor = "1";
+  versionMajor = "2.52";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/libsoup/${versionMajor}/${name}.tar.xz";
-    sha256 = "0ydvlv4v49kp7rxmvpirqqv4558sgagr9i12zz376ydf0zpaq1cb";
+    sha256 = "1p4k40y2gikr6m8p3hm0vswdzj2pj133dckipd2jk5bxbj5n4mfv";
   };
 
   postPatch = ''
@@ -34,13 +34,18 @@ stdenv.mkDerivation rec {
 
   # glib_networking is a runtime dependency, not a compile-time dependency
   configureFlags = [
+    "--enable-glibtest"
+    "--disable-installed-tests"
+    "--disable-always-build-tests"
     "--enable-nls"
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
-    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    (enFlag "introspection" (gobjectIntrospection != null) null)
     "--disable-vala"
     "--disable-tls-check"
+    "--disable-code-coverage"
+    "--enable-more-warnings"
     "--with-gnome"
   ];
 
@@ -51,18 +56,18 @@ stdenv.mkDerivation rec {
     python
   ];
 
+  propagatedBuildInputs = [
+    glib
+  ];
+
   buildInputs = [
     glib_networking
+    gobjectIntrospection
     libxml2
     sqlite
   ] ++ libintlOrEmpty;
 
-  propagatedBuildInputs = [
-    glib # pkgconfig
-    gobjectIntrospection # pkgconfig
-  ];
-
-  postInstall = "rm -rf $out/share/gtk-doc";
+  postInstall = "rm -rvf $out/share/gtk-doc";
 
   passthru = {
     propagatedUserEnvPackages = [
