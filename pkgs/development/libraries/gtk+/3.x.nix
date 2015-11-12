@@ -99,8 +99,6 @@ stdenv.mkDerivation rec {
     mesa_noglu
     wayland
     xorg.inputproto
-    xorg.libICE
-    xorg.libSM
     xorg.libX11
     xorg.libXcomposite
     xorg.libXcursor
@@ -119,6 +117,8 @@ stdenv.mkDerivation rec {
     gdk_pixbuf # pkgconfig
     glib # pkgconfig
     pango # pkgconfig
+    xorg.libICE
+    xorg.libSM
   ];
 
   postInstall = "rm -rvf $out/share/gtk-doc";

@@ -37,9 +37,6 @@ stdenv.mkDerivation rec {
   versionMinor = "28";
   version = "${versionMajor}.${versionMinor}";
 
-  # Because there are a number of needed commits (patches) on the gtk+ 2.24
-  # branch, which also require running autoreconf, and the tarballs are missing
-  # files to do so.
   src = fetchFromGitHub {
     owner = "gnome";
     repo = "gtk";
@@ -48,31 +45,25 @@ stdenv.mkDerivation rec {
     sha256 = "112w10ywjcx6w4w0g19fsn9lj5xgpzzb6msms1b8vslbz142j8ji";
   };
 
-  postPatch =
-    optionalString (!tests) ''
-      # Don't build tests if disabled
-      sed -e 's|demos tests perf|demos perf|' -i ./Makefile.*
-      sed -e 's|$(gdktarget) . tests|$(gdktarget) .|' -i ./gdk/Makefile.*
-    '';
-
   configureFlags = [
     (enFlag "shm" (xorg.libXext != null) null)
     (enFlag "xkb" (libxkbcommon != null) null)
     (enFlag "xinerama" (xorg.libXinerama != null) null)
     "--enable-rebuilds"
     "--enable-visibility"
-    (enFlag "glibtest" tests null)
+    "--enable-explicit-deps"
+    "--enable-glibtest"
     "--enable-modules"
     "--disable-quartz-relocation"
     (enFlag "cups" (cups != null) null)
     (enFlag "papi" false null)
-    (enFlag "test-print-backend" tests null)
-    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    (enFlag "test-print-backend" (cups != null) null)
+    (enFlag "introspection" (gobjectIntrospection != null) null)
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
     "--enable-man"
-    (wtFlag "xinput" (xorg.libXi != null) "yes")
+    (wtFlag "xinput" (xorg.libXi != null) null)
     (wtFlag "gdktarget" (true) "x11") # add xorg deps
     #"--with-gdktarget=directfb"
     (wtFlag "x" (xorg != null) null)
@@ -97,29 +88,28 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     cups
-    fontconfig
     gobjectIntrospection
-    libintlOrEmpty
     libxkbcommon
     xorg.inputproto
-    xorg.libX11
-    xorg.libXcomposite
-    xorg.libXcursor
-    xorg.libXdamage
-    xorg.libXext
-    xorg.libXfixes
-    xorg.libXi
-    xorg.libXinerama
-    xorg.libXrender
-    xorg.libXrandr
-  ];
+  ] ++ libintlOrEmpty;
 
   propagatedBuildInputs = [
     atk # pkgconfig
     cairo # pkgconfig
+    fontconfig
     gdk_pixbuf # pkgconfig
     glib # pkgconfig
     pango # pkgconfig
+    xorg.libX11
+    xorg.libXcomposite
+    xorg.libXcursor
+    xorg.libXext
+    xorg.libXfixes
+    xorg.libXdamage
+    xorg.libXi
+    xorg.libXinerama
+    xorg.libXrandr
+    xorg.libXrender
   ];
 
   postInstall = "rm -rf $out/share/gtk-doc";
@@ -128,8 +118,10 @@ stdenv.mkDerivation rec {
 
   passthru = {
     gtkExeEnvPostBuild = ''
-      rm $out/lib/gtk-2.0/2.10.0/immodules.cache
-      $out/bin/gtk-query-immodules-2.0 $out/lib/gtk-2.0/2.10.0/immodules/*.so > $out/lib/gtk-2.0/2.10.0/immodules.cache
+      rm -v $out/lib/gtk-2.0/2.10.0/immodules.cache
+      $out/bin/gtk-query-immodules-2.0 \
+        $out/lib/gtk-2.0/2.10.0/immodules/*.so > \
+        $out/lib/gtk-2.0/2.10.0/immodules.cache
     ''; # workaround for bug of nix-mode for Emacs */ '';
   };
 
