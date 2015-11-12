@@ -15,11 +15,11 @@
 
 stdenv.mkDerivation rec {
   name = "btrfs-progs-${version}";
-  version = "4.2.3";
+  version = "4.3";
 
   src = fetchurl {
     url = "mirror://kernel/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${version}.tar.xz";
-    sha256 = "0gpknqvnpl4y78fsfak3iv147czc0rak8fbcg0d9krr50wzd3hf3";
+    sha256 = "1755bjysbw7m2zgzp0jyr03x2vrnxvzdh8wvzmqqgmg97ngv4rxb";
   };
 
   # gcc bug with -O1 on ARM with gcc 4.8
