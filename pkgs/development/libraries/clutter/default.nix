@@ -13,11 +13,14 @@
 , gobjectIntrospection
 , json_glib
 , libdrm
+, libgudev
+, libinput
 , libxkbcommon
 , mesa
 , pango
+, udev
 , xorg
-, wayland #
+, wayland
 }:
 
 stdenv.mkDerivation rec {
@@ -32,7 +35,36 @@ stdenv.mkDerivation rec {
   };
 
   configureFlags = [
+    "--enable-glibtest"
+    "--enable-Bsymbolic"
+    "--enable-x11-backend"
+    "--disable-win32-backend"
+    "--disable-quartz-backend"
+    "--enable-wayland-backend"
+    "--enable-egl-backend"
+    "--disable-mir-backend"
+    "--disable-cex100-backend"
+    "--enable-wayland-compositor"
+    "--enable-tslib-input"
+    "--enable-evdev-input"
+    "--enable-xinput"
+    "--enable-gdk-pixbuf"
+    "--disable-debug"
     "--enable-introspection"
+    "--disable-deprecated"
+    "--disable-maintainer-flags"
+    "--disable-gcov"
+    "--enable-introspection"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--disable-docs"
+    "--enable-nls"
+    "--enable-rpath"
+    "--disable-installed-tests"
+    "--disable-always-build-tests"
+    "--disable-examples"
+    "--with-x"
   ];
 
   nativeBuildInputs = [
@@ -41,34 +73,37 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    atk
     bzip2
-    cairo
-    cogl
     fontconfig
     freetype
     gdk_pixbuf
-    glib
     gobjectIntrospection
     libdrm
+    libgudev
+    libinput
     mesa
-    pango
-    xorg.libX11
-    xorg.libXcomposite
-    xorg.libXdamage
-    xorg.libXext
+    udev
+    xorg.inputproto
     xorg.libXrandr
   ];
 
   propagatedBuildInputs = [
-    cogl # pkg-config
-    json_glib # pkg-config
-    libxkbcommon # pkg-config
-    wayland # pkg-config
-    xorg.libXi # pkg-config
+    atk # pkgconfig
+    cairo # pkgconfig
+    cogl # pkgconfig
+    glib # pkgconfig
+    json_glib # pkgconfig
+    libxkbcommon # pkgconfig
+    pango # pkgconfig
+    wayland # pkgconfig
+    xorg.libX11 # pkgconfig
+    xorg.libXcomposite # pkgconfig
+    xorg.libXdamage # pkgconfig
+    xorg.libXext # pkgconfig
+    xorg.libXi # pkgconfig
   ];
 
-  enableParallelBuilding = true;
+  enableParallelBuilding = false;
 
   meta = with stdenv.lib; {
     description = "Library for creating graphical user interfaces";

@@ -5977,8 +5977,6 @@ let
 
   clucene_core = clucene_core_1;
 
-  clutter_1_16 = callPackage ../development/libraries/clutter/1.16.x.nix { };
-  clutter_1_22 = callPackage ../development/libraries/clutter/1.22.x.nix { };
   clutter = callPackage ../development/libraries/clutter { };
 
   clutter-gst_2 = callPackage ../development/libraries/clutter-gst/2.x.nix { };
