@@ -26,7 +26,17 @@ stdenv.mkDerivation rec {
   };
 
   configureFlags = [
+    "--enable-compile-warnings"
+    #"--enable-session-selector"
+    "--enable-gconf"
     "--enable-systemd"
+    "--enable-consolkit"
+    "--disable-docbook-doc"
+    "--disable-man"
+    "--enable-nls"
+    "--enable-schemas-compile"
+    "--enable-ipv6"
+    "--with-xtrans"
   ];
 
   buildInputs = [
