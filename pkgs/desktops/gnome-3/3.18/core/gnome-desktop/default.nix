@@ -59,7 +59,6 @@ stdenv.mkDerivation rec {
     glib
     gnome_doc_utils
     gobjectIntrospection
-    gtk3
     isocodes
     itstool
     libxkbfile
@@ -76,6 +75,7 @@ stdenv.mkDerivation rec {
 
   propagatedBuildInputs = [
     gnome3.gsettings_desktop_schemas
+    gtk3
   ];
 
   enableParallelBuilding = true;
