@@ -1,5 +1,15 @@
-{ stdenv, fetchurl, openconnect, intltool, pkgconfig, networkmanager, libsecret
-, withGnome ? true, gnome3, procps, module_init_tools }:
+{ stdenv, fetchurl
+, openconnect
+, intltool
+, pkgconfig
+, networkmanager
+, libsecret
+, withGnome ? true
+  , gnome3
+, procps
+, module_init_tools
+, xorg
+}:
 
 stdenv.mkDerivation rec {
   name = "${pname}${if withGnome then "-gnome" else ""}-${version}";
@@ -11,10 +21,22 @@ stdenv.mkDerivation rec {
     sha256 = "03k05s3aaxcwrip3g3r13bx80wbg7vh5sssc7mvg27c4cdc0a2hj";
   };
 
-  buildInputs = [ openconnect networkmanager libsecret ]
-    ++ stdenv.lib.optionals withGnome [ gnome3.gtk3 gnome3.libgnome_keyring gnome3.gconf ];
+  nativeBuildInputs = [
+    intltool
+    pkgconfig
+  ];
 
-  nativeBuildInputs = [ intltool pkgconfig ];
+  buildInputs = [
+    openconnect
+    networkmanager
+    libsecret
+    xorg.libICE
+    xorg.libSM
+  ] ++ stdenv.lib.optionals withGnome [
+    gnome3.gtk3
+    gnome3.libgnome_keyring
+    gnome3.gconf
+  ];
 
   configureFlags = [
     "${if withGnome then "--with-gnome --with-gtkver=3" else "--without-gnome"}"

@@ -1,23 +1,44 @@
-{ stdenv, fetchurl, intltool, wirelesstools, pkgconfig, dbus_glib, xz
-, udev, libnl, libuuid, polkit, gnutls, ppp, dhcp, dhcpcd, iptables
-, libgcrypt, dnsmasq, avahi, bind, perl, bluez, substituteAll, readline
-, gobjectIntrospection, modemmanager, openresolv, libndp, newt, libsoup }:
+{ stdenv, fetchurl
+, intltool
+, wirelesstools
+, pkgconfig
+, dbus_glib
+, xz
+, udev
+, libnl
+, libuuid
+, polkit
+, gnutls
+, ppp
+, dhcp
+, dhcpcd
+, iptables
+, libgcrypt
+, dnsmasq
+, avahi
+, bind
+, perl
+, bluez
+, substituteAll
+, readline
+, gobjectIntrospection
+, modemmanager
+, openresolv
+, libndp
+, newt
+, libsoup
+, libgudev
+}:
 
 stdenv.mkDerivation rec {
   name = "network-manager-${version}";
   version = "1.0.2";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/NetworkManager/1.0/NetworkManager-${version}.tar.xz";
+    url = "mirror://gnome/sources/NetworkManager/1.0/" +
+          "NetworkManager-${version}.tar.xz";
     sha256 = "1zq8jm1rc7n7amqa9xz1v93w2jnczg6942gyijsdpgllfiq8b4rm";
   };
-
-  preConfigure = ''
-    substituteInPlace tools/glib-mkenums --replace /usr/bin/perl ${perl}/bin/perl
-    substituteInPlace src/ppp-manager/nm-ppp-manager.c --replace /sbin/modprobe /run/current-system/sw/sbin/modprobe
-    substituteInPlace src/devices/nm-device.c --replace /sbin/modprobe /run/current-system/sw/sbin/modprobe
-    configureFlags="$configureFlags --with-udev-dir=$out/lib/udev"
-  '';
 
   # Right now we hardcode quite a few paths at build time. Probably we should
   # patch networkmanager to allow passing these path in config file. This will
@@ -33,9 +54,11 @@ stdenv.mkDerivation rec {
     "--with-iptables=${iptables}/bin/iptables"
     #"--with-udev-dir=$(out)/lib/udev"
     "--with-resolvconf=${openresolv}/sbin/resolvconf"
-    "--sysconfdir=/etc" "--localstatedir=/var"
+    "--sysconfdir=/etc"
+    "--localstatedir=/var"
     "--with-dbus-sys-dir=\${out}/etc/dbus-1/system.d"
-    "--with-crypto=gnutls" "--disable-more-warnings"
+    "--with-crypto=gnutls"
+    "--disable-more-warnings"
     "--with-systemdsystemunitdir=$(out)/etc/systemd/system"
     "--with-kernel-firmware-dir=/run/current-system/firmware"
     "--with-session-tracking=systemd"
@@ -44,39 +67,77 @@ stdenv.mkDerivation rec {
     "--with-libsoup=yes"
   ];
 
-  buildInputs = [ wirelesstools udev libnl libuuid polkit ppp libndp
-                  xz bluez gobjectIntrospection modemmanager readline newt libsoup ];
+  preConfigure = ''
+    substituteInPlace tools/glib-mkenums \
+      --replace /usr/bin/perl ${perl}/bin/perl
+    substituteInPlace src/ppp-manager/nm-ppp-manager.c \
+      --replace /sbin/modprobe /run/current-system/sw/sbin/modprobe
+    substituteInPlace src/devices/nm-device.c \
+      --replace /sbin/modprobe /run/current-system/sw/sbin/modprobe
+    configureFlags="$configureFlags --with-udev-dir=$out/lib/udev"
+  '';
 
-  propagatedBuildInputs = [ dbus_glib gnutls libgcrypt ];
+  nativeBuildInputs = [
+    intltool
+    pkgconfig
+  ];
 
-  nativeBuildInputs = [ intltool pkgconfig ];
+  propagatedBuildInputs = [
+    dbus_glib
+    gnutls
+    libgcrypt
+  ];
 
-  preInstall =
-    ''
-      installFlagsArray=( "sysconfdir=$out/etc" "localstatedir=$out/var" )
-    '';
+  buildInputs = [
+    wirelesstools
+    udev
+    libnl
+    libuuid
+    polkit
+    ppp
+    libndp
+    xz
+    bluez
+    gobjectIntrospection
+    modemmanager
+    readline
+    newt
+    libsoup
+    libgudev
+  ];
 
-  postInstall =
-    ''
-      mkdir -p $out/lib/NetworkManager
+  preInstall = ''
+    installFlagsArray=( "sysconfdir=$out/etc" "localstatedir=$out/var" )
+  '';
 
-      # FIXME: Workaround until NixOS' dbus+systemd supports at_console policy
-      substituteInPlace $out/etc/dbus-1/system.d/org.freedesktop.NetworkManager.conf --replace 'at_console="true"' 'group="networkmanager"'
+  postInstall = ''
+    mkdir -p $out/lib/NetworkManager
 
-      # rename to network-manager to be in style
-      mv $out/etc/systemd/system/NetworkManager.service $out/etc/systemd/system/network-manager.service 
+    # FIXME: Workaround until NixOS' dbus+systemd supports at_console policy
+    substituteInPlace \
+      $out/etc/dbus-1/system.d/org.freedesktop.NetworkManager.conf \
+      --replace 'at_console="true"' 'group="networkmanager"'
 
-      # systemd in NixOS doesn't use `systemctl enable`, so we need to establish
-      # aliases ourselves.
-      ln -s $out/etc/systemd/system/NetworkManager-dispatcher.service $out/etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service
-      ln -s $out/etc/systemd/system/network-manager.service $out/etc/systemd/system/dbus-org.freedesktop.NetworkManager.service
-    '';
+    # rename to network-manager to be in style
+    mv \
+      $out/etc/systemd/system/NetworkManager.service \
+      $out/etc/systemd/system/network-manager.service
+
+    # systemd in NixOS doesn't use `systemctl enable`, so we need to establish
+    # aliases ourselves.
+    ln -s \
+      $out/etc/systemd/system/NetworkManager-dispatcher.service \
+      $out/etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service
+    ln -s \
+      $out/etc/systemd/system/network-manager.service \
+      $out/etc/systemd/system/dbus-org.freedesktop.NetworkManager.service
+  '';
 
   meta = with stdenv.lib; {
-    homepage = http://projects.gnome.org/NetworkManager/;
     description = "Network configuration and management tool";
+    homepage = http://projects.gnome.org/NetworkManager/;
     license = licenses.gpl2Plus;
-    maintainers = with maintainers; [ phreedom urkud rickynils iElectric ];
+    maintainers = with maintainers; [ ];
     platforms = platforms.linux;
   };
 }
