@@ -11,6 +11,7 @@
 , gobjectIntrospection
 , gusb
 , lcms2
+, libgudev
 , libusb1
 , polkit
 , sqlite
@@ -68,6 +69,7 @@ stdenv.mkDerivation rec {
     gobjectIntrospection
     gusb
     lcms2
+    libgudev
     libusb1
     polkit
     sqlite
