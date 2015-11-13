@@ -15,8 +15,8 @@
 , clutter
 , libstartup_notification
 , libcanberra
+, libgudev
 , zenity
-, libcanberra_gtk3
 , xkeyboard_config
 , libxkbfile
 , libxkbcommon
@@ -86,7 +86,7 @@ stdenv.mkDerivation rec {
     gnome3.gsettings_desktop_schemas
     gtk3
     libcanberra
-    libcanberra_gtk3
+    libgudev
     libinput
     libstartup_notification
     libxkbcommon

@@ -1,6 +1,7 @@
 { stdenv, fetchurl, pkgconfig, glib, dbus_glib
 , intltool, libxslt, docbook_xsl, udev, libusb1
 , useSystemd ? true, systemd, gobjectIntrospection
+, libgudev
 }:
 
 assert stdenv.isLinux;
@@ -14,7 +15,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs =
-    [ dbus_glib intltool libxslt docbook_xsl udev libusb1 gobjectIntrospection ]
+    [ dbus_glib intltool libxslt docbook_xsl udev libusb1 gobjectIntrospection libgudev ]
     ++ stdenv.lib.optional useSystemd systemd;
 
   nativeBuildInputs = [ pkgconfig ];

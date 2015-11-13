@@ -28,6 +28,7 @@
 , xkeyboard_config
 , xorg
 , cups
+, libgudev
 }:
 
 stdenv.mkDerivation rec {
@@ -81,6 +82,7 @@ stdenv.mkDerivation rec {
     xorg.libXi
     xorg.libXfixes
     cups
+    libgudev
   ];
 
   preFixup = ''

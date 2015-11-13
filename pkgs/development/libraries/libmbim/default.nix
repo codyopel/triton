@@ -1,4 +1,11 @@
-{ stdenv, fetchurl, pkgconfig, glib, python, udev }:
+{ stdenv, fetchurl
+, pkgconfig
+
+, glib
+, libgudev
+, python
+, udev
+}:
 
 stdenv.mkDerivation rec {
   name = "libmbim-1.12.2";
@@ -12,7 +19,7 @@ stdenv.mkDerivation rec {
     patchShebangs .
   '';
 
-  buildInputs = [ pkgconfig glib udev python ];
+  buildInputs = [ pkgconfig glib libgudev udev python ];
 
   meta = with stdenv.lib; {
     homepage = http://www.freedesktop.org/software/libmbim/;

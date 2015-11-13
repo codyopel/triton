@@ -12,6 +12,7 @@
 , libarchive
 , fuse
 , libcdio
+, libgudev
 , libxml2
 , libxslt
 , docbook_xsl
@@ -54,6 +55,7 @@ stdenv.mkDerivation rec {
     gnome3.gcr
     libarchive
     libcdio
+    libgudev
     libgcrypt
     libgphoto2
     libmtp
