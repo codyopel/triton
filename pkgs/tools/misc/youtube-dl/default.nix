@@ -16,11 +16,11 @@
 
 buildPythonPackage rec {
   name = "youtube-dl-${version}";
-  version = "2015.10.24";
+  version = "2015.11.10";
 
   src = fetchurl {
     url = "http://youtube-dl.org/downloads/${version}/${name}.tar.gz";
-    sha256 = "1q9srq08vb2yzl81hmjrgqwajckq52fhh9ag2ppbbxjibf91w5gs";
+    sha256 = "1gp68wzsfg31xx6iv7ga6cp022ak14r7ghg7mbhk9zr7rz5lx8y5";
   };
 
   makeFlags = [
