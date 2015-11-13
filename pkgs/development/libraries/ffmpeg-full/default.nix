@@ -53,84 +53,84 @@
 #, aacplusExtlib ? false, aacplus ? null # AAC+ encoder
 , alsaLib ? null # Alsa in/output support
 #, avisynth ? null # Support for reading AviSynth scripts
-, bzip2 ? null
-, celt ? null # CELT decoder
+, bzip2
+, celt # CELT decoder
 #, crystalhd ? null # Broadcom CrystalHD hardware acceleration
 #, decklinkExtlib ? false, blackmagic-design-desktop-video ? null # Blackmagic Design DeckLink I/O support
 , faacExtlib ? false, faac ? null # AAC encoder
 , fdkaacExtlib ? false, fdk_aac ? null # Fraunhofer FDK AAC de/encoder
 #, flite ? null # Flite (voice synthesis) support
-, fontconfig ? null # Needed for drawtext filter
-, freetype ? null # Needed for drawtext filter
-, frei0r ? null # frei0r video filtering
-, fribidi ? null # Needed for drawtext filter
-, game-music-emu ? null # Game Music Emulator
-, gnutls ? null
-, gsm ? null # GSM de/encoder
-#, ilbc ? null # iLBC de/encoder
-, libjack2 ? null # Jack audio (only version 2 is supported in this build)
-, ladspaH ? null # LADSPA audio filtering
-, lame ? null # LAME MP3 encoder
-, libass ? null # (Advanced) SubStation Alpha subtitle rendering
-, libbluray ? null # BluRay reading
-, libbs2b ? null # bs2b DSP library
-, libcaca ? null # Textual display (ASCII art)
-#, libcdio-paranoia ? null # Audio CD grabbing
-, libdc1394 ? null, libraw1394 ? null # IIDC-1394 grabbing (ieee 1394)
-, libiconv ? null
+, fontconfig # Needed for drawtext filter
+, freetype # Needed for drawtext filter
+, frei0r # frei0r video filtering
+, fribidi # Needed for drawtext filter
+, game-music-emu # Game Music Emulator
+, gnutls
+, gsm # GSM de/encoder
+#, ilbc # iLBC de/encoder
+, libjack2 # Jack audio (only version 2 is supported in this build)
+, ladspaH # LADSPA audio filtering
+, lame # LAME MP3 encoder
+, libass # (Advanced) SubStation Alpha subtitle rendering
+, libbluray # BluRay reading
+, libbs2b # bs2b DSP library
+, libcaca # Textual display (ASCII art)
+#, libcdio-paranoia # Audio CD grabbing
+, libdc1394, libraw1394 # IIDC-1394 grabbing (ieee 1394)
+, libiconv
 #, libiec61883 ? null, libavc1394 ? null # iec61883 (also uses libraw1394)
-#, libmfx ? null # Hardware acceleration vis libmfx
-, libmodplug ? null # ModPlug support
-#, libnut ? null # NUT (de)muxer, native (de)muser exists
-, libogg ? null # Ogg container used by vorbis & theora
-, libopus ? null # Opus de/encoder
+#, libmfx # Hardware acceleration vis libmfx
+, libmodplug # ModPlug support
+#, libnut # NUT (de)muxer, native (de)muser exists
+, libogg # Ogg container used by vorbis & theora
+, libopus # Opus de/encoder
 , libsndio ? null # sndio playback/record support
-, libssh ? null # SFTP protocol
-, libtheora ? null # Theora encoder
-, libv4l ? null # Video 4 Linux support
-, libva ? null # Vaapi hardware acceleration
-, libvdpau ? null # Vdpau hardware acceleration
-, libvorbis ? null # Vorbis de/encoding, native encoder exists
-, libvpx ? null # VP8 & VP9 de/encoding
-, libwebp ? null # WebP encoder
-, libX11 ? null # Xlib support
-, libxcb ? null # X11 grabbing using XCB
+, libssh # SFTP protocol
+, libtheora # Theora encoder
+, libv4l # Video 4 Linux support
+, libva # Vaapi hardware acceleration
+, libvdpau # Vdpau hardware acceleration
+, libvorbis # Vorbis de/encoding, native encoder exists
+, libvpx # VP8 & VP9 de/encoding
+, libwebp # WebP encoder
+, libX11 # Xlib support
+, libxcb # X11 grabbing using XCB
 , libxcbshmExtlib ? true # X11 grabbing shm communication
 , libxcbxfixesExtlib ? true # X11 grabbing mouse rendering
 , libxcbshapeExtlib ? true # X11 grabbing shape rendering
-, libXv ? null # Xlib support
-, lzma ? null # xz-utils
-#, nvenc ? null # NVIDIA NVENC support
-, openal ? null # OpenAL 1.1 capture support
-#, opencl ? null # OpenCL code
-#, opencore-amr ? null # AMR-NB de/encoder & AMR-WB decoder
-#, opencv ? null # Video filtering
-, openglExtlib ? false, mesa ? null # OpenGL rendering
-#, openh264 ? null # H.264/AVC encoder
-, openjpeg_1 ? null # JPEG 2000 de/encoder
+, libXv # Xlib support
+, lzma # xz-utils
+#, nvenc # NVIDIA NVENC support
+, openal # OpenAL 1.1 capture support
+#, opencl # OpenCL code
+#, opencore-amr # AMR-NB de/encoder & AMR-WB decoder
+#, opencv # Video filtering
+, mesa_noglu # OpenGL rendering
+#, openh264 # H.264/AVC encoder
+, openjpeg_1 # JPEG 2000 de/encoder
 , opensslExtlib ? false, openssl ? null
-, libpulseaudio ? null # Pulseaudio input support
-, rtmpdump ? null # RTMP[E] support
-#, libquvi ? null # Quvi input support
-, samba ? null # Samba protocol
-#, schroedinger ? null # Dirac de/encoder
-, SDL ? null
-#, shine ? null # Fixed-point MP3 encoder
-, soxr ? null # Resampling via soxr
-, speex ? null # Speex de/encoder
-#, twolame ? null # MP2 encoder
-#, utvideo ? null # Ut Video de/encoder
-, vid-stab ? null # Video stabilization
+, libpulseaudio # Pulseaudio input support
+, rtmpdump # RTMP[E] support
+#, libquvi # Quvi input support
+, samba # Samba protocol
+#, schroedinger # Dirac de/encoder
+, SDL
+#, shine # Fixed-point MP3 encoder
+, soxr # Resampling via soxr
+, speex # Speex de/encoder
+#, twolame # MP2 encoder
+#, utvideo # Ut Video de/encoder
+, vid-stab # Video stabilization
 #, vo-aacenc ? null # AAC encoder
 #, vo-amrwbenc ? null # AMR-WB encoder
-, wavpack ? null # Wavpack encoder
+, wavpack # Wavpack encoder
 , x11grabExtlib ? false, libXext ? null, libXfixes ? null # X11 grabbing (legacy)
-, x264 ? null # H.264/AVC encoder
-, x265 ? null # H.265/HEVC encoder
-, xavs ? null # AVS encoder
-, xvidcore ? null # Xvid encoder, native encoder exists
-, zeromq4 ? null # Message passing
-, zlib ? null
+, x264 # H.264/AVC encoder
+, x265 # H.265/HEVC encoder
+, xavs # AVS encoder
+, xvidcore # Xvid encoder, native encoder exists
+, zeromq4 # Message passing
+, zlib
 #, zvbi ? null # Teletext support
 /*
  *  Developer options
@@ -172,10 +172,16 @@
  *
  */
 
-let
-  inherit (stdenv) isCygwin isFreeBSD isLinux;
-  inherit (stdenv.lib) optional optionals enableFeature;
-in
+with {
+  inherit (stdenv)
+    isFreeBSD
+    isLinux;
+  inherit (stdenv.lib)
+    optional
+    optionals
+    enableFeature
+    enFlag;
+};
 
 /*
  *  Licensing dependencies
@@ -226,7 +232,6 @@ assert gnutls != null -> !opensslExtlib;
 assert libxcbshmExtlib -> libxcb != null;
 assert libxcbxfixesExtlib -> libxcb != null;
 assert libxcbshapeExtlib -> libxcb != null;
-assert openglExtlib -> mesa != null;
 assert opensslExtlib -> gnutls == null && openssl != null && nonfreeLicensing;
 assert x11grabExtlib -> libX11 != null && libXv != null;
 
@@ -260,13 +265,8 @@ stdenv.mkDerivation rec {
     (enableFeature hardcodedTablesBuild "hardcoded-tables")
     (enableFeature safeBitstreamReaderBuild "safe-bitstream-reader")
     (enableFeature memalignHackBuild "memalign-hack")
-    (if multithreadBuild then (
-       if isCygwin then
-         "--disable-pthreads --enable-w32threads"
-       else # Use POSIX threads by default
-         "--enable-pthreads --disable-w32threads")
-     else
-       "--disable-pthreads --disable-w32threads")
+    (enFlag "pthreads" multithreadBuild null)
+    "--disable-w32threads" # We don't support Windows
     "--disable-os2threads" # We don't support OS/2
     (enableFeature networkBuild "network")
     (enableFeature pixelutilsBuild "pixelutils")
@@ -305,8 +305,8 @@ stdenv.mkDerivation rec {
      */
     #(enableFeature aacplus "libaacplus")
     #(enableFeature avisynth "avisynth")
-    (enableFeature (bzip2 != null) "bzlib")
-    (enableFeature (celt != null) "libcelt")
+    (enFlag "bzlib" (bzip2 != null) null)
+    (enFlag "libcelt" (celt != null) null)
     #(enableFeature crystalhd "crystalhd")
     #(enableFeature decklinkExtlib "decklink")
     (enableFeature faacExtlib "libfaac")
@@ -355,7 +355,7 @@ stdenv.mkDerivation rec {
     #(enableFeature opencl "opencl")
     #(enableFeature (opencore-amr != null && version3Licensing) "libopencore-amrnb")
     #(enableFeature (opencv != null) "libopencv")
-    (enableFeature openglExtlib "opengl")
+    (enFlag "opengl" (mesa_noglu != null) null)
     #(enableFeature (openh264 != null) "openh264")
     (enableFeature (openjpeg_1 != null) "libopenjpeg")
     (enableFeature (opensslExtlib && gplLicensing) "openssl")
@@ -373,14 +373,14 @@ stdenv.mkDerivation rec {
     (enableFeature (vid-stab != null && gplLicensing) "libvidstab") # Actual min. version 2.0
     #(enableFeature (vo-aacenc != null && version3Licensing) "libvo-aacenc")
     #(enableFeature (vo-amrwbenc != null && version3Licensing) "libvo-amrwbenc")
-    (enableFeature (wavpack != null) "libwavpack")
-    (enableFeature (x11grabExtlib && gplLicensing) "x11grab")
-    (enableFeature (x264 != null && gplLicensing) "libx264")
-    (enableFeature (x265 != null && gplLicensing) "libx265")
-    (enableFeature (xavs != null && gplLicensing) "libxavs")
-    (enableFeature (xvidcore != null && gplLicensing) "libxvid")
-    (enableFeature (zeromq4 != null) "libzmq")
-    (enableFeature (zlib != null) "zlib")
+    (enFlag "libwavpack" (wavpack != null) null)
+    (enFlag "x11grab" (x11grabExtlib && gplLicensing) null)
+    (enFlag "libx264" (x264 != null && gplLicensing) null)
+    (enFlag "libx265" (x265 != null && gplLicensing) null)
+    (enFlag "libxavs" (xavs != null && gplLicensing) null)
+    (enFlag "libxvid" (xvidcore != null && gplLicensing) null)
+    (enFlag "libzmq" (zeromq4 != null) null)
+    (enFlag "zlib" (zlib != null) null)
     #(enableFeature (zvbi != null && gplLicensing) "libzvbi")
     /*
      * Developer flags
@@ -391,23 +391,84 @@ stdenv.mkDerivation rec {
     (enableFeature strippingDeveloper "stripping")
   ];
 
-  nativeBuildInputs = [ perl pkgconfig texinfo yasm ];
+  nativeBuildInputs = [
+    perl
+    pkgconfig
+    texinfo
+    yasm
+  ];
 
   buildInputs = [
-    bzip2 celt fontconfig freetype frei0r fribidi game-music-emu gnutls gsm
-    libjack2 ladspaH lame libass libbluray libbs2b libcaca libdc1394 libmodplug
-    libogg libopus libssh libtheora libvdpau libvorbis libvpx libwebp libX11
-    libxcb libXext libXfixes libXv lzma openal openjpeg_1 libpulseaudio rtmpdump
-    samba SDL soxr speex vid-stab wavpack x264 x265 xavs xvidcore zeromq4 zlib
-  ] ++ optional openglExtlib mesa
-    ++ optionals x11grabExtlib [ libXext libXfixes ]
-    ++ optionals nonfreeLicensing [ faac fdk_aac openssl ]
-    ++ optional ((isLinux || isFreeBSD) && libva != null) libva
-    ++ optionals isLinux [ alsaLib libraw1394 libv4l ];
+    bzip2
+    celt
+    fontconfig
+    freetype
+    frei0r
+    fribidi
+    game-music-emu
+    gnutls
+    gsm
+    libjack2
+    ladspaH
+    lame
+    libass
+    libbluray
+    libbs2b
+    libcaca
+    libdc1394
+    libmodplug
+    libogg
+    libopus
+    libssh
+    libtheora
+    libvdpau
+    libvorbis
+    libvpx
+    libwebp
+    libX11
+    libxcb
+    libXext
+    libXfixes
+    libXv
+    lzma
+    mesa_noglu
+    openal
+    openjpeg_1
+    libpulseaudio
+    rtmpdump
+    samba
+    SDL
+    soxr
+    speex
+    vid-stab
+    wavpack
+    x264
+    x265
+    xavs
+    xvidcore
+    zeromq4
+    zlib
+  ] ++ optionals x11grabExtlib [
+    libXext
+    libXfixes
+  ] ++ optionals nonfreeLicensing [
+    faac
+    fdk_aac
+    openssl
+  ] ++ optionals isLinux [
+    alsaLib
+    libraw1394
+    libv4l
+  ] ++ optional ((isLinux || isFreeBSD) && libva != null) libva;
 
   # Build qt-faststart executable
-  buildPhase = optional qtFaststartProgram ''make tools/qt-faststart'';
-  postInstall = optional qtFaststartProgram ''cp -a tools/qt-faststart $out/bin/'';
+  postBuild = optional qtFaststartProgram ''
+    make tools/qt-faststart
+  '';
+
+  postInstall = optional qtFaststartProgram ''
+    install -vD 'tools/qt-faststart' "$out/bin/qt-faststart"
+  '';
 
   enableParallelBuilding = true;
 
@@ -443,13 +504,6 @@ stdenv.mkDerivation rec {
   meta = with stdenv.lib; {
     description = "A complete, cross-platform solution to record, convert and stream audio and video";
     homepage = http://www.ffmpeg.org/;
-    longDescription = ''
-      FFmpeg is the leading multimedia framework, able to decode, encode, transcode, 
-      mux, demux, stream, filter and play pretty much anything that humans and machines 
-      have created. It supports the most obscure ancient formats up to the cutting edge. 
-      No matter if they were designed by some standards committee, the community or 
-      a corporation. 
-    '';
     license = (
       if nonfreeLicensing then
         licenses.unfreeRedistributable
@@ -460,7 +514,7 @@ stdenv.mkDerivation rec {
       else
         licenses.lgpl21Plus
     );
+    maintainers = with maintainers; [ codyopel ];
     platforms = platforms.all;
-    maintainers = with maintainers; [ codyopel fuuzetsu ];
   };
 }
