@@ -4,6 +4,7 @@
 
 , colord
 , glib
+, gobjectIntrospection
 , gtk3
 , lcms2
 }:
@@ -24,6 +25,7 @@ stdenv.mkDerivation rec {
   buildInputs = [
     colord
     glib
+    gobjectIntrospection
     gtk3
     lcms2
   ];
