@@ -1,48 +1,57 @@
 { fetchurl, stdenv
-, pkgconfig
-, gnome3
-, json_glib
-, libcroco
-, intltool
-, libsecret
-, python3
-, libsoup
-, polkit
-, clutter
-, networkmanager
 , docbook_xsl
 , docbook_xsl_ns
-, at_spi2_core
-, libstartup_notification
-, telepathy_glib
-, telepathy_logger
-, libXtst
-, p11_kit
-, unzip
-, sqlite
-, libgweather
-, libcanberra_gtk3
-, libpulseaudio
-, libical
+, intltool
 , libtool
-, nss
-, gobjectIntrospection
-, gstreamer
 , makeWrapper
+, pkgconfig
+
 , accountsservice
+, at_spi2_atk
+, at_spi2_core
+, atk
+, clutter
+, cogl
+, dbus
 , gdk_pixbuf
 , gdm
-, upower
+, gnome3
+, gobjectIntrospection
+, gstreamer
 , ibus
-, networkmanagerapplet
+, json_glib
+, libcanberra_gtk3
+, libcroco
+, libical
+, libgweather
+, libpulseaudio
 , librsvg
-, spidermonkey_24
-, cogl
-, wayland
-, mesa_noglu
+, libsecret
+, libsoup
+, libstartup_notification
 , libxkbcommon
-, at_spi2_atk
+, libxml2
+, mesa_noglu
+, networkmanager
+, networkmanagerapplet
+, nss
+, p11_kit
+, pango
+, polkit
+, spidermonkey_24
+, sqlite
+, telepathy_glib
+, telepathy_logger
+, unzip
+, upower
+, wayland
 , xorg
+
+, python3
+
+, libffi
+, zlib
+, glib
 }:
 
 # http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/gnome-base/gnome-shell/gnome-shell-3.10.2.1.ebuild?revision=1.3&view=markup
@@ -61,81 +70,102 @@ stdenv.mkDerivation rec {
   configureFlags = [
     # Needed to find /etc/NetworkManager/VPN
     "--sysconfdir=/etc"
-    #"--disable-compile-warnings"
+    "--enable-nls"
+    "--enable-schemas-compile"
+    "--enable-systemd"
+    "--enable-browser-plugin"
+    "--enable-introspection"
+    "--enable-networkmanager"
+    "--enable-glibtest"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--disable-man"
+    "--enable-compile-warnings"
+    "--enable-Werror"
+  ];
+
+  nativeBuildInputs = [
+    docbook_xsl
+    docbook_xsl_ns
+    intltool
+    libtool
+    makeWrapper
+    pkgconfig
   ];
 
   buildInputs = with gnome3; [
+    accountsservice
     at_spi2_atk
-    gsettings_desktop_schemas
+    at_spi2_core
+    atk
+    caribou
+    clutter
+    cogl
+    dbus
+    defaultIconTheme
+    evolution_data_server
+    gcr
+    gdk_pixbuf
+    gdm
+    glib
+    gjs
+    gnome_control_center
+    gnome_desktop
     gnome_keyring
     gnome-menus
-    glib
-    gcr
-    json_glib
-    accountsservice
-    libcroco
-    intltool
-    libsecret
-    pkgconfig
-    python3
-    libsoup
-    polkit
-    libcanberra_gtk3
-    gdk_pixbuf
-    librsvg
-    clutter
-    networkmanager
-    libstartup_notification
-    telepathy_glib
-    docbook_xsl
-    docbook_xsl_ns
-    libXtst
-    p11_kit
-    networkmanagerapplet
-    gjs
-    mutter
-    libpulseaudio
-    caribou
-    evolution_data_server
-    libical
-    libtool
-    nss
-    gobjectIntrospection
-    gtk
-    gstreamer
-    makeWrapper
-    gdm
-    gnome_control_center
-    defaultIconTheme
-    sqlite
-    gnome3.gnome-bluetooth
-    libgweather # not declared at build time, but typelib is needed at runtime
-    gnome3.gnome-clocks # schemas needed
-    spidermonkey_24
-    cogl
-    wayland
-    mesa_noglu
-    libxkbcommon
-    at_spi2_core
-    upower
-    ibus
     gnome_session
-    gnome_desktop
-    telepathy_logger
+    gnome3.gnome-bluetooth
+    # not declared at build time, but typelib is needed at runtime
+    # also requires libffi
+    gnome3.libgweather
+    gnome3.gnome-clocks # schemas needed
     gnome3.gnome_settings_daemon
+    gobjectIntrospection
+    gsettings_desktop_schemas
+    gstreamer
+    gtk
+    ibus
+    json_glib
+    libcanberra_gtk3
+    libcroco
+    libical
+    libpulseaudio
+    librsvg
+    libsecret
+    libsoup
+    libstartup_notification
+    libxkbcommon
+    libxml2
+    mesa_noglu
+    mutter
+    networkmanager
+    networkmanagerapplet
+    nss
+    p11_kit
+    pango
+    polkit
+    python3
+    spidermonkey_24
+    sqlite
+    telepathy_glib
+    telepathy_logger
+    upower
+    wayland
     xorg.libSM
     xorg.libICE
     xorg.libXinerama
-  ];
-
-  installFlags = [
-    "keysdir=$(out)/share/gnome-control-center/keybindings"
+    xorg.libXtst
   ];
 
   preBuild = ''
     patchShebangs src/data-to-c.pl
     substituteInPlace data/Makefile --replace " install-keysDATA" ""
   '';
+
+  installFlags = [
+    "keysdir=$(out)/share/gnome-control-center/keybindings"
+  ];
 
   preFixup = with gnome3; ''
     wrapProgram "$out/bin/gnome-shell" \
