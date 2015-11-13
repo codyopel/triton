@@ -17,13 +17,21 @@ let
   maintainers = with pkgs.lib.maintainers; [ lethalman jgeerds ];
 
   corePackages = with gnome3; [
-    pkgs.desktop_file_utils pkgs.ibus
+    pkgs.desktop_file_utils
+    pkgs.ibus
     pkgs.shared_mime_info # for update-mime-database
     glib # for gsettings
     gtk3 # for gtk-update-icon-cache
-    glib_networking gvfs dconf gnome-backgrounds gnome_control_center
-    gnome-menus gnome_settings_daemon gnome_shell
-    gnome_themes_standard defaultIconTheme gnome-shell-extensions
+    glib_networking
+    gvfs dconf
+    gnome-backgrounds
+    gnome_control_center
+    gnome-menus
+    gnome_settings_daemon
+    gnome_shell
+    gnome_themes_standard
+    defaultIconTheme
+    gnome-shell-extensions
     pkgs.hicolor_icon_theme
   ];
 
@@ -52,8 +60,8 @@ let
     gtk3
     gtkmm
     libcanberra
-    clutter-gst_2
     libcanberra_gtk3
+    clutter-gst_2
     libsoup
     clutter
     cogl;
@@ -61,7 +69,6 @@ let
   libchamplain = pkgs.libchamplain.override { libsoup = libsoup; };
   orbit = ORBit2;
   gnome3 = self // { recurseForDerivations = false; };
-  clutter_gtk = pkgs.clutter_gtk_1_6.override { inherit clutter gtk3; };
   webkitgtk24x = webkitgtk_2_4;
   gtk = pkgs.gtk3;
   vala = pkgs.vala_0_26;
@@ -185,7 +192,7 @@ let
 
   libgxps = callPackage ./core/libgxps { };
 
-  libpeas = callPackage ./core/libpeas {};
+  libpeas = callPackage ./core/libpeas { };
 
   libgweather = callPackage ./core/libgweather { };
 
