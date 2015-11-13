@@ -1,21 +1,22 @@
 { stdenv, fetchurl
-, pkgconfig
 , intltool
-, gnupg
-, p11_kit
+, libxslt
+, makeWrapper
+, pkgconfig
+
+, atk
+, dbus_glib
+, gdk_pixbuf
 , glib
+, gobjectIntrospection
+, gnome3
+, gnupg
+, gtk3
 , libgcrypt
 , libtasn1
-, dbus_glib
-, gtk3
+, p11_kit
 , pango
-, gdk_pixbuf
-, atk
-, gobjectIntrospection
-, makeWrapper
-, libxslt
 , vala
-, gnome3
 }:
 
 stdenv.mkDerivation rec {
@@ -29,25 +30,28 @@ stdenv.mkDerivation rec {
     sha256 = "006f6xbd3jppkf9avg83mpqdld5d0z6mr0sm81lql52mmyjnvlfl";
   };
 
+  nativeBuildInputs = [
+    intltool
+    libxslt
+    makeWrapper
+    pkgconfig
+  ];
+
   propagatedBuildInputs = [
     p11_kit
   ];
 
   buildInputs = [
-    pkgconfig
-    intltool
-    gnupg
+    atk
+    dbus_glib
+    gdk_pixbuf
     glib
+    gnupg
     gobjectIntrospection
-    libxslt
+    gtk3
     libgcrypt
     libtasn1
-    dbus_glib
-    gtk3
     pango
-    gdk_pixbuf
-    atk
-    makeWrapper
     vala
   ];
 
