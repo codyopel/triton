@@ -12,6 +12,7 @@
 , libdrm
 , libpng
 #, librsvg
+, libspectre
 , lzo
 , pixman
 #, poppler
@@ -74,8 +75,7 @@ stdenv.mkDerivation rec {
     "--enable-script"
     "--enable-ft"
     "--enable-fc"
-    # TODO: requires libspectre
-    "--disable-ps"
+    "--enable-ps"
     "--enable-pdf"
     "--enable-svg"
     "--disable-test-surfaces"
@@ -111,6 +111,7 @@ stdenv.mkDerivation rec {
     freetype
     glib
     libpng
+    libspectre
     mesa_noglu
     xorg.libX11
     xorg.libxcb
