@@ -28,10 +28,19 @@ stdenv.mkDerivation rec {
   };
 
   configureFlags = [
+    "--enable-schemas-compile"
+    "--enable-compile-warnings"
+    "--enable-glibtest"
     "--enable-nls"
-    "--enable-introspection=yes"
+    "--enable-rpath"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-introspection"
+    "--disable-vala"
     "--with-zoneinfo-dir=${tzdata}/share/zoneinfo"
   ];
+
   nativeBuildInputs = [
     gettext
     intltool
@@ -39,19 +48,19 @@ stdenv.mkDerivation rec {
   ];
 
   propagatedBuildInputs = [
-    glib
-    libxml2
-    gtk3
-    libsoup
-    gconf
-    pango
     gdk_pixbuf
-    atk
-    gnome3.geocode_glib
+    glib
+    gtk3
   ];
 
   buildInputs = [
+    atk
+    gconf
+    gnome3.geocode_glib
     gobjectIntrospection
+    libsoup
+    libxml2
+    pango
   ];
 
   meta = with stdenv.lib; {
