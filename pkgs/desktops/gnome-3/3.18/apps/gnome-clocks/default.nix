@@ -1,7 +1,9 @@
 { stdenv, intltool, fetchurl, libgweather, libnotify
 , pkgconfig, gtk3, glib, gsound
 , makeWrapper, itstool, libcanberra_gtk3, libtool
-, gnome3, librsvg, gdk_pixbuf, geoclue2, wrapGAppsHook }:
+, gnome3, librsvg, gdk_pixbuf, geoclue2, wrapGAppsHook
+, libxml2
+}:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
@@ -13,7 +15,9 @@ stdenv.mkDerivation rec {
                   gdk_pixbuf gnome3.defaultIconTheme librsvg
                   gnome3.gnome_desktop gnome3.geocode_glib geoclue2
                   libgweather libnotify libtool gsound
-                  wrapGAppsHook ];
+                  wrapGAppsHook
+                  libxml2
+  ];
 
   enableParallelBuilding = true;
 
