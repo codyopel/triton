@@ -169,14 +169,18 @@ stdenv.mkDerivation rec {
     ruby
   ];
 
+  propagatedBuildInputs = [
+    glib
+    gtk3
+    libsoup
+  ];
+
   buildInputs = [
     # Required
     atk
     cairo
     fontconfig
     freetype
-    glib
-    gtk3
     harfbuzz
     icu
     libjpeg
@@ -206,10 +210,6 @@ stdenv.mkDerivation rec {
     xorg.libXcomposite
     xorg.libXrender
     xorg.libXdamage
-  ];
-
-  propagatedBuildInputs = [
-    libsoup
   ];
 
   enableParallelBuilding = true;
