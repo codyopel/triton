@@ -32,6 +32,7 @@
 , icu
 , libtool
 , udev
+, libgudev
 , docbook_xsl
 , docbook_xsl_ns
 , modemmanager
@@ -109,6 +110,7 @@ stdenv.mkDerivation rec {
     clutter_gtk
     gnome3.vino
     udev
+    libgudev
     networkmanager
     modemmanager
     makeWrapper
