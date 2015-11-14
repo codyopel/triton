@@ -1,12 +1,16 @@
 { fetchurl, stdenv, pkgconfig, gnome3, python
 , intltool, libsoup, libxml2, libsecret, icu, sqlite
-, p11_kit, db, nspr, nss, libical, gperf, makeWrapper, valaSupport ? true, vala }:
+, p11_kit, db, nspr, nss, libical, gperf, makeWrapper
+, valaSupport ? true, vala
+, gobjectIntrospection
+}:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
   buildInputs = with gnome3;
     [ pkgconfig glib python intltool libsoup libxml2 gtk3 gnome_online_accounts
+    gobjectIntrospection
       gcr p11_kit libgweather libgdata gperf makeWrapper icu sqlite gsettings_desktop_schemas ]
     ++ stdenv.lib.optional valaSupport vala;
 
