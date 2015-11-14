@@ -1,34 +1,140 @@
-{ fetchurl, stdenv, pkgconfig, gnome3, python
-, intltool, libsoup, libxml2, libsecret, icu, sqlite
-, p11_kit, db, nspr, nss, libical, gperf, makeWrapper
-, valaSupport ? true, vala
+{ fetchurl, stdenv
+, gettext
+, intltool
+, makeWrapper
+, pkgconfig
+
+, db
+, gcr
+, glib
+, gnome3
+, gnome_online_accounts
+, gperf
+, gsettings_desktop_schemas
+, gtk3
+, icu
+, kerberos
+, libaccounts-glib
+, libgdata
+, libgweather
+, libical
+, libsecret
+, libsoup
+, libxml2
+, openldap
+, nspr
+, nss
+, p11_kit
+, python
+, sqlite
+# Optional
+, vala
 , gobjectIntrospection
 }:
 
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
+
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "evolution-data-server-${version}";
+  versionMajor = "3.18";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
 
-  buildInputs = with gnome3;
-    [ pkgconfig glib python intltool libsoup libxml2 gtk3 gnome_online_accounts
-    gobjectIntrospection
-      gcr p11_kit libgweather libgdata gperf makeWrapper icu sqlite gsettings_desktop_schemas ]
-    ++ stdenv.lib.optional valaSupport vala;
-
-  propagatedBuildInputs = [ libsecret nss nspr libical db ];
+  src = fetchurl {
+    url = "mirror://gnome/sources/evolution-data-server/${versionMajor}/" +
+          "${name}.tar.xz";
+    sha256 = "16yfd2a00xqxikyf6pi2awfd0qfq4hwdhfar88axrb4mycfgqhjr";
+  };
 
   # uoa irrelevant for now
-  configureFlags = [ "--disable-uoa" ]
-                   ++ stdenv.lib.optional valaSupport "--enable-vala-bindings";
+  configureFlags = [
+    "--enable-schemas-compile"
+    "--disable-maintainer-mode"
+    "--enable-nls"
+    "--disable-code-coverage"
+    "--disable-installed-tests"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-gtk"
+    "--disable-examples"
+    "--enable-goa"
+    # TODO: requires libsignon-glib
+    "--disable-uoa"
+    "--enable-backend-per-process"
+    "--disable-backtraces"
+    "--enable-smime"
+    "--enable-ipv6"
+    "--enable-weather"
+    "--enable-dot-locking"
+    "--enable-file-locking"
+    "--disable-purify"
+    "--enable-google"
+    "--enable-largefile"
+    "--enable-glibtest"
+    "--enable-introspection"
+    (enFlag "vala-bindings" (vala != null) null)
+    # TODO: libphonenumber support
+    "--without-phonenumber"
+    "--without-private-docs"
+    "--with-libdb=${db}"
+    "--with-krb5=${kerberos}"
+    "--with-openldap"
+    "--without-static-ldap"
+    "--without-sunldap"
+    "--without-static-sunldap"
+  ];
+
+  nativeBuildInputs = [
+    gettext
+    intltool
+    makeWrapper
+    pkgconfig
+  ];
+
+  propagatedBuildInputs = [
+    glib
+    gtk3
+    libical
+    libsecret
+    libxml2
+    nspr
+    nss
+    sqlite
+  ];
+
+  buildInputs = [
+    db
+    gcr
+    gnome_online_accounts
+    gobjectIntrospection
+    gperf
+    gsettings_desktop_schemas
+    icu
+    kerberos
+    libaccounts-glib
+    libgdata
+    libgweather
+    libsoup
+    openldap
+    p11_kit
+    python
+    vala
+  ];
 
   preFixup = ''
-    for f in "$out/libexec/"*; do
-      wrapProgram "$f" --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
+    for f in "$out/libexec/"* ; do
+      wrapProgram "$f" \
+        --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
     done
   '';
 
   meta = with stdenv.lib; {
-    platforms = platforms.linux;
     maintainers = gnome3.maintainers;
+    platforms = platforms.linux;
   };
 
 }
