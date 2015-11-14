@@ -14,18 +14,13 @@
 # Info on how to use:
 # https://wiki.archlinux.org/index.php/BluRay
 
-let
-  inherit (stdenv.lib)
-    optional;
-in
-
 stdenv.mkDerivation rec {
   name = "libbluray-${version}";
-  version  = "0.9.0";
+  version  = "0.9.1";
 
   src = fetchurl {
     url = "ftp://ftp.videolan.org/pub/videolan/libbluray/${version}/${name}.tar.bz2";
-    sha256 = "0kb9znxk6610vi0fjhqxn4z5i98nvxlsz1f8dakj99rg42livdl4";
+    sha256 = "0h1r5z263cyr97bay89p1x4k6cbyv73gr7syv0rpp402b2jpyr6r";
   };
 
   patches = [
@@ -33,10 +28,38 @@ stdenv.mkDerivation rec {
     ./BDJ-JARFILE-path.patch
   ];
 
+  configureFlags = [
+    "--disable-werror"
+    "--enable-optimizations"
+    "--disable-examples"
+    "--enable-bdjava"
+    "--enable-udf"
+    "--disable-doxygen-doc"
+    "--disable-doxygen-dot"
+    "--disable-doxygen-man"
+    "--disable-doxygen-rtf"
+    "--disable-doxygen-xml"
+    "--disable-doxygen-chm"
+    "--disable-doxygen-chi"
+    "--disable-doxygen-html"
+    "--disable-doxygen-ps"
+    "--disable-doxygen-pdf"
+    "--with-libxml2"
+    "--with-freetype"
+    "--with-fontconfig"
+    "--with-bdj-type=j2se"
+    #"--with-bdj-bootclasspath="
+  ];
+
+  NIX_LDFLAGS = [
+    "-L${libaacs}/lib"
+    "-laacs"
+    "-L${libbdplus}/lib"
+    "-lbdplus"
+  ];
+
   preConfigure = ''
     export JDK_HOME="${jdk.home}"
-    export NIX_LDFLAGS="$NIX_LDFLAGS -L${libaacs}/lib -laacs"
-    export NIX_LDFLAGS="$NIX_LDFLAGS -L${libbdplus}/lib -lbdplus"
   '';
 
   nativeBuildInputs = [
