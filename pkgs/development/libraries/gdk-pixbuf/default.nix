@@ -42,7 +42,8 @@ stdenv.mkDerivation rec {
     "--disable-installed-tests"
     "--disable-always-build-tests"
     "--disable-coverage"
-    "--enable-relocations"
+    # Enabling relocations breaks setting loaders.cache path
+    "--disable-relocations"
     "--with-libpng"
     "--with-libjpeg"
     "--with-libjasper"
