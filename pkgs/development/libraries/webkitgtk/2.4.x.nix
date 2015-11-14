@@ -10,10 +10,6 @@
 , python
 , ruby
 , which
-# Required
-# Optional
-
-
 
 , atk
 , cairo
@@ -123,6 +119,12 @@ stdenv.mkDerivation rec {
     gettext
   ];
 
+  propagatedBuildInputs = [
+    glib
+    gtk3
+    libsoup
+  ];
+
   buildInputs = [
     atk
     cairo
@@ -130,10 +132,8 @@ stdenv.mkDerivation rec {
     fontconfig
     freetype
     geoclue2
-    glib
     gobjectIntrospection
     gtk2
-    gtk3
     gst_all_1.gst-plugins-base
     gst_all_1.gstreamer
     harfbuzz
@@ -141,7 +141,6 @@ stdenv.mkDerivation rec {
     libjpeg
     libpng
     libsecret
-    libsoup
     libwebp
     libxml2
     libxslt
