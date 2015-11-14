@@ -12471,9 +12471,7 @@ let
     plugins = [ urxvt_perl urxvt_perls urxvt_tabbedex urxvt_font_size ];
   };
 
-  sakura = callPackage ../applications/misc/sakura {
-    vte = gnome3.vte_290;
-  };
+  sakura = callPackage ../applications/misc/sakura { };
 
   sbagen = callPackage ../applications/misc/sbagen { };
 
