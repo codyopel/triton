@@ -35,12 +35,12 @@ with {
 stdenv.mkDerivation rec {
   name = "gtk+-${version}";
   versionMajor = "3.18";
-  versionMinor = "3";
+  versionMinor = "4";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gtk+/${versionMajor}/${name}.tar.xz";
-    sha256 = "0iimb57g3qj24ka5rgx9l1srh2vk0wqghxinn1hf4l9zz68ngizk";
+    sha256 = "1sy7fq62y078abxvdm15nhypszviika9xm9kdxh293fjh3rdq02l";
   };
 
   # demos fail to install, no idea where the problem is
