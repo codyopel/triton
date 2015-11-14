@@ -1,25 +1,62 @@
-{ stdenv, fetchFromGitLab, autoconf, automake, glib
-, gtk_doc, libtool, libxml2, libxslt, pkgconfig, sqlite }:
+{ stdenv, fetchurl
+, autoreconfHook
+, gtk_doc
+, libtool
+, libxslt
+, pkgconfig
 
-let version = "1.18"; in
+, glib
+, gobjectIntrospection
+, libxml2
+, sqlite
+}:
+
 stdenv.mkDerivation rec {
   name = "libaccounts-glib-${version}";
+  version = "1.18";
 
-  src = fetchFromGitLab {
-    sha256 = "02p23vrqhw2l2w6nrwlk4bqxf7z9kplkc2d43716x9xakxr291km";
-    rev = version;
-    repo = "libaccounts-glib";
-    owner = "accounts-sso";
+  src = fetchurl {
+    url = "https://gitlab.com/accounts-sso/libaccounts-glib/repository/" +
+          "archive.tar.gz?ref=${version}";
+    sha256 = "1602cysf4l779ygscl9ylxkrjy3zlradnmji347bzz5xamawzksv";
   };
 
-  buildInputs = [ glib libxml2 libxslt sqlite ];
-  nativeBuildInputs = [ autoconf automake gtk_doc libtool pkgconfig ];
-
   postPatch = ''
-    NOCONFIGURE=1 ./autogen.sh
+    export HAVE_GCOV_FALSE='#'
+    gtkdocize --copy --flavour no-tmpl
   '';
 
-  configurePhase = ''
-    HAVE_GCOV_FALSE="#" ./configure $configureFlags --prefix=$out
-  '';
+  configureFlags = [
+    "--enable-introspection"
+    "--disable-tests"
+    "--disable-gcov"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-cast-checks"
+    "--enable-asserts"
+    "--enable-checks"
+    "--disable-debug"
+    "--enable-wal"
+    "--enable-python"
+    "--disable-man"
+  ];
+
+  nativeBuildInputs = [
+    autoreconfHook
+    gtk_doc
+    libtool
+    libxslt
+    pkgconfig
+  ];
+
+  propagatedBuildInputs = [
+    glib
+  ];
+
+  buildInputs = [
+    gobjectIntrospection
+    libxml2
+    sqlite
+  ];
 }
