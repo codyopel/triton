@@ -1,35 +1,68 @@
-{ fetchurl, stdenv, pkgconfig, glib, gtk3, cairo, clutter, sqlite
-, clutter_gtk, libsoup /*, libmemphis */ }:
+{ fetchurl, stdenv
+, pkgconfig
 
-let version = "0.12.11"; in
+, cairo
+, clutter
+, clutter_gtk
+, glib
+, gobjectIntrospection
+, gtk3
+#, libmemphis
+, libsoup
+, sqlite
+}:
+
 stdenv.mkDerivation rec {
   name = "libchamplain-${version}";
+  versionMajor = "0.12";
+  versionMinor = "11";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/libchamplain/0.12/libchamplain-${version}.tar.xz";
+    url = "mirror://gnome/sources/libchamplain/${versionMajor}/${name}.tar.xz";
     sha256 = "19aadn4lh6mzpz2qzi5l1qcbi11a57qqv1zxp2n10z4nin4287l5";
   };
 
-  buildInputs = [ pkgconfig ];
+  configureFlags = [
+    "--enable-glibtest"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--enable-compile-warnings"
+    "--disable-maintainer-mode"
+    "--enable-introspection"
+    "--disable-debug"
+    "--disable-maemo"
+    "--enable-gtk"
+    "--disable-memphis"
+    "--disable-vala"
+    "--disable-vala-demos"
+  ];
 
-  propagatedBuildInputs = [ glib gtk3 cairo clutter_gtk sqlite libsoup ];
+  nativeBuildInputs = [
+    pkgconfig
+  ];
+
+  buildInputs = [
+    cairo
+    clutter
+    gobjectIntrospection
+    libsoup
+    sqlite
+  ];
+
+  propagatedBuildInputs = [
+    glib
+    gtk3
+    clutter_gtk
+  ];
 
   meta = with stdenv.lib; {
-    inherit version;
+    description = "C library providing a ClutterActor to display maps";
     homepage = http://projects.gnome.org/libchamplain/;
     license = licenses.lgpl2Plus;
-
-    description = "C library providing a ClutterActor to display maps";
-
-    longDescription =
-      '' libchamplain is a C library providing a ClutterActor to display
-         maps.  It also provides a Gtk+ widget to display maps in Gtk+
-         applications.  Python and Perl bindings are also available.  It
-         supports numerous free map sources such as OpenStreetMap,
-         OpenCycleMap, OpenAerialMap, and Maps for free.
-      '';
-
-     maintainers = [ ];
-     platforms = platforms.gnu;  # arbitrary choice
+    maintainers = [ ];
+    platforms = platforms.gnu;
+    inherit version;
   };
 }
