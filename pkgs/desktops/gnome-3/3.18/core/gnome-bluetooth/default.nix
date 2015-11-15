@@ -2,7 +2,15 @@
 , udev, itstool, libxml2, makeWrapper, libnotify, libcanberra_gtk3 }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-bluetooth-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-bluetooth/${versionMajor}/${name}.tar.xz";
+    sha256 = "0jaa9nbygdvcqp9k4p4iy2g8x3684s4x9k5nbcmmm11jdn4mn7f5";
+  };
 
   buildInputs = [ pkgconfig intltool glib gtk3 udev libxml2 gnome3.defaultIconTheme
                   makeWrapper gnome3.gsettings_desktop_schemas itstool
