@@ -34,12 +34,12 @@
 stdenv.mkDerivation rec {
   name = "gnome-settings-daemon-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-settings-daemon/${versionMajor}/${name}.tar.xz";
-    sha256 = "1h7jdmm8yfm5m8l1cr9y1rmsp7qasbdb080h8rhgwcniy4bilqps";
+    sha256 = "0vzwf875csyqx04fnra6zicmzcjc3s13bxxpcizlys12iwjwfw9h";
   };
 
   NIX_CFLAGS_COMPILE = [
