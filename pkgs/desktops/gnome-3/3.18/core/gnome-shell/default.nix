@@ -59,12 +59,12 @@
 stdenv.mkDerivation rec {
   name = "gnome-shell-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-shell/${versionMajor}/${name}.tar.xz";
-    sha256 = "0i9qpxr83xvaj0mj9jmib4icpa73cmjqmib99ywjb6p2ncam588l";
+    sha256 = "14iqj5lynjy9ks7kr9say5yk5blrzx177f5fjvv2wvnxx254pybv";
   };
 
   configureFlags = [
