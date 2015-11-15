@@ -24,12 +24,12 @@
 stdenv.mkDerivation rec {
   name = "gnome-online-accounts-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2.1";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-online-accounts/${versionMajor}/${name}.tar.xz";
-    sha256 = "1hn2fvkr1f4qh4gix03avnvk7pklvv5272ns8ws56v4kcq4nppkc";
+    sha256 = "1b6gdq4qcrwcaxdcy3379s0ahsfyqglakzk8xlvq9h2sx9c9q2na";
   };
 
   NIX_CFLAGS_COMPILE = [
