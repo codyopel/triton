@@ -2,15 +2,15 @@
 , dbus, pythonPackages, libxml2, autoconf
 , libxklavier, libXtst, gtk2, intltool, libxslt, at_spi2_core, automake114x }:
 
-let
-  majorVersion = "0.4";
-in
 stdenv.mkDerivation rec {
-  name = "caribou-${majorVersion}.18.1";
+  name = "caribou-${version}";
+  versionMajor = "0.4";
+  versionMinor = "19";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/caribou/${majorVersion}/${name}.tar.xz";
-    sha256 = "0l1ikx56ddgayvny3s2xv8hs3p23xsclw4zljs3cczv4b89dzymf";
+    url = "mirror://gnome/sources/caribou/${versionMajor}/${name}.tar.xz";
+    sha256 = "0i2s2xy9ami3wslam15cajhggpcsj4c70qm7qddcz52z9k0x02rg";
   };
 
   buildInputs = with gnome3;
