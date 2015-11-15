@@ -16,9 +16,11 @@
 , glib
 , gnome3
 , json_glib
+, librsvg
 , libxkbcommon
 , mesa_noglu
 , pango
+, shared_mime_info
 , wayland
 , xlibsWrapper
 , xorg
@@ -86,6 +88,17 @@ stdenv.mkDerivation rec {
     pkgconfig
   ];
 
+  propagatedBuildInputs = [
+    atk # pkgconfig
+    cairo # pkgconfig
+    gdk_pixbuf # pkgconfig
+    glib # pkgconfig
+    gnome3.adwaita-icon-theme
+    pango # pkgconfig
+    xorg.libICE
+    xorg.libSM
+  ];
+
   buildInputs = [
     at_spi2_atk
     colord
@@ -95,8 +108,10 @@ stdenv.mkDerivation rec {
     fontconfig
     gnome3.rest
     json_glib
+    librsvg
     libxkbcommon
     mesa_noglu
+    shared_mime_info
     wayland
     xorg.inputproto
     xorg.libX11
@@ -109,16 +124,6 @@ stdenv.mkDerivation rec {
     xorg.libXinerama
     xorg.libXrandr
     xorg.libXrender
-  ];
-
-  propagatedBuildInputs = [
-    atk # pkgconfig
-    cairo # pkgconfig
-    gdk_pixbuf # pkgconfig
-    glib # pkgconfig
-    pango # pkgconfig
-    xorg.libICE
-    xorg.libSM
   ];
 
   postInstall = "rm -rvf $out/share/gtk-doc";
