@@ -6,7 +6,15 @@
 , libsoup, vala, dbus_glib, automake115x, autoconf }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-contacts-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-contacts/${versionMajor}/${name}.tar.xz";
+    sha256 = "09ng00kszzpa6al4j5ak4451i4gg34w89kjqvgs0ag77f1gd4604";
+  };
 
   doCheck = true;
 
