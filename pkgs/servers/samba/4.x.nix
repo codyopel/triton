@@ -37,45 +37,33 @@
 assert kerberos != null -> zlib != null;
 
 let
-  bundledLibs = if kerberos != null && kerberos.implementation == "heimdal" then "NONE" else "com_err";
+  bundledLibs =
+    if kerberos != null && kerberos.implementation == "heimdal" then
+      "NONE"
+    else
+      "com_err";
   hasGnutls = gnutls != null && libgcrypt != null && libgpgerror != null;
-  isKrb5OrNull = if kerberos != null && kerberos.implementation == "krb5" then true else null;
+  isKrb5OrNull =
+    if kerberos != null && kerberos.implementation == "krb5" then
+      true
+    else
+      null;
   #hasInfinibandOrNull = if libibverbs != null && librdmacm != null then true else null;
   hasInfinibandOrNull = null;  # TODO(wkennington): Reenable after fixed
 in
 with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "samba-4.3.0";
+  name = "samba-4.3.1";
 
   src = fetchurl {
     url = "mirror://samba/pub/samba/stable/${name}.tar.gz";
-    sha256 = "0qyvmjl8p8fnyhibwivhxxkm67nxxaj4lp35jni9l7gcknrbdnyq";
+    sha256 = "10ic9pxsk3ml5ycmi0bql8wraxhbr2l4fhzd0qwmiqmrjl6sh24r";
   };
 
   patches = [
     ./4.x-no-persistent-install.patch
     ./4.x-fix-ctdb-deps.patch
   ] ++ optional (kerberos != null) ./4.x-heimdal-compat.patch;
-
-  nativeBuildInputs = [
-    pythonPackages.python pkgconfig perl libxslt docbook_xsl docbook_xml_dtd_42
-    pythonPackages.wrapPython
-  ];
-  buildInputs = [
-    readline talloc tdb tevent ldb popt iniparser
-    subunit libbsd nss_wrapper resolv_wrapper socket_wrapper uid_wrapper
-    libarchive
-
-    kerberos zlib openldap cups pam avahi acl libaio fam libceph glusterfs
-
-    libiconv gettext
-
-    gnutls libgcrypt libgpgerror
-
-    ncurses libunwind dbus libibverbs librdmacm systemd
-  ];
-
-  pythonPath = [ talloc ldb tdb ];
 
   postPatch = ''
     # Removes absolute paths in scripts
@@ -84,8 +72,6 @@ stdenv.mkDerivation rec {
     # Fix the XML Catalog Paths
     sed -i "s,\(XML_CATALOG_FILES=\"\),\1$XML_CATALOG_FILES ,g" buildtools/wafsamba/wafsamba.py
   '';
-
-  enableParallelBuilding = true;
 
   configureFlags = [
     # source3/wscript options
@@ -144,6 +130,65 @@ stdenv.mkDerivation rec {
     (mkEnable null                 "pmda"              null)
   ];
 
+  pythonPath = [
+    talloc
+    ldb
+    tdb
+  ];
+
+  nativeBuildInputs = [
+    pythonPackages.python
+    pkgconfig
+    perl
+    libxslt
+    docbook_xsl
+    docbook_xml_dtd_42
+    pythonPackages.wrapPython
+  ];
+
+  buildInputs = [
+    readline
+    talloc
+    tdb
+    tevent
+    ldb
+    popt
+    iniparser
+    subunit
+    libbsd
+    nss_wrapper
+    resolv_wrapper
+    socket_wrapper
+    uid_wrapper
+    libarchive
+
+    kerberos
+    zlib
+    openldap
+    cups
+    pam
+    avahi
+    acl
+    libaio
+    fam
+    libceph
+    glusterfs
+
+    libiconv
+    gettext
+
+    gnutls
+    libgcrypt
+    libgpgerror
+
+    ncurses
+    libunwind
+    dbus
+    libibverbs
+    librdmacm
+    systemd
+  ];
+
   stripAllList = [ "bin" "sbin" ];
 
   postInstall = ''
@@ -165,9 +210,11 @@ stdenv.mkDerivation rec {
     done
   '';
 
+  enableParallelBuilding = true;
+
   meta = {
+    description = "Windows interoperability suite of programs for Unix"; 
     homepage = http://www.samba.org/;
-    description = "The standard Windows interoperability suite of programs for Linux and Unix";
     license = licenses.gpl3;
     maintainers = with maintainers; [ wkennington ];
     platforms = platforms.unix;
