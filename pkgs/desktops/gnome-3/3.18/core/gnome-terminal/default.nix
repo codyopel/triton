@@ -3,7 +3,15 @@
 , desktop_file_utils, itstool, makeWrapper, appdata-tools }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-terminal-${version}";
+  versionMajor = "3.18";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-terminal/${versionMajor}/${name}.tar.xz";
+    sha256 = "1ylyv0mla2ypms7iyxndbdjvha0q9jzglb4mhfmqn9cm2gxc0day";
+  };
 
   buildInputs = [ gnome3.gtk gnome3.gsettings_desktop_schemas gnome3.vte appdata-tools
                   gnome3.dconf itstool makeWrapper gnome3.nautilus vala ];
