@@ -5,7 +5,15 @@
 }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "nautilus-${version}";
+  versionMajor = "3.18";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/nautilus/${versionMajor}/${name}.tar.xz";
+    sha256 = "0jj23n8vmmyc4gp5xhiz7slsxwksydp26blxi5m154yaw9lgdp38";
+  };
 
   buildInputs = [
     pkgconfig libxml2 dbus_glib shared_mime_info libexif gtk libunique intltool
