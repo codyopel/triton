@@ -18,13 +18,13 @@ with {
 
 stdenv.mkDerivation rec {
   name = "vte-${version}";
-  versionMajor = "0.42";
-  versionMinor = "1";
+  versionMajor = "0.43";
+  versionMinor = "0";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/vte/${versionMajor}/${name}.tar.xz";
-    sha256 = "0d4xzjq6mxrlhnh4i12a1yy90n41m03z8wf8g6wh4hjgx7ly404y";
+    sha256 = "1faa9n6dn0vgzlbf9vlm7d0ksw19577p57v3b3j9wgk3910sw41g";
   };
 
   patches = optional selectTextPatch ./expose_select_text.0.40.0.patch;
