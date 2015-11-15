@@ -14,12 +14,12 @@
 stdenv.mkDerivation rec {
   name = "gnome-shell-extensions-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-shell-extensions/${versionMajor}/${name}.tar.xz";
-    sha256 = "1hhwz8gyl6bpi8nky24k040k0692zcnd8blinll8v00c1i13axbs";
+    sha256 = "0qfzi85j39dfj9yczghkhd8xbyaqf3lvi758ad4c1n3fi7y4ylfc";
   };
 
   buildInputs = [
