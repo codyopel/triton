@@ -1,17 +1,16 @@
 { stdenv, fetchurl
 , pkgconfig
 
-, glib
-, gdk_pixbuf
-, pango
-, cairo
-, libxml2
-, libgsf
 , bzip2
-, libcroco
-, libintlOrEmpty
-, tools ? false, gtk3 ? null
+, cairo
+, gdk_pixbuf
+, glib
 , gobjectIntrospection
+, libcroco
+, libgsf
+, libintlOrEmpty
+, libxml2
+, pango
 }:
 
 with {
@@ -32,13 +31,14 @@ stdenv.mkDerivation rec {
   };
 
   configureFlags = [
+    "--disable-maintainer-mode"
     "--enable-pixbuf-loader"
     "--enable-Bsymbolic"
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
-    (enFlag "tools" (tools && gtk3 != null) null)
-    (enFlag "--enable-introspection" (gobjectIntrospection != null) "yes")
+    "--disable-tools"
+    (enFlag "introspection" (gobjectIntrospection != null) "yes")
     "--disable-vala"
   ];
 
@@ -75,8 +75,7 @@ stdenv.mkDerivation rec {
     libgsf
     libxml2
     pango
-  ] ++ optional tools gtk3
-    ++ libintlOrEmpty;
+  ] ++ libintlOrEmpty;
 
   # Merge gdkpixbuf and librsvg loaders
   postInstall = ''
