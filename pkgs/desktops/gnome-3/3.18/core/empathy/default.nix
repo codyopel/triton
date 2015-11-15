@@ -10,15 +10,15 @@
 
 # TODO: enable more features
 
-let
-  majorVersion = "3.12";
-in
 stdenv.mkDerivation rec {
-  name = "empathy-${majorVersion}.8";
+  name = "empathy-${version}";
+  versionMajor = "3.12";
+  versionMinor = "11";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/empathy/${majorVersion}/${name}.tar.xz";
-    sha256 = "10z6ksia6yx7vg0wsdbk4w6vjgfg3cg3n04jf9bj2vr7kr5zvs7w";
+    url = "mirror://gnome/sources/empathy/${versionMajor}/${name}.tar.xz";
+    sha256 = "11yl8msyf017197fm6h15yw159yjp9i08566l967yashbx7gzr6i";
   };
 
   propagatedUserEnvPkgs = [ gnome3.gnome_themes_standard
