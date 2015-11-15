@@ -17,12 +17,12 @@
 stdenv.mkDerivation rec {
   name = "gnome-calculator-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-calculator/${versionMajor}/${name}.tar.xz";
-    sha256 = "0p4v9w2w9cplc3nyv7akqvk28n6d498dsajfb3f9r8z8sk1f3yhw";
+    sha256 = "0r2d4xxw5zn0wljaaa7lvkrq1a51y369fklhjqcd1qcw81bmhv68";
   };
 
   NIX_CFLAGS_COMPILE = [
