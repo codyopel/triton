@@ -1,16 +1,17 @@
 { stdenv, fetchurl, pkgconfig, libxml2, glib }:
 
 stdenv.mkDerivation rec {
-  name = "libcroco-0.6.8";
+  name = "libcroco-${version}";
+  versionMajor = "0.6";
+  versionMinor = "9";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/libcroco/0.6/${name}.tar.xz";
-    sha256 = "0w453f3nnkbkrly7spx5lx5pf6mwynzmd5qhszprq8amij2invpa";
+    url = "mirror://gnome/sources/libcroco/${versionMajor}/${name}.tar.xz";
+    sha256 = "1bp01c6974p65wkyj0j6k0glvba5z0d8v9h7rarmagl1s6padf9q";
   };
 
   outputs = [ "out" "doc" ];
-
-  configureFlags = stdenv.lib.optional stdenv.isDarwin "--disable-Bsymbolic";
 
   buildInputs = [ pkgconfig libxml2 glib ];
 
