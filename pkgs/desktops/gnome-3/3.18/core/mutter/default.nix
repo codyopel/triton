@@ -28,14 +28,14 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "mutter-3.18.1";
+  name = "mutter-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/mutter/${versionMajor}/${name}.tar.xz";
-    sha256 = "1ab959z5fgi4rq0ifxdqvpdbv99a2b1lfgvj327s9crdvk4ygpjg";
+    sha256 = "108i4qvwhipdlyvd75fykhskp6y4rywkhffmdknpaxbc45pk4sca";
   };
 
   patches = [
