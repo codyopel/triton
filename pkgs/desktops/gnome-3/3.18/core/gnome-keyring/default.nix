@@ -3,7 +3,15 @@
 , docbook_xsl_ns, docbook_xsl, gnome3 }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-keyring-${version}";
+  versionMajor = "3.18";
+  versionMinor = "3";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-keyring/${versionMajor}/${name}.tar.xz";
+    sha256 = "167dq1yvm080g5s38hqjl0xx5cgpkcl1xqy9p5sxmgc92zb0srrz";
+  };
 
   buildInputs = with gnome3; [
     dbus libgcrypt pam python gtk3 gconf libgnome_keyring
