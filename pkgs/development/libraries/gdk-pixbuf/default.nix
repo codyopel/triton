@@ -15,13 +15,13 @@
 
 stdenv.mkDerivation rec {
   name = "gdk-pixbuf-${version}";
-  versionMajor = "2.32";
-  versionMinor = "2";
+  versionMajor = "2.33";
+  versionMinor = "1";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gdk-pixbuf/${versionMajor}/${name}.tar.xz";
-    sha256 = "0ib1jap60xkv74ndha06y8ziglpspp77fz62skzfy4rv2by0dayk";
+    sha256 = "12q8nlrh8svf3msj2k69pi21zjpxdlh1872py0p4w86qkfrmh8qk";
   };
 
   setupHook = ./setup-hook.sh;
@@ -39,8 +39,8 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc-pdf"
     "--disable-man"
     "--enable-Bsymbolic"
-    "--disable-installed-tests"
-    "--disable-always-build-tests"
+    "--enable-installed-tests"
+    "--enable-always-build-tests"
     "--disable-coverage"
     # Enabling relocations breaks setting loaders.cache path
     "--disable-relocations"
