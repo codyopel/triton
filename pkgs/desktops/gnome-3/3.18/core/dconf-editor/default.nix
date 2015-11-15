@@ -15,12 +15,12 @@
 stdenv.mkDerivation rec {
   name = "dconf-editor-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/dconf-editor/${versionMajor}/${name}.tar.xz";
-    sha256 = "04yvs48607jf6b5pkngiab17f57cxg2c2j2iscar1p67mi97ih9m";
+    sha256 = "0xdwi7g1xdmgrc9m8ii62fp2zj114gsfpmgazlnhrcmmfi97z5d7";
   };
 
   buildInputs = [
