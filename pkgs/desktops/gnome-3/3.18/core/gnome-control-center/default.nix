@@ -50,12 +50,12 @@
 stdenv.mkDerivation rec {
   name = "gnome-control-center-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-control-center/${versionMajor}/${name}.tar.xz";
-    sha256 = "0hcbaydyj2ch5bd5067l5wjl70kxwgv37nb9lrskm1rxw0gyqncs";
+    sha256 = "1bgqg1sl3cp2azrwrjgwx3jzk9n3w76xpcyvk257qavx4ibn3zin";
   };
 
   patches = [
