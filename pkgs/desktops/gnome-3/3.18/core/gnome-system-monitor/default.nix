@@ -3,7 +3,15 @@
 , itstool, gnome3, librsvg, gdk_pixbuf, libgtop }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-system-monitor-${version}";
+  versionMajor = "3.18";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-system-monitor/${versionMajor}/${name}.tar.xz";
+    sha256 = "0rp6wf5q19s8ikpww8j9hbbkv7l8yc3zw1qr627l8qm3xxm5sjly";
+  };
 
   doCheck = true;
 
