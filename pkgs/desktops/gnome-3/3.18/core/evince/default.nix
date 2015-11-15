@@ -32,12 +32,12 @@ with {
 stdenv.mkDerivation rec {
   name = "evince-${version}";
   versionMajor = "3.18";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/evince/${versionMajor}/${name}.tar.xz";
-    sha256 = "0cccmbvl1b6d2976642iyfr8g3r69zf3mzl2ln6vjvvdbrv26l3v";
+    sha256 = "05ybiqniqbn1nr4arksvc11bkb37z17shvhkmgnak0fqairnrba2";
   };
 
   configureFlags = [
