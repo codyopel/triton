@@ -6,12 +6,12 @@
 stdenv.mkDerivation rec {
   name = "libsigc++-${version}";
   versionMajor = "2.6";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/libsigc++/${versionMajor}/${name}.tar.xz";
-    sha256 = "06xyvxaaxh3nbpjg86gcq5zcc2qnpx354wcfrqlhbndkq5kj2vqq";
+    sha256 = "0ds4wlys149gi320xiy452dr0mq6r94r03sp2wn7kpii9h9ygb7x";
   };
 
   NIX_CFLAGS_COMPILE = [
@@ -24,6 +24,7 @@ stdenv.mkDerivation rec {
   ];
 
   doCheck = true;
+  enableParallelBuilding = true;
 
   meta = {
     description = "A typesafe callback system for standard C++";

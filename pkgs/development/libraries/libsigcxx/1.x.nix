@@ -20,6 +20,7 @@ stdenv.mkDerivation rec {
   ];
 
   doCheck = true;
+  enableParallelBuilding = true;
 
   meta = {
     description = "A typesafe callback system for standard C++";
