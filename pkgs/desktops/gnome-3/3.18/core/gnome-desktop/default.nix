@@ -22,13 +22,14 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "gnome-desktop-${majorVersion}.${minorVersion}";
-  majorVersion = gnome3.version;
-  minorVersion = "1";
+  name = "gnome-desktop-${version}";
+  versionMajor = "3.18";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/gnome-desktop/${majorVersion}/${name}.tar.xz";
-    sha256 = "0avpmyhzz5b3pyfpkp8iq5ym5r5w7zs3a396hqkdpdsiym0vrazc";
+    url = "mirror://gnome/sources/gnome-desktop/${versionMajor}/${name}.tar.xz";
+    sha256 = "0mkv5vg04n2znd031dgjsgari6rgnf97637mf4x58dz15l16vm6x";
   };
 
   configureFlags = [
