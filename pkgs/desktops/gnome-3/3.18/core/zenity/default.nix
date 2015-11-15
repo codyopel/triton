@@ -2,7 +2,15 @@
 , gnome_doc_utils, intltool, libX11, which, itstool }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "zenity-${version}";
+  versionMajor = "3.18";
+  versionMinor = "1.1";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/zenity/${versionMajor}/${name}.tar.xz";
+    sha256 = "02m88dfm1rziqk2ywakwib06wl1rxangbzih6cp8wllbyl1plcg6";
+  };
 
   preBuild = ''
     mkdir -p $out/include
