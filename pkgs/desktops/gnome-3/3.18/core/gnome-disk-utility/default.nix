@@ -4,7 +4,15 @@
 , libcanberra_gtk3, libxslt, libtool, docbook_xsl, libpwquality }:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gnome-disk-utility-${version}";
+  versionMajor = "3.18";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gnome-disk-utility/${versionMajor}/${name}.tar.xz";
+    sha256 = "1gyf1cgs67d66s748mbhbbiynclwkwlxzv5iz10rd0jnj8s4dgig";
+  };
 
   doCheck = true;
 
