@@ -1,33 +1,33 @@
 { stdenv, fetchurl
-, iconnamingutils
+, gettext
 , intltool
 , pkgconfig
 
-, gdk_pixbuf
 , gnome3
 , hicolor_icon_theme
 , librsvg
 }:
 
 stdenv.mkDerivation rec {
-  name = "adwaita-icon-theme-3.18.0";
+  name = "adwaita-icon-theme-${version}";
+  versionMajor = "3.18";
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = mirror://gnome/sources/adwaita-icon-theme/3.18/adwaita-icon-theme-3.18.0.tar.xz;
+    url = "mirror://gnome/sources/adwaita-icon-theme/${versionMajor}/${name}.tar.xz";
     sha256 = "5e9ce726001fdd8ee93c394fdc3cdb9e1603bbed5b7c62df453ccf521ec50e58";
   };
 
   configureFlags = [
-    "--enable-nls"
+    # nls creates unused directories
+    "--disable-nls"
     "--enable-w32-cursors"
     "--disable-l-xl-variants"
   ];
 
-  # Adding gtk3 as a build input will cause the build to ignore
-  # GDK_PIXBUF_MODULE_FILE, and look for loaders in the gtk lib directory
-
   nativeBuildInputs = [
-    iconnamingutils
+    gettext
     intltool
     pkgconfig
   ];
@@ -38,14 +38,8 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    gdk_pixbuf
     librsvg
   ];
-
-  # remove a tree of dirs with no files within
-  postInstall = ''
-    rm -rvf "$out/locale"
-  '';
 
   doCheck = false;
   enableParallelBuilding = true;
