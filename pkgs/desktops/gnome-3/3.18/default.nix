@@ -59,6 +59,7 @@ let
     webkitgtk_2_4
     gtk3
     gtkmm
+    pcre2
     libcanberra
     libcanberra_gtk3
     clutter-gst_2
