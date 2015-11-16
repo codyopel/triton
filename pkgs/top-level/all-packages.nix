@@ -504,6 +504,12 @@ let
     youtube-dl = pythonPackages.youtube-dl;
   };
 
+
+  pcre = callPackage ../all-pkgs/pcre/1.nix {
+    unicodeSupport = config.pcre.unicode or true;
+  };
+  pcre2 = callPackage ../all-pkgs/pcre/2.nix { };
+
   sublime-text = callPackage ../all-pkgs/sublime-text { };
 
   vlc = callPackage ../all-pkgs/vlc { };
@@ -7708,10 +7714,6 @@ let
 
   pcl = callPackage ../development/libraries/pcl {
     vtk = vtkWithQt4;
-  };
-
-  pcre = callPackage ../development/libraries/pcre {
-    unicodeSupport = config.pcre.unicode or true;
   };
 
   pdf2xml = callPackage ../development/libraries/pdf2xml {} ;
