@@ -2,12 +2,17 @@
 , intltool
 , pkgconfig
 
+, glib
 , gnome3
-, ncurses
 , gobjectIntrospection
-, vala
-, libxml2
 , gnutls
+, gtk3
+, libxml2
+, ncurses
+, pango
+, pcre2
+, vala
+, zlib
 , selectTextPatch ? false
 }:
 
@@ -44,6 +49,7 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
     "--with-gnutls"
+    "--with-pcre2"
   ];
 
   nativeBuildInputs = [
@@ -52,13 +58,16 @@ stdenv.mkDerivation rec {
   ];
 
   propagatedBuildInputs = [
+    glib
     gnutls
+    gtk3
+    pango
+    pcre2
+    zlib
   ];
 
   buildInputs = [
     gobjectIntrospection
-    gnome3.glib
-    gnome3.gtk3
     ncurses
     vala
     libxml2
