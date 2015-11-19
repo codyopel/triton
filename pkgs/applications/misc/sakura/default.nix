@@ -3,7 +3,7 @@
 , perl
 , pkgconfig
 
-, gdk_pixbuf
+, glib
 , gnome3
 , gtk3
 }:
@@ -24,6 +24,7 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
+    glib
     gnome3.vte
     gtk3
   ];
@@ -32,9 +33,9 @@ stdenv.mkDerivation rec {
 
   meta = with stdenv.lib; {
     description = "A terminal emulator based on GTK and VTE";
-    homepage    = http://www.pleyades.net/david/projects/sakura;
-    license     = licenses.gpl2;
+    homepage = http://www.pleyades.net/david/projects/sakura;
+    license = licenses.gpl2;
     maintainers = with maintainers; [ codyopel ];
-    platforms   = platforms.linux;
+    platforms = platforms.linux;
   };
 }
