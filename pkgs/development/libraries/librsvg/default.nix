@@ -38,7 +38,7 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
     "--disable-tools"
-    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    (enFlag "introspection" (gobjectIntrospection != null) null)
     "--disable-vala"
   ];
 
@@ -59,6 +59,7 @@ stdenv.mkDerivation rec {
   '';
 
   nativeBuildInputs = [
+    gobjectIntrospection
     pkgconfig
   ];
 
@@ -70,7 +71,6 @@ stdenv.mkDerivation rec {
 
   buildInputs = [
     bzip2
-    gobjectIntrospection
     libcroco
     libgsf
     libxml2
