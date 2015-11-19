@@ -1,17 +1,39 @@
-{stdenv, fetchurl, pkgconfig, gettext, perl, perlXMLParser, intltool
-, libxml2, glib}:
+{stdenv, fetchurl
+, gettext
+, intltool
+, pkgconfig
+
+, libxml2
+, glib
+}:
 
 stdenv.mkDerivation rec {
-  name = "shared-mime-info-1.3";
+  name = "shared-mime-info-1.5";
 
   src = fetchurl {
     url = "http://freedesktop.org/~hadess/${name}.tar.xz";
-    sha256 = "0fijrc8j2kw6bvdx7fmlfafbcwxvinhr8l44b46b3v59gj69rm2g";
+    sha256 = "1021x95xbkfc5ipx3gi2rdc0y6x2pv36yyzxc5pg6nr6xd02hhfn";
   };
 
-  buildInputs = [
-    pkgconfig gettext intltool perl perlXMLParser libxml2 glib
+  configureFlags = [
+    "--enable-nls"
+    "--enable-default-make-check"
+    "--disable-update-mimedb"
   ];
+
+  nativeBuildInputs = [
+    gettext
+    intltool
+    pkgconfig
+  ];
+
+  buildInputs = [
+    glib
+    libxml2
+  ];
+
+  doCheck = true;
+  enableParallelBuilding = true;
 
   meta = {
     description = "A database of common MIME types";
