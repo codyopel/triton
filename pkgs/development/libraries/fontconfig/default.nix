@@ -36,8 +36,8 @@ stdenv.mkDerivation rec {
     })
   ];
 
-  propagatedBuildInputs = [ freetype ];
-  buildInputs = [ pkgconfig expat ];
+  propagatedBuildInputs = [ freetype expat ];
+  nativeBuildInputs = [ pkgconfig ];
 
   configureFlags = [
     "--with-cache-dir=/var/cache/fontconfig" # otherwise the fallback is in $out/
