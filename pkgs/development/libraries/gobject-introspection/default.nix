@@ -1,14 +1,12 @@
 { stdenv, fetchurl
+, bison
+, flex
 , pkgconfig
 
-, bison
-, cairo
-, flex
 , glib
 , libffi
 , libintlOrEmpty
 , python
-, pythonPackages
 }:
 
 stdenv.mkDerivation rec {
@@ -36,10 +34,11 @@ stdenv.mkDerivation rec {
   '';
 
   configureFlags = [
+    "--disable-maintainer-mode"
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
-    "--enable-doctool"
+    "--disable-doctool"
     "--enable-Bsymbolic"
     # Tests require cairo
     "--without-cairo"
@@ -52,9 +51,7 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    #cairo
     python
-    pythonPackages.Mako
   ] ++ libintlOrEmpty;
 
   propagatedBuildInputs = [
