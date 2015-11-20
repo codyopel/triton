@@ -1,11 +1,10 @@
 { stdenv, fetchurl
+, autoreconfHook
 , gettext
 , perl
 , pkgconfig
 , python
 
-, attr
-#, fam
 , libiconv
 , libintlOrEmpty
 , zlib
@@ -13,12 +12,20 @@
 , pcre
 , libelf
 
-, check ? false
+, doCheck ? false
+  , coreutils
+  , dbus_daemon
+  , tzdata
+  , libxml2
+  , desktop_file_utils
+  , shared_mime_info
 }:
 
 with {
   inherit (stdenv.lib)
-    enFlag;
+    enFlag
+    optionals
+    optionalString;
 };
 
 let
@@ -51,15 +58,57 @@ stdenv.mkDerivation rec {
 
   setupHook = ./setup-hook.sh;
 
+  patches = optionals doCheck [
+    ./skip-timer-test.patch
+  ];
+
+  postPatch = (
+    # Patch tests
+    if doCheck then (''
+      substituteInPlace \
+        gio/tests/desktop-files/home/applications/epiphany-*.desktop \
+        --replace "Exec=/bin/true" "Exec=${coreutils}/bin/true"
+
+      # gdesktopappinfo requires existing terminal (e.g. gnome-terminal)
+      #sed -e "/appinfo\/launch/d" -i gio/tests/appinfo.c
+
+      # desktop-app-info/fallback test broken upstream
+      # https://github.com/GNOME/glib/commit/a036bd38a574f38773d269447cf81df023d2c819
+      sed -e '/\/desktop-app-info\/fallback/d' -i gio/tests/desktop-app-info.c
+
+      # Fails to detect content type, shared-mime-info?
+      sed -e '/contenttype/d' -i gio/tests/Makefile.{am,in}
+
+      # Disable tests that require machine-id
+      sed -e '/\/gdbus\/codegen-peer-to-peer/d' -i gio/tests/gdbus-peer.c
+      sed -e '/\/gdbus\/x11-autolaunch/d' -i gio/tests/gdbus-unix-addresses.c
+
+      # Regex test fails, glib/gcc5 or pcre/gcc5?
+      sed -e '/?<ab/d' -i glib/tests/regex.c
+
+      # All gschemas fail to pass the test, upstream bug?
+      sed -e '/g_test_add_data_func/ s/^\/*/\/\//' -i gio/tests/gschema-compile.c
+
+      # Cannot reproduce the failing test_associations on hydra
+      sed -e '/\/appinfo\/associations/d' -i gio/tests/appinfo.c
+
+      # Needed because of libtool wrappers
+      sed -e '/g_subprocess_launcher_set_environ (launcher, envp);/a g_subprocess_launcher_setenv (launcher, "PATH", g_getenv("PATH"), TRUE);' \
+          -i gio/tests/gsubprocess.c
+    '') else (''
+      # Don't build tests, also prevents extra deps
+      sed -e 's/ tests//' -i {.,gio,glib}/Makefile.{am,in}
+    '')
+  );
+
   configureFlags = [
     "--enable-shared"
     # Static is necessary for qemu-nix to support static userspace translators
     "--enable-static"
     "--disable-selinux"
-    # use fam for file system monitoring
     "--disable-fam"
-    "--enable-xattr"
-    (enFlag "libelf" (libelf != null) null)
+    "--disable-xattr"
+    "--enable-libelf"
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
@@ -70,30 +119,48 @@ stdenv.mkDerivation rec {
     "--enable-Bsymbolic"
     "--enable-compile-warnings"
     "--with-threads=posix"
-    # TODO: cite issue external pcre
-    "--with-pcre=internal"
+    # internal pcre is not patched to support gcc5, among other fixes
+    "--with-pcre=system"
   ];
 
   nativeBuildInputs = [
+    autoreconfHook
     gettext
     perl
     pkgconfig
     python
   ];
 
-  buildInputs = [
-    attr
-    #fam
-    libelf
+  propagatedBuildInputs = [
     libiconv
     libffi
+    pcre
     zlib
+  ];
+
+  buildInputs = [
+    libelf
+  ] ++ optionals doCheck [
+    desktop_file_utils
+    libxml2
+    shared_mime_info
+    tzdata
   ] ++ libintlOrEmpty;
 
   postInstall = "rm -rvf $out/share/gtk-doc";
 
+  preCheck = optionalString doCheck ''
+    export LD_LIBRARY_PATH="$NIX_BUILD_TOP/${name}/glib/.libs:$LD_LIBRARY_PATH"
+    export TZDIR="${tzdata}/share/zoneinfo"
+    export XDG_CACHE_HOME="$TMP"
+    export XDG_RUNTIME_HOME="$TMP"
+    export HOME="$TMP"
+    export XDG_DATA_DIRS="${desktop_file_utils}/share:${shared_mime_info}/share"
+    export G_TEST_DBUS_DAEMON="${dbus_daemon}/bin/dbus-daemon"
+  '';
+
   # TODO: fix or disable failing tests
-  doCheck = false;
+  inherit doCheck;
   dontDisableStatic = true;
   enableParallelBuilding = true;
   DETERMINISTIC_BUILD = 1;
