@@ -1,38 +1,63 @@
 { stdenv, fetchurl
+, autoreconfHook
+
+, bzip2
+, zlib
+
 , unicodeSupport ? true
 , cplusplusSupport ? true
 }:
 
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
+
 stdenv.mkDerivation rec {
-  #name = "pcre-8.37";
   name = "pcre-8.38-RC1";
 
   src = fetchurl {
     #url = "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${name}.tar.bz2";
-    #sha256 = "17bqykp604p7376wj3q2nmjdhrb6v1ny8q08zdwi7qvc02l9wrsi";
-    url = "http://pub.wak.io/nixos/tarballs/${name}.tar.bz2";
-    sha256 = "60106bd136df843b9542127ffe6767e66a8d8452de345b1ed5c9e1b7f2376379";
+    url = "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/Testing/${name}.tar.bz2";
+    sha256 = "140dm4xb91gmm8c2xgj5ddncw8kh7pmky1nknmnhg55h0x00ldqn";
   };
 
-  #patches = [
-  #  ./cve-2015-3210.patch
-  #  ./cve-2015-5073.patch
-  #];
+  configureFlags = [
+    "--enable-pcre8"
+    "--enable-pcre16"
+    "--enable-pcre32"
+    (enFlag "cpp" cplusplusSupport null)
+    "--enable-jit"
+    "--enable-pcregrep-jit"
+    "--enable-rebuild-chartables"
+    "--enable-utf"
+    (enFlag "unicode-properties" unicodeSupport null)
+    "--enable-newline-is-any"
+    (enFlag "pcregrep-libz" (zlib != null) null)
+    (enFlag "pcregrep-libbz2" (bzip2 != null) null)
+    "--disable-pcretest-libedit"
+    "--disable-pcretest-libreadline"
+    "--disable-valgrind"
+    "--disable-coverage"
+  ];
 
-  configureFlags = ''
-    --enable-jit
-    ${if unicodeSupport then "--enable-unicode-properties" else ""}
-    ${if !cplusplusSupport then "--disable-cpp" else ""}
-  '';
+  nativeBuildInputs = [
+    autoreconfHook
+  ];
+
+  buildInputs = [
+    bzip2
+    zlib
+  ];
 
   outputs = [ "out" "doc" "man" ];
 
-  # we are running out of stack on both freeBSDs on Hydra
-  doCheck = with stdenv; !isFreeBSD;
+  doCheck = true;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
+    description = "Perl Compatible Regular Expressions";
     homepage = "http://www.pcre.org/";
-    description = "A library for Perl Compatible Regular Expressions";
     license = licenses.bsd3;
     maintainers = [ ];
     platforms = platforms.all;

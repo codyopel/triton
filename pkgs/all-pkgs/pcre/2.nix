@@ -1,4 +1,14 @@
-{ stdenv, fetchurl }:
+{ stdenv, fetchurl
+, autoreconfHook
+
+, bzip2
+, zlib
+}:
+
+with {
+  inherit (stdenv.lib)
+    enFlag;
+};
 
 stdenv.mkDerivation rec {
   name = "pcre2-10.20";
@@ -13,10 +23,32 @@ stdenv.mkDerivation rec {
     "--enable-pcre2-32"
     "--disable-debug"
     "--enable-jit"
-    "--enable-pcre2grep-git"
+    "--enable-pcre2grep-jit"
     "--enable-rebuild-chartables"
     "--enable-unicode"
+    "--enable-newline-is-any"
+    "--enable-stack-for-recursion"
+    (enFlag "pcre2grep-libz" (zlib != null) null)
+    (enFlag "pcre2grep-libbz2" (bzip2 != null) null)
+    "--disable-pcre2test-libedit"
+    "--disable-pcre2test-libreadline"
+    "--disable-valgrind"
+    "--disable-coverage"
   ];
+
+  nativeBuildInputs = [
+    autoreconfHook
+  ];
+
+  buildInputs = [
+    bzip2
+    zlib
+  ];
+
+  outputs = [ "out" "doc" "man" ];
+
+  doCheck = true;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Perl Compatible Regular Expressions";
