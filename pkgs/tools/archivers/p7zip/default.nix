@@ -2,10 +2,10 @@
 , rarSupport ? false
 }:
 
-let
-  inherit (stdenv) isDarwin;
-  inherit (stdenv.lib) optionalString;
-in
+with {
+  inherit (stdenv.lib)
+    optionalString;
+};
 
 stdenv.mkDerivation rec {
   name = "p7zip-${version}";
@@ -28,8 +28,6 @@ stdenv.mkDerivation rec {
 
   preConfigure = ''
     buildFlags=all3
-  '' + optionalString isDarwin ''
-    cp -f makefile.macosx_64bits makefile.machine
   '';
 
   enableParallelBuilding = true;
