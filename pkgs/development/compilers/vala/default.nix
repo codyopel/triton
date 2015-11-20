@@ -1,30 +1,51 @@
-{ stdenv, fetchurl, pkgconfig, flex, bison, libxslt
-, glib, libiconv, libintlOrEmpty
+{ stdenv, fetchurl
+, bison
+, flex
+, libxslt
+, pkgconfig
+
+, glib
+, libiconv
+, libintlOrEmpty
 }:
 
-let
-  major = "0.23";
-  minor = "2";
-  sha256 = "0g22ss9qbm3fqhx4fxhsyfmdc5g1hgdw4dz9d37f4489kl0qf8pl";
-in
 stdenv.mkDerivation rec {
-  name = "vala-${major}.${minor}";
-
-  meta = {
-    description = "Compiler for GObject type system";
-    homepage = "http://live.gnome.org/Vala";
-    license = stdenv.lib.licenses.lgpl21Plus;
-    platforms = stdenv.lib.platforms.unix;
-    maintainers = with stdenv.lib.maintainers; [ antono ];
-  };
+  name = "vala-${version}";
+  versionMajor = "0.30";
+  versionMinor = "0";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/vala/${major}/${name}.tar.xz";
-    inherit sha256;
+    url = "mirror://gnome/sources/vala/${versionMajor}/${name}.tar.xz";
+    sha256 = "1pyyhfw3zzbhxfscbn8xz70dg6vx0kh8gshzikpxczhg01xk7w31";
   };
 
-  nativeBuildInputs = [ pkgconfig flex bison libxslt ];
+  configureFlags = [
+    "--disable-maintainer-mode"
+    "--disable-unversioned"
+    "--disable-coverage"
+  ];
 
-  buildInputs = [ glib libiconv ]
-    ++ libintlOrEmpty;
+  nativeBuildInputs = [
+    bison
+    flex
+    libxslt
+    pkgconfig
+  ];
+
+  buildInputs = [
+    glib
+    libiconv
+  ] ++ libintlOrEmpty;
+
+  doCheck = false;
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
+    description = "Compiler for GObject type system";
+    homepage = "http://live.gnome.org/Vala";
+    license = licenses.lgpl21Plus;
+    maintainers = with maintainers; [ ];
+    platforms = platforms.unix;
+  };
 }

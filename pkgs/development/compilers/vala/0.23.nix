@@ -3,9 +3,9 @@
 }:
 
 let
-  major = "0.28";
-  minor = "0";
-  sha256 = "0zwpzhkhfk3piya14m7p2hl2vaabahprphppfm46ci91z39kp7hd";
+  major = "0.23";
+  minor = "2";
+  sha256 = "0g22ss9qbm3fqhx4fxhsyfmdc5g1hgdw4dz9d37f4489kl0qf8pl";
 in
 stdenv.mkDerivation rec {
   name = "vala-${major}.${minor}";
@@ -15,7 +15,7 @@ stdenv.mkDerivation rec {
     homepage = "http://live.gnome.org/Vala";
     license = stdenv.lib.licenses.lgpl21Plus;
     platforms = stdenv.lib.platforms.unix;
-    maintainers = with stdenv.lib.maintainers; [ antono lethalman ];
+    maintainers = with stdenv.lib.maintainers; [ antono ];
   };
 
   src = fetchurl {
