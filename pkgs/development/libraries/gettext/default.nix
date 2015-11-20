@@ -1,4 +1,5 @@
 { stdenv, fetchurl
+, expat
 , libiconv
 , libintlOrEmpty
 , xz
@@ -53,7 +54,7 @@ stdenv.mkDerivation rec {
     "--with-included-libcroco"
     # this will _disable_ libunistring (since it is not bundled),
     # see gentoo bug #326477
-    "--with-included-linunistring"
+    "--with-included-libunistring"
     "--with-included-libxml"
     "--with-included-libxml2"
     "--with-emacs"
@@ -75,6 +76,7 @@ stdenv.mkDerivation rec {
   '';
 
   buildInputs = [
+    expat
     libiconv
     xz
   ] ++ libintlOrEmpty;
