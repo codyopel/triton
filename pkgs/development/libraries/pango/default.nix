@@ -16,6 +16,7 @@
 with {
   inherit (stdenv.lib)
     enFlag
+    optionalString
     wtFlag;
 };
 
@@ -32,18 +33,19 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--enable-rebuilds"
-    (enFlag "introspection" (gobjectIntrospection != null) "yes")
+    "--enable-introspection"
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
     "--disable-gtk-doc-pdf"
     "--disable-doc-cross-reference"
     "--enable-Bsymbolic"
-    "--disable-installed-tests"
-    (wtFlag "xft" (freetype != null) null)
+    "--enable-installed-tests"
+    (wtFlag "xft" (xorg.libXft != null) null)
     (wtFlag "cairo" (cairo != null) null)
   ];
 
   nativeBuildInputs = [
+    gobjectIntrospection
     pkgconfig
   ];
 
@@ -56,16 +58,21 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    gobjectIntrospection
     harfbuzz
     libpng
+    xorg.libX11
     xorg.libXrender
   ] ++ libintlOrEmpty;
 
-  doCheck = false;
-  enableParallelBuilding = true;
-
   postInstall = "rm -rvf $out/share/gtk-doc";
+
+  preCheck = optionalString doCheck ''
+    # Fontconfig fails to load default config in test
+    export FONTCONFIG_FILE="${fontconfig}/etc/fonts/fonts.conf"
+  '';
+
+  doCheck = true;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "A library for laying out and rendering of text";
