@@ -44,6 +44,7 @@ stdenv.mkDerivation rec {
     "--disable-glade"
     "--enable-introspection"
     "--enable-vala"
+    # test application uses deprecated functions
     "--disable-test-application"
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
@@ -53,6 +54,7 @@ stdenv.mkDerivation rec {
   ];
 
   nativeBuildInputs = [
+    gobjectIntrospection
     intltool
     pkgconfig
   ];
@@ -67,10 +69,9 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    gobjectIntrospection
+    libxml2
     ncurses
     vala
-    libxml2
   ];
 
   postInstall = ''
@@ -78,6 +79,7 @@ stdenv.mkDerivation rec {
       --replace "-lncurses" "-L${ncurses}/lib -lncurses"
   '';
 
+  doCheck = true;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
