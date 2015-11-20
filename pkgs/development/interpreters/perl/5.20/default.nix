@@ -1,4 +1,13 @@
-{ stdenv, fetchurl, enableThreading ? stdenv ? glibc }:
+{ stdenv, fetchurl
+
+, enableThreading ? stdenv ? glibc
+}:
+
+with {
+  inherit (stdenv.lib)
+    optional
+    optionalString;
+};
 
 # We can only compile perl with threading on platforms where we have a
 # real glibc in the stdenv.
@@ -13,76 +22,75 @@
 assert enableThreading -> (stdenv ? glibc);
 
 let
-
   libc = if stdenv.cc.libc or null != null then stdenv.cc.libc else "/usr";
-
 in
 
-with stdenv.lib;
-
 stdenv.mkDerivation rec {
-  name = "perl-5.20.2";
+  name = "perl-5.20.3";
 
   src = fetchurl {
     url = "mirror://cpan/authors/id/S/SH/SHAY/${name}.tar.gz";
-    sha256 = "17cvplgpxbm1hshxlkra2fldn4da1iap1lsnb04hdm8ply93k95i";
+    sha256 = "0jlvpd5l5nk7lzfd4akdg1sw6vinbkj6izclyyr0lrbidfky691m";
   };
 
-  outputs = [ "out" "man" ];
+  setupHook = ./setup-hook.sh;
 
-  patches =
-    [ # Do not look in /usr etc. for dependencies.
-      ./no-sys-dirs.patch
-      # Remove in 5.20.3
-      ./perl-5.20.2-gcc5_fixes-1.patch
-    ]
-    ++ optional stdenv.isSunOS ./ld-shared.patch;
+  patches = [
+    # Do not look in /usr etc. for dependencies.
+    ./no-sys-dirs.patch
+  ] ++ optional stdenv.isSunOS ./ld-shared.patch;
+
+  postPatch = ''
+    patchShebangs Configure
+
+    # configure tests require a static glibc, libpthreads_nonshared.a
+    sed -e 's/libswanted="cl pthread/libswanted="cl/' -i Configure
+  '';
+
+  configureScript = "./Configure";
 
   # Build a thread-safe Perl with a dynamic libperls.o.  We need the
   # "installstyle" option to ensure that modules are put under
   # $out/lib/perl5 - this is the general default, but because $out
   # contains the string "perl", Configure would select $out/lib.
   # Miniperl needs -lm. perl needs -lrt.
-  configureFlags =
-    [ "-de"
-      "-Dcc=cc"
-      "-Uinstallusrbinperl"
-      "-Dinstallstyle=lib/perl5"
-      "-Duseshrplib"
-      "-Dlocincpth=${libc}/include"
-      "-Dloclibpth=${libc}/lib"
-    ]
-    ++ optional enableThreading "-Dusethreads";
+  configureFlags = [
+    "-de"
+    "-Dcc=cc"
+    "-Uinstallusrbinperl"
+    "-Dinstallstyle=lib/perl5"
+    "-Duseshrplib"
+    "-Dlocincpth=${libc}/include"
+    "-Dloclibpth=${libc}/lib"
+  ] ++ optional enableThreading "-Dusethreads";
 
-  configureScript = "${stdenv.shell} ./Configure";
+  preConfigure = ''
+    configureFlags="$configureFlags -Dprefix=$out -Dman1dir=$out/share/man/man1 -Dman3dir=$out/share/man/man3"
+
+    ${optionalString stdenv.isArm ''
+      configureFlagsArray=(-Dldflags="-lm -lrt")
+    ''}
+  '';
+
+  preBuild = optionalString (!(stdenv ? cc && stdenv.cc.nativeTools)) ''
+    # fix hardcoded `/bin/pwd` path
+    substituteInPlace dist/PathTools/Cwd.pm \
+      --replace "'/bin/pwd'" "'$(type -tP pwd)'"
+  '';
+
+  outputs = [ "out" "man" ];
 
   dontAddPrefix = true;
-
   enableParallelBuilding = true;
 
-  preConfigure =
-    ''
-      configureFlags="$configureFlags -Dprefix=$out -Dman1dir=$out/share/man/man1 -Dman3dir=$out/share/man/man3"
+  passthru = {
+    libPrefix = "lib/perl5/site_perl";
+  };
 
-      ${optionalString stdenv.isArm ''
-        configureFlagsArray=(-Dldflags="-lm -lrt")
-      ''}
-    '';
-
-  preBuild = optionalString (!(stdenv ? cc && stdenv.cc.nativeTools))
-    ''
-      # Make Cwd work on NixOS (where we don't have a /bin/pwd).
-      substituteInPlace dist/PathTools/Cwd.pm --replace "'/bin/pwd'" "'$(type -tP pwd)'"
-    '';
-
-  setupHook = ./setup-hook.sh;
-
-  passthru.libPrefix = "lib/perl5/site_perl";
-
-  meta = {
+  meta = with stdenv.lib; {
+    description = "The Perl 5 programmming language";
     homepage = https://www.perl.org/;
-    description = "The standard implementation of the Perl 5 programmming language";
-    maintainers = [ maintainers.eelco ];
+    maintainers = [ ];
     platforms = platforms.all;
   };
 }
