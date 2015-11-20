@@ -1,28 +1,36 @@
-{stdenv, fetchurl, aspell, which}:
+{ stdenv, fetchurl, aspell, which }:
 
 let
 
   /* Function to compile an Aspell dictionary.  Fortunately, they all
      build in the exact same way. */
   buildDict =
-    {shortName, fullName, src, postInstall ? ""}:
+    { shortName, fullName, src, postInstall ? "" }:
 
     stdenv.mkDerivation {
       name = "aspell-dict-${shortName}";
 
       inherit src;
 
-      buildInputs = [aspell which];
+      buildInputs = [
+        aspell
+        which
+      ];
+
+      preBuild = ''
+        makeFlagsArray+=(
+          "dictdir=$out/lib/aspell"
+          "datadir=$out/lib/aspell"
+        )
+      '';
 
       dontAddPrefix = true;
 
-      preBuild = "makeFlagsArray=(dictdir=$out/lib/aspell datadir=$out/lib/aspell)";
-
       inherit postInstall;
 
-      meta = {
+      meta = with stdenv.lib; {
         description = "Aspell dictionary for ${fullName}";
-        platforms = stdenv.lib.platforms.all;
+        platforms = platforms.all;
       };
     };
 
@@ -193,6 +201,4 @@ in {
       sha256 = "19k0m1v5pcf7xr4lxgjkzqkdlks8nyb13bvi1n7521f3i4lhma66";
     };
   };
-
-
 }

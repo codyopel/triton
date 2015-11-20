@@ -1,4 +1,23 @@
-{stdenv, fetchurl, perl}:
+{ stdenv, fetchurl
+, autoreconfHook
+, gettext
+, perl
+, pkgconfig
+
+, ncurses
+}:
+
+with {
+  inherit (stdenv.lib)
+    optionals;
+};
+
+# Note: Users should define the `ASPELL_CONF' environment variable to
+# `dict-dir $HOME/.nix-profile/lib/aspell/' so that they can access
+# dictionaries installed in their profile.
+#
+# We can't use `$out/etc/aspell.conf' for that purpose since Aspell
+# doesn't expand environment variables such as `$HOME'.
 
 stdenv.mkDerivation rec {
   name = "aspell-0.60.6.1";
@@ -8,33 +27,53 @@ stdenv.mkDerivation rec {
     sha256 = "1qgn5psfyhbrnap275xjfrzppf5a83fb67gpql0kfqv37al869gm";
   };
 
-  patchPhase = ''
-    patch interfaces/cc/aspell.h < ${./clang.patch}
+  patches = optionals stdenv.cc.isClang [
+    ./aspell-0.60.6.1-clang.patch
+  ];
+
+  postPatch = ''
+    # fix for automake 1.13+, gentoo bug #467602
+    sed -e 's/AM_CONFIG_HEADER/AC_CONFIG_HEADERS/g' -i configure.ac
   '';
 
-  buildInputs = [ perl ];
-
-  doCheck = true;
+  configureFlags = [
+    "--enable-curses"
+    "--enable-wide-curses"
+    "--enable-regex"
+    "--enable-compile-in-filters"
+    "--enable-filter-version-control"
+    "--enable-pspell-compatibility"
+    "--disable-incremented-soname"
+    "--enable-nls"
+    "--enable-rpath"
+  ];
 
   preConfigure = ''
-    configureFlagsArray=(
-      --enable-pkglibdir=$out/lib/aspell
-      --enable-pkgdatadir=$out/lib/aspell
-    );
+    configureFlagsArray+=(
+      "--enable-pkglibdir=$out/lib/aspell"
+      "--enable-pkgdatadir=$out/lib/aspell"
+    )
   '';
 
-  # Note: Users should define the `ASPELL_CONF' environment variable to
-  # `dict-dir $HOME/.nix-profile/lib/aspell/' so that they can access
-  # dictionaries installed in their profile.
-  #
-  # We can't use `$out/etc/aspell.conf' for that purpose since Aspell
-  # doesn't expand environment variables such as `$HOME'.
+  nativeBuildInputs = [
+    autoreconfHook
+    gettext
+    perl
+    pkgconfig
+  ];
 
-  meta = {
+  buildInputs = [
+    ncurses
+  ];
+
+  doCheck = true;
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
     description = "Spell checker for many languages";
     homepage = http://aspell.net/;
-    license = stdenv.lib.licenses.lgpl2Plus;
+    license = licenses.lgpl2Plus;
     maintainers = [ ];
-    platforms = with stdenv.lib.platforms; all;
+    platforms = platforms.all;
   };
 }
