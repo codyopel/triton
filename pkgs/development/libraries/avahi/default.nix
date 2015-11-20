@@ -6,7 +6,6 @@
 , dbus
 , expat
 , glib
-, gobjectIntrospection
 , libdaemon
 
 # Remove this flag
@@ -35,7 +34,7 @@ stdenv.mkDerivation rec {
     "--localstatedir=/var"
     "--enable-nls"
     (enFlag "glib" (glib != null) null)
-    (enFlag "gobject" (gobjectIntrospection != null) null)
+    (enFlag "gobject" (glib != null) null)
     # Disable all builtin interfaces
     "--disable-qt3"
     "--disable-qt4"
@@ -88,7 +87,6 @@ stdenv.mkDerivation rec {
     dbus
     expat
     glib
-    gobjectIntrospection
     libdaemon
   ];
 
