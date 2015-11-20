@@ -33,7 +33,7 @@ stdenv.mkDerivation rec {
   ];
 
   doCheck = true;
-  enableParallelBuilding = true;
+  enableParallelBuilding = false;
 
   meta = {
     description = "A database of common MIME types";
