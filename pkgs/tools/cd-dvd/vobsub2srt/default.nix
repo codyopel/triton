@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
     sha256 = "0gxyl89i9mg4jiyavblibvpb7df2nmh1m983012qacmn3dxd5ffb";
   };
 
-  patchPhase = ''
+  prePatch = ''
     rm -f ./configure
   '';
 
