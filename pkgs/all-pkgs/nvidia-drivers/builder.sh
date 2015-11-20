@@ -379,17 +379,10 @@ nvidiaUserspace() {
       if test -n "${nvidiasettingsSupport}" && \
          test -z "${libsOnly}" && \
          [ ${versionMajor} -ge 346 ] ; then
-        if test -n "${gtk3Support}" ; then
-          installNvidiaLib 346 0 'libnvidia-gtk3'
-          patchelf --set-rpath \
-            "${out}/lib:${glPath}:${gtkPath}" \
-            "${out}/lib/libnvidia-gtk3.so.${version}"
-        else
-          installNvidiaLib 346 0 'libnvidia-gtk2'
-          patchelf --set-rpath \
-            "${out}/lib:${glPath}:${gtkPath}" \
-            "${out}/lib/libnvidia-gtk2.so.${version}"
-        fi
+        installNvidiaLib 346 0 'libnvidia-gtk3'
+        patchelf --set-rpath \
+          "${out}/lib:${glPath}:${gtkPath}" \
+          "${out}/lib/libnvidia-gtk3.so.${version}"
       fi
 
   #

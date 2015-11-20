@@ -9699,36 +9699,22 @@ let
     nvidia-drivers_legacy304 = callPackage ../all-pkgs/nvidia-drivers {
       buildConfig = "all";
       channel = "legacy304";
-      gtk2Support = true;
-      gtk3Support = false;
-      cairo = null;
-      gtk3 = null;
     };
     nvidia-drivers_legacy340 = callPackage ../all-pkgs/nvidia-drivers {
       buildConfig = "all";
       channel = "legacy340";
-      gtk2Support = true;
-      gtk3Support = false;
-      cairo = null;
-      gtk3 = null;
     };
     nvidia-drivers = callPackage ../all-pkgs/nvidia-drivers {
       buildConfig = "all";
       channel = "long-lived";
-      gtk2Support = false;
-      gtk2 = null;
     };
     nvidia-drivers_unstable = callPackage ../all-pkgs/nvidia-drivers {
       buildConfig = "all";
       channel = "short-lived";
-      gtk2Support = false;
-      gtk2 = null;
     };
     nvidia-drivers_testing = callPackage ../all-pkgs/nvidia-drivers {
       buildConfig = "all";
       channel = "testing";
-      gtk2Support = false;
-      gtk2 = null;
     };
 
     rtl8812au = callPackage ../os-specific/linux/rtl8812au { };

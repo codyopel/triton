@@ -14,24 +14,23 @@
 , libsOnly ? false
 
 , nvidiasettingsSupport ? true
-  , atk ? null
-  , gdk_pixbuf ? null
-  , glib ? null
-  , pango ? null
-  , gtk2Support ? false
-    , gtk2 ? null
-  , gtk3Support ? true
-    , gtk3 ? null
-    , cairo ? null
+  , atk
+  , gdk_pixbuf
+  , glib
+  , pango
+  , gtk2 # <346
+  , gtk3 # >346
+  , cairo
 }:
 
 # NOTICE:
 # - ONLY versions 304+ are supported on NixOS
 
-# SHORTLIVED:  355.xx,   xorg <=1.17.x, kernel <=4.2
-# LONGLIVED:   352.xx,   xorg <=1.17.x, kernel <=4.2 (stable) <- default
-# LEGACY:      340.xx,   xorg <=1.17.x, kernel <=4.2
-# LEGACY:      304.xx,   xorg <=1.17.x, kernel <=3.16
+# BETA:        358.xx,   xorg <=1.17.x, kernel <=4.4
+# SHORTLIVED:  355.xx,   xorg <=1.17.x, kernel <=4.3
+# LONGLIVED:   352.xx,   xorg <=1.18.x, kernel <=4.4 (stable) <- default
+# LEGACY:      340.xx,   xorg <=1.18.x, kernel <=4.4
+# LEGACY:      304.xx,   xorg <=1.18.x, kernel <=4.4
 # UNSUPPORTED: 173.14.x, xorg <=1.15.x, kernel <=3.13
 # UNSUPPORTED: 96.43.x,  xorg <=1.12.x, kernel <=3.7
 # UNSUPPORTED: 71.86.x,  xorg <=?,      kernel <=?
@@ -39,7 +38,7 @@
 # If your gpu requires a version that is unsupported it is recommended to use
 # the nouveau driver.
 
-let
+with {
   inherit (stdenv)
     system
     isx86_64;
@@ -50,12 +49,14 @@ let
     optionalString
     versionAtLeast
     versionOlder;
-  sources = builtins.getAttr channel (import ./sources.nix);
-  inherit (sources)
+  inherit (builtins.getAttr channel (import ./sources.nix))
     versionMajor
     versionMinor
     sha256i686
     sha256x86_64;
+};
+
+let
   version = "${versionMajor}.${versionMinor}";
   buildKernelspace = any (n: n == buildConfig) [ "kernelspace" "all" ];
   buildUserspace = any (n: n == buildConfig) [ "userspace" "all" ];
@@ -78,26 +79,12 @@ assert nvidiasettingsSupport -> (
   atk != null &&
   gdk_pixbuf != null &&
   glib != null &&
-  pango != null && 
-  (gtk3Support || gtk2Support)
-);
-assert gtk2Support -> (
-  gtk2 != null &&
-  !gtk3Support &&
-  cairo == null &&
-  gtk3 == null
-);
-assert gtk3Support  -> (
-  versionAtLeast versionMajor "346" &&
-  cairo != null &&
-  gtk3 != null &&
-  !gtk2Support &&
-  gtk2 == null
+  pango != null
+  # TODO: add gtk2/3 requirement
 );
 assert libsOnly -> !buildKernelspace;
 
 stdenv.mkDerivation {
-
   name = "nvidia-drivers-${buildConfig}-${version}"
        + "${optionalString buildKernelspace "-${kernel.version}"}";
 
@@ -144,7 +131,6 @@ stdenv.mkDerivation {
     buildKernelspace
     buildUserspace
     libsOnly
-    gtk3Support
     nvidiasettingsSupport
     version
     versionMajor;
@@ -152,8 +138,6 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ nukeReferences ];
 
   builder = ./builder.sh;
-
-  dontStrip = true;
 
   glPath = makeLibraryPath [
     xlibs.libXext
@@ -178,7 +162,7 @@ stdenv.mkDerivation {
         glib
         gdk_pixbuf
       ] ++ (
-        if gtk3Support then [
+        if versionAtLeast versionMajor "346" then [
           cairo
           gtk3
         ] else [
@@ -187,6 +171,9 @@ stdenv.mkDerivation {
       )
     )
   );
+
+  dontStrip = true;
+  enableParallelBuilding = true;
 
   passthru = {
     inherit
@@ -207,16 +194,11 @@ stdenv.mkDerivation {
         false;
   };
 
-  enableParallelBuilding = true;
-
   meta = with stdenv.lib; {
     description = "Drivers and Linux kernel modules for NVIDIA graphics cards";
     homepage = http://www.nvidia.com/object/unix.html;
     license = licenses.unfreeRedistributable;
-    maintainers = with maintainers; [
-      codyopel
-      vcunat
-    ];
+    maintainers = with maintainers; [ codyopel ];
     platforms = [
       "i686-linux"
       "x86_64-linux"
