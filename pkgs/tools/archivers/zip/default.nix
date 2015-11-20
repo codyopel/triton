@@ -1,4 +1,15 @@
-{ stdenv, fetchurl, enableNLS ? true, libnatspec ? null, libiconv }:
+{ stdenv, fetchurl
+, bzip2
+, enableNLS ? true
+, libnatspec ? null
+, libiconv
+}:
+
+with {
+  inherit (stdenv.lib)
+    optional
+    optionals;
+};
 
 assert enableNLS -> libnatspec != null;
 
@@ -13,21 +24,36 @@ stdenv.mkDerivation {
     sha256 = "0sb3h3067pzf3a7mlxn1hikpcjrsvycjcnj9hl9b1c3ykcgvps7h";
   };
 
-  # should be makeFlags on all archs, not changed yet to prevent rebuild
-  buildFlags="-f unix/Makefile generic";
-  makeFlags = if stdenv.isCygwin then "-f unix/Makefile ${if stdenv.isCygwin then "cygwin" else "generic"}" else null;
+  patches = optionals enableNLS [
+    ./natspec-gentoo.patch.bz2
+  ];
 
-  installFlags="-f unix/Makefile prefix=$(out) INSTALL=cp";
+  NIX_CFLAGS_COMPILE = [
+    "-DLARGE_FILE_SUPPORT"
+    "-DUIDGID_NOT_16BIT"
+    "-DBZIP2_SUPPORT"
+    "-DCRYPT"
+    "-DUNICODE_SUPPORT"
+  ];
 
-  patches = if (enableNLS && !stdenv.isCygwin) then [ ./natspec-gentoo.patch.bz2 ] else [];
+  makefile = "unix/Makefile";
 
-  buildInputs = stdenv.lib.optional enableNLS libnatspec
-    ++ stdenv.lib.optional stdenv.isCygwin libiconv;
+  makeFlags = "generic";
 
-  meta = {
+  installFlags=[
+    "prefix=$(out)"
+    "INSTALL=install"
+  ];
+
+  buildInputs = [
+    bzip2
+    libiconv
+  ] ++ optional enableNLS libnatspec;
+
+  meta = with stdenv.lib; {
     description = "Compressor/archiver for creating and modifying zipfiles";
     homepage = http://www.info-zip.org;
-    platforms = stdenv.lib.platforms.all;
-    maintainers = [ stdenv.lib.maintainers.urkud ];
+    maintainers = [ ];
+    platforms = platforms.all;
   };
 }
