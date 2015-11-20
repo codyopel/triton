@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, gettext }:
+{ stdenv, fetchurl }:
 
 stdenv.mkDerivation rec {
   name = "attr-2.4.47";
@@ -8,15 +8,23 @@ stdenv.mkDerivation rec {
     sha256 = "0nd8y0m6awc9ahv0ciiwf8gy54c8d3j51pw9xg7f7cn579jjyxr5";
   };
 
-  nativeBuildInputs = [ gettext ];
+  configureFlags = [
+    "--enable-shared"
+    "--disable-gettext"
+    "--enable-lib64"
+  ];
 
-  configureFlags = "MAKE=make MSGFMT=msgfmt MSGMERGE=msgmerge XGETTEXT=xgettext ECHO=echo SED=sed AWK=gawk";
+  installTargets = [
+    "install"
+    "install-lib"
+    "install-dev"
+  ];
 
-  installTargets = "install install-lib install-dev";
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
-    homepage = http://savannah.nongnu.org/projects/attr/;
     description = "Library and tools for manipulating extended attributes";
+    homepage = http://savannah.nongnu.org/projects/attr/;
     platforms = platforms.all;
   };
 }
