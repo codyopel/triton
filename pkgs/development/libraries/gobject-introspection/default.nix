@@ -1,8 +1,10 @@
 { stdenv, fetchurl
 , bison
 , flex
+, libtool
 , pkgconfig
 
+, cairo
 , glib
 , libffi
 , libintlOrEmpty
@@ -27,10 +29,11 @@ stdenv.mkDerivation rec {
   ];
 
   patchPhase = ''
+    patchShebangs tests/gi-tester
+
     # patchShebangs does not catch @PYTHON@
-    sed \
-      -e 's|#!/usr/bin/env @PYTHON@|#!${python.interpreter}|' \
-      -i tools/g-ir-tool-template.in
+    sed -e 's|#!/usr/bin/env @PYTHON@|#!${python.interpreter}|' \
+        -i tools/g-ir-tool-template.in
   '';
 
   configureFlags = [
@@ -40,17 +43,16 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc-pdf"
     "--disable-doctool"
     "--enable-Bsymbolic"
-    # Tests require cairo
-    "--without-cairo"
-  ];
-
-  nativeBuildInputs = [
-    bison
-    flex
-    pkgconfig
+    "--with-cairo"
+    "--with-python=${python.interpreter}"
   ];
 
   buildInputs = [
+    bison
+    cairo
+    flex
+    libtool
+    pkgconfig
     python
   ] ++ libintlOrEmpty;
 
@@ -61,6 +63,7 @@ stdenv.mkDerivation rec {
 
   postInstall = "rm -rvf $out/share/gtk-doc";
 
+  doCheck = true;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
