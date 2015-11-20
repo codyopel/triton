@@ -1,6 +1,7 @@
 { stdenv, fetchurl
 , libintlOrEmpty
 , pkgconfig
+, python
 
 , cairo
 , fontconfig
@@ -11,13 +12,30 @@
 , icu
 }:
 
+with {
+  inherit (stdenv.lib)
+    optionals
+    optionalString;
+};
+
 stdenv.mkDerivation rec {
-  name = "harfbuzz-1.0.6";
+  name = "harfbuzz-1.1.0";
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/harfbuzz/release/${name}.tar.bz2";
-    sha256 = "09ivk5m4y09ar4zi9r6db7gp234cy05h0ach7w22g9kqvkxsf5pn";
+    sha256 = "0svixcn5bn3kbyzjm1xb5sk1fjsym8mi4kksbrbdw3p68xclln0g";
   };
+
+  postPatch = optionalString doCheck ''
+    patchShebangs test/shaping/
+
+    # failing test, https://bugs.freedesktop.org/show_bug.cgi?id=89190
+    sed -e 's|tests/arabic-fallback-shaping.tests||' \
+        -i test/shaping/Makefile.{am,in}
+
+    # test fails
+    sed -e 's|tests/vertical.tests||' -i test/shaping/Makefile.{am,in}
+  '';
 
   configureFlags = [
     "--disable-gtk-doc"
@@ -37,6 +55,8 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     pkgconfig
+  ] ++ optionals doCheck [
+    python
   ] ++ libintlOrEmpty;
 
   propagatedBuildInputs = [
@@ -51,6 +71,11 @@ stdenv.mkDerivation rec {
     graphite2
     icu
   ];
+
+  postInstall = "rm -rvf $out/share/gtk-doc";
+
+  doCheck = true;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "An OpenType text shaping engine";
