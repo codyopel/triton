@@ -21,10 +21,10 @@
     sha256x86_64 = "11dgvsygavdsgbgq87d3d2sj3dc85f2yarr71qczkgiqa030yb1k";
   };
   "short-lived" = {
-    versionMajor = "355";
-    versionMinor = "11";
-    sha256i686   = "0rihvvz6ygyr1hwb84mh0s9sm9dr80813ac39nw33fc1jn3npkll";
-    sha256x86_64 = "0hpqs2iqwqhdq2c2qsrg4phqwdbblnnglxgkmx217hazl1i6mk0g";
+    versionMajor = "358";
+    versionMinor = "16";
+    sha256i686   = "1cc0zsri92nz2mznabfd6pqckm9mlbszmysqqqh3w5mipwn898nk";
+    sha256x86_64 = "1xr16faam2zsx8ajwm9g9302m6qjzyjh1zd56g8jhc8jxg8h43sg";
   };
   "testing" = {
     versionMajor = "358";
