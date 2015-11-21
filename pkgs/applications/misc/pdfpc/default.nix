@@ -1,5 +1,5 @@
 { stdenv, fetchurl, cmake, makeWrapper, pkgconfig, vala, gtk3, libgee, poppler
-, libpthreadstubs, gstreamer, gst-plugins-base, librsvg }:
+, libpthreadstubs, gstreamer, gst-plugins-base, librsvg, gobjectIntrospection }:
 
 stdenv.mkDerivation rec {
   name = "${product}-${version}";
@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ cmake pkgconfig ];
   buildInputs = [ gstreamer gst-plugins-base vala gtk3 libgee poppler
-                  libpthreadstubs makeWrapper librsvg ];
+                  libpthreadstubs makeWrapper librsvg gobjectIntrospection ];
 
   postInstall = ''
     wrapProgram $out/bin/pdfpc \
