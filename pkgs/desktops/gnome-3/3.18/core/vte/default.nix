@@ -1,10 +1,10 @@
 { stdenv, fetchurl
+, gobjectIntrospection
 , intltool
 , pkgconfig
 
 , glib
 , gnome3
-, gobjectIntrospection
 , gnutls
 , gtk3
 , libxml2
@@ -34,7 +34,11 @@ stdenv.mkDerivation rec {
 
   patches = optional selectTextPatch ./expose_select_text.0.40.0.patch;
 
-  postPatch = "patchShebangs .";
+  postPatch = ''
+    patchShebangs src/box_drawing_generate.sh
+    patchShebangs src/check-libstdc++.sh
+    patchShebangs src/test-vte-sh.sh
+  '';
 
   configureFlags = [
     "--disable-maintainer-mode"
