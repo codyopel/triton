@@ -6426,9 +6426,7 @@ let
 
   gtk2 = callPackage ../development/libraries/gtk+/2.x.nix { };
 
-  gtk3 = callPackage ../development/libraries/gtk+/3.x.nix {
-    gettext = gettextWithExpat;
-  };
+  gtk3 = callPackage ../development/libraries/gtk+/3.x.nix { };
 
   gtk = pkgs.gtk2;
 
