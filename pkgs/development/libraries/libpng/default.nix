@@ -1,37 +1,46 @@
-{ stdenv, fetchurl, zlib, apngSupport ? true }:
-
-assert zlib != null;
+{ stdenv, fetchurl
+, zlib
+, apngSupport ? false
+}:
 
 let
-  version = "1.6.18";
-  sha256 = "0qq96rf31483kxz32h6l6921hy6p2v2pfqfvc74km229g4xw241f";
-  patch_src = fetchurl {
+  version = "1.6.19";
+in
+
+let
+  libpng-apng = fetchurl {
     url = "mirror://sourceforge/libpng-apng/libpng-${version}-apng.patch.gz";
-    sha256 = "0g2ljh2vhclas1hacys1c4gk6l6hyy6sngb2yvdsnjz50nyq16kv";
+    sha256 = "0bgqkac16yhl0zwjzq2zwkixg2l2x3a6blbk3k0wqz0lza2a6jrh";
   };
   whenPatched = stdenv.lib.optionalString apngSupport;
+in
 
-in stdenv.mkDerivation rec {
+stdenv.mkDerivation rec {
   name = "libpng" + whenPatched "-apng" + "-${version}";
 
   src = fetchurl {
     url = "mirror://sourceforge/libpng/libpng-${version}.tar.xz";
-    inherit sha256;
+    sha256 = "1s1mmkl79ghiczi2x2rbnp6y70v4c5pr8g3icxn9h5imymbmc71i";
   };
 
-  postPatch = whenPatched "gunzip < ${patch_src} | patch -Np1";
+  postPatch = whenPatched "gunzip < ${libpng-apng} | patch -Np1";
 
-  propagatedBuildInputs = [ zlib ];
+  propagatedBuildInputs = [
+    zlib
+  ];
 
   doCheck = true;
+  enableParallelBuilding = true;
 
-  passthru = { inherit zlib; };
+  passthru = {
+    inherit zlib;
+  };
 
   meta = with stdenv.lib; {
-    description = "The official reference implementation for the PNG file format" + whenPatched " with animation patch";
+    description = "Reference implementation for the PNG file format";
     homepage = http://www.libpng.org/pub/png/libpng.html;
     license = licenses.libpng;
+    maintainers = [ ];
     platforms = platforms.all;
-    maintainers = [ maintainers.vcunat maintainers.fuuzetsu ];
   };
 }
