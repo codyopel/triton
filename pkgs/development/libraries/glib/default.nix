@@ -6,7 +6,6 @@
 , python
 
 , libiconv
-, libintlOrEmpty
 , zlib
 , libffi
 , pcre
@@ -68,9 +67,6 @@ stdenv.mkDerivation rec {
       substituteInPlace \
         gio/tests/desktop-files/home/applications/epiphany-*.desktop \
         --replace "Exec=/bin/true" "Exec=${coreutils}/bin/true"
-
-      # gdesktopappinfo requires existing terminal (e.g. gnome-terminal)
-      #sed -e "/appinfo\/launch/d" -i gio/tests/appinfo.c
 
       # desktop-app-info/fallback test broken upstream
       # https://github.com/GNOME/glib/commit/a036bd38a574f38773d269447cf81df023d2c819
@@ -145,7 +141,7 @@ stdenv.mkDerivation rec {
     libxml2
     shared_mime_info
     tzdata
-  ] ++ libintlOrEmpty;
+  ];
 
   postInstall = "rm -rvf $out/share/gtk-doc";
 
