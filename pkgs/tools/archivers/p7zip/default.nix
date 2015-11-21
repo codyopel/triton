@@ -9,14 +9,14 @@ with {
 
 stdenv.mkDerivation rec {
   name = "p7zip-${version}";
-  version = "9.38.1";
+  version = "15.09";
 
   src = fetchurl {
     url = "mirror://sourceforge/p7zip/p7zip_${version}_src_all.tar.bz2";
-    sha256 = "15drzp2xi9zv7w55yd2hzx8q3biyhnk3fz95sd5g66wskh81jl7x";
+    sha256 = "0vsdkg24qa4l47gllyy2n3vyrn2cdk01qcgpa00y04728zvsr0w7";
   };
 
-  patchPhase = optionalString (!rarSupport) ''
+  postPatch = optionalString (!rarSupport) ''
     sed -e '/Rar/d' -i makefile* CPP/7zip/Bundles/Format7zFree/makefile
     sed -e '/RAR/d' -i makefile* CPP/7zip/Bundles/Format7zFree/makefile
     rm -rf CPP/7zip/Compress/Rar
@@ -37,11 +37,14 @@ stdenv.mkDerivation rec {
     homepage = http://p7zip.sourceforge.net/;
     license = (
       if rarSupport then
-        licenses.unfree
+        licenses.unfreeRedistributable
       else
         licenses.lgpl21Plus
     );
-    maintainers = with maintainers; [ raskin ];
-    platforms = platforms.unix;
+    maintainers = with maintainers; [ ];
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
