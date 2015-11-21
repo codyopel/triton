@@ -1,16 +1,14 @@
 { stdenv, fetchurl
+, makeWrapper
+
+, acl
 , expat
-, libiconv
-, libintlOrEmpty
 , xz
 }:
 
 with {
-  inherit (stdenv)
-    isSunOS;
   inherit (stdenv.lib)
-    optionals
-    optionalString;
+    optional;
 };
 
 stdenv.mkDerivation rec {
@@ -21,46 +19,9 @@ stdenv.mkDerivation rec {
     sha256 = "0pb9vp4ifymvdmc31ks3xxcnfqgzj8shll39czmk8c1splclqjzd";
   };
 
-  LDFLAGS = optionals isSunOS [
-    "-lm"
-    "-lmd"
-    "-lmp"
-    "-luutil"
-    "-lnvpair"
-    "-lnsl"
-    "-lidmap"
-    "-lavl"
-    "-lsec"
-  ];
-
   configureFlags = [
-    "--disable-java"
-    "--disable-native-java"
     "--disable-csharp"
-    "--enable-largefile"
-    "--enable-threads=${if isSunOS then "solaris" else "posix"}"
-    "--enable-nls"
-    "--enable-rpath"
-    "--enable-c++"
-    "--enable-relocatable"
-    "--enable-libasprintf"
-    "--disable-acl"
-    "--enable-openmp"
-    "--disable-curses"
-    "--without-included-gettext"
-    # glib depends on gettext so avoid circular deps
-    "--with-included-glib"
-    # libcroco depends on glib which ... ^^^
-    "--with-included-libcroco"
-    # this will _disable_ libunistring (since it is not bundled),
-    # see gentoo bug #326477
-    "--with-included-libunistring"
-    "--with-included-libxml"
-    "--with-included-libxml2"
-    "--with-emacs"
-    "--without-git"
-    "--without-cvs"
-    "--without-bzip2"
+    "--with-libexpat-prefix=${expat}"
     "--with-xz"
   ];
 
@@ -69,33 +30,47 @@ stdenv.mkDerivation rec {
   # own wchar.h file, which does not cope well with the system's
   # wchar.h and stddef.h (gcc-4.3 - glibc-2.9)
   preConfigure = ''
-    if test -n "$crossConfig"; then
-      echo gl_cv_func_wcwidth_works=yes > cachefile
-      configureFlags="$configureFlags --cache-file=`pwd`/cachefile"
+    if test -n "$crossConfig" ; then
+      echo 'gl_cv_func_wcwidth_works=yes' > cachefile
+      configureFlagsArray+=("--cache-file=$(pwd)/cachefile")
     fi
   '';
 
+  nativeBuildInputs = [
+    makeWrapper
+  ];
+
   buildInputs = [
+    acl
     expat
-    libiconv
     xz
-  ] ++ libintlOrEmpty;
+  ];
+
+  preFixup = ''
+    for p in $out/bin/* ; do
+      wrapProgram $p --prefix LD_LIBRARY_PATH : ${expat}/lib
+    done
+  '';
 
   outputs = [ "out" "doc" ];
 
   crossAttrs = {
-    buildInputs = stdenv.lib.optional (stdenv ? ccCross && stdenv.ccCross.libc ? libiconv)
+    buildInputs = optional (stdenv ? ccCross && stdenv.ccCross.libc ? libiconv)
       stdenv.ccCross.libc.libiconv.crossDrv;
     # Gettext fails to guess the cross compiler
     configureFlags = "CXX=${stdenv.cross.config}-g++";
   };
 
+  doCheck = false;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Well integrated set of translation tools and documentation";
     homepage = http://www.gnu.org/software/gettext/;
     maintainers = [ ];
-    platforms = platforms.all;
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
