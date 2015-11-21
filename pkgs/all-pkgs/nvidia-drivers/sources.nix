@@ -4,9 +4,9 @@
 
   "legacy304" = {
     versionMajor = "304";
-    versionMinor = "128";
-    sha256i686   = "0s4h2asljdkspr68yrzkwc9qpggngqxllbj18hs3wivm6ddnkapn";
-    sha256x86_64 = "188cv7v531mzi62gxcxvvb9qx4cp5flk6hi1s7z3al1i3lfz2jzm";
+    versionMinor = "131";
+    sha256i686   = "1a1d0fsahgijcvs2p59vwhs0dpp7pp2wmvgcs1i7fzl6yyv4nmfj";
+    sha256x86_64 = "0gpqzb5gvhrcgrp3kph1p0yjkndx9wfzgh5j88ysrlflkv3q4vig";
   };
   "legacy340" = {
     versionMajor = "340";
