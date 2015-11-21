@@ -1,14 +1,13 @@
 { stdenv, fetchurl
+, gettext
 , intltool
 , pkgconfig
 
-, gtk3
+, cairo
 , gnome3
-, librsvg
-, pango
-, atk
 , gtk2
-, gdk_pixbuf
+, gtk3
+, librsvg
 }:
 
 stdenv.mkDerivation rec {
@@ -23,19 +22,25 @@ stdenv.mkDerivation rec {
     sha256 = "1jxss8kxszhf66vic9n1sagczm5amm0mgxpzyxyjna15q82fnip6";
   };
 
+  configureFlags = [
+    "--enable-glibtest"
+    "--enable-nls"
+    "--enable-gtk3-engine"
+    "--enable-gtk2-engine"
+  ];
+
   nativeBuildInputs = [
+    gettext
     intltool
     pkgconfig
   ];
   
   buildInputs = [
-    gtk3
-    librsvg
-    pango
-    atk
+    cairo
     gtk2
-    gdk_pixbuf
+    gtk3
     gnome3.defaultIconTheme
+    librsvg
   ];
 
   meta = with stdenv.lib; {
