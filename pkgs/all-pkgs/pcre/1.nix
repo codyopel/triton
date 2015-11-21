@@ -29,10 +29,8 @@ stdenv.mkDerivation rec {
     (enFlag "cpp" cplusplusSupport null)
     "--enable-jit"
     "--enable-pcregrep-jit"
-    "--enable-rebuild-chartables"
     "--enable-utf"
     (enFlag "unicode-properties" unicodeSupport null)
-    "--enable-newline-is-any"
     (enFlag "pcregrep-libz" (zlib != null) null)
     (enFlag "pcregrep-libbz2" (bzip2 != null) null)
     "--disable-pcretest-libedit"

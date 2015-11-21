@@ -24,9 +24,7 @@ stdenv.mkDerivation rec {
     "--disable-debug"
     "--enable-jit"
     "--enable-pcre2grep-jit"
-    "--enable-rebuild-chartables"
     "--enable-unicode"
-    "--enable-newline-is-any"
     "--enable-stack-for-recursion"
     (enFlag "pcre2grep-libz" (zlib != null) null)
     (enFlag "pcre2grep-libbz2" (bzip2 != null) null)
