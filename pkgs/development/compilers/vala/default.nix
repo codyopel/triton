@@ -1,12 +1,16 @@
 { stdenv, fetchurl
+, autoreconfHook
 , bison
 , flex
+, gettext
+, gobjectIntrospection
 , libxslt
 , pkgconfig
 
 , glib
 , libiconv
-, libintlOrEmpty
+
+, dbus_daemon
 }:
 
 stdenv.mkDerivation rec {
@@ -20,15 +24,25 @@ stdenv.mkDerivation rec {
     sha256 = "1pyyhfw3zzbhxfscbn8xz70dg6vx0kh8gshzikpxczhg01xk7w31";
   };
 
+  postPatch = ''
+    patchShebangs tests/testrunner.sh
+
+    # Disable dbus tests, requires machine-id
+    sed -e '/dbus\//d' -i tests/Makefile.am
+  '';
+
   configureFlags = [
     "--disable-maintainer-mode"
-    "--disable-unversioned"
+    "--enable-unversioned"
     "--disable-coverage"
   ];
 
   nativeBuildInputs = [
+    autoreconfHook
     bison
     flex
+    gettext
+    gobjectIntrospection
     libxslt
     pkgconfig
   ];
@@ -36,9 +50,9 @@ stdenv.mkDerivation rec {
   buildInputs = [
     glib
     libiconv
-  ] ++ libintlOrEmpty;
+  ];
 
-  doCheck = false;
+  doCheck = true;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {

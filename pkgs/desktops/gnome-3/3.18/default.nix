@@ -65,6 +65,7 @@ let
     clutter-gst_2
     libsoup
     clutter
+    vala
     cogl;
   inherit (pkgs.gnome2) ORBit2;
   libchamplain = pkgs.libchamplain.override { libsoup = libsoup; };
@@ -72,7 +73,6 @@ let
   gnome3 = self // { recurseForDerivations = false; };
   webkitgtk24x = webkitgtk_2_4;
   gtk = pkgs.gtk3;
-  vala = pkgs.vala_0_26;
   gegl_0_3 = pkgs.gegl_0_3.override { inherit gtk; };
 
 # Simplify the nixos module and gnome packages
