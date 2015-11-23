@@ -32,11 +32,15 @@ stdenv.mkDerivation rec {
     libxml2
   ];
 
+  preFixup = ''
+    $out/bin/update-mime-database -V $out/share/mime
+  '';
+
   doCheck = true;
   enableParallelBuilding = false;
 
   meta = {
-    description = "A database of common MIME types";
+    description = "The Shared MIME-info Database specification";
     homepage = http://freedesktop.org/wiki/Software/shared-mime-info;
   };
 }
