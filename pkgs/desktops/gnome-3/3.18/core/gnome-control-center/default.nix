@@ -62,6 +62,12 @@ stdenv.mkDerivation rec {
     ./vpn_plugins_path.patch
   ];
 
+  postPatch = ''
+    # Patch path to gnome version file
+    sed -e 's|DATADIR "/gnome/gnome-version.xml"|"${gnome3.gnome_desktop}/share/gnome/gnome-version.xml"|' \
+      -i panels/info/cc-info-panel.c
+  '';
+
   configureFlags = [
     "--disable-maintainer-mode"
     "--disable-debug"
