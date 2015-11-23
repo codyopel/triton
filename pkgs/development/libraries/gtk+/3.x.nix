@@ -37,12 +37,12 @@ with {
 stdenv.mkDerivation rec {
   name = "gtk+-${version}";
   versionMajor = "3.18";
-  versionMinor = "4";
+  versionMinor = "5";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gtk+/${versionMajor}/${name}.tar.xz";
-    sha256 = "1sy7fq62y078abxvdm15nhypszviika9xm9kdxh293fjh3rdq02l";
+    sha256 = "0lhqlw166wsc1lc9f58qjljj10rdqgznvpgc9c23rkj48adfnyhh";
   };
 
   # demos fail to install, no idea where the problem is
@@ -60,13 +60,13 @@ stdenv.mkDerivation rec {
     "--disable-quartz-backend"
     (enFlag "broadway-backend" true null)
     (enFlag "wayland-backend" (wayland != null) null)
-    (enFlag "mir-backend" false null)
+    "--disable-mir-backend"
     "--disable-quartz-relocation"
-    "--enable-explicit-deps"
+    #"--enable-explicit-deps"
     "--enable-glibtest"
-    "--enable-modules"
+    #"--enable-modules"
     (enFlag "cups" (cups != null) null)
-    (enFlag "papi" false null)
+    "--disable-papi"
     (enFlag "cloudprint" (gnome3.rest != null && json_glib != null) null)
     (enFlag "test-print-backend" (cups != null) null)
     "--enable-schemas-compile"
@@ -135,7 +135,8 @@ stdenv.mkDerivation rec {
   passthru = {
     gtkExeEnvPostBuild = ''
       rm $out/lib/gtk-3.0/3.0.0/immodules.cache
-      $out/bin/gtk-query-immodules-3.0 $out/lib/gtk-3.0/3.0.0/immodules/*.so > $out/lib/gtk-3.0/3.0.0/immodules.cache
+      $out/bin/gtk-query-immodules-3.0 $out/lib/gtk-3.0/3.0.0/immodules/*.so > \
+        $out/lib/gtk-3.0/3.0.0/immodules.cache
     ''; # workaround for bug of nix-mode for Emacs */ '';
   };
 
