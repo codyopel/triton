@@ -1,4 +1,8 @@
-{ stdenv, fetchurl, pkgconfig, glib }:
+{ stdenv, fetchurl
+, pkgconfig
+
+, glib
+}:
 
 stdenv.mkDerivation rec {
   name = "desktop-file-utils-0.22";
@@ -8,11 +12,20 @@ stdenv.mkDerivation rec {
     sha256 = "1ianvr2a69yjv4rpyv30w7yjsmnsb23crrka5ndqxycj4rkk4dc4";
   };
 
-  buildInputs = [ pkgconfig glib ];
+  nativeBuildInputs = [
+    pkgconfig
+  ];
 
-  meta = {
-    homepage = http://www.freedesktop.org/wiki/Software/desktop-file-utils;
+  buildInputs = [
+    glib
+  ];
+
+  doCheck = true;
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
     description = "Command line utilities for working with .desktop files";
-    platforms = stdenv.lib.platforms.linux;
+    homepage = http://www.freedesktop.org/wiki/Software/desktop-file-utils;
+    platforms = platforms.linux;
   };
 }
