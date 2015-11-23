@@ -81,7 +81,7 @@ stdenv.mkDerivation rec {
     "--enable-tee"
     "--enable-xml"
     "--enable-pthread"
-    (enFlag "gobject" (glib != null) "yes")
+    (enFlag "gobject" (glib != null) null)
     "--disable-full-testing"
     "--disable-trace"
     "--enable-interpreter"
