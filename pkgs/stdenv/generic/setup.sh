@@ -13,32 +13,56 @@ set -o pipefail
 # code). The hooks for <hookName> are the shell function or variable
 # <hookName>, and the values of the shell array ‘<hookName>Hooks’.
 runHook() {
-    local hookName="$1"
-    shift
-    local var="$hookName"
-    if [[ "$hookName" =~ Hook$ ]]; then var+=s; else var+=Hooks; fi
-    eval "local -a dummy=(\"\${$var[@]}\")"
-    for hook in "_callImplicitHook 0 $hookName" "${dummy[@]}"; do
-        _eval "$hook" "$@"
-    done
-    return 0
+
+  local hookName
+  local var
+
+  hookName="${1}" ; shift
+  var="${hookName}"
+
+  if [[ "${hookName}" =~ Hook$ ]] ; then
+    var+=s
+  else
+    var+=Hooks
+  fi
+
+  eval "local -a dummy=(\"\${$var[@]}\")"
+
+  for hook in "_callImplicitHook 0 ${hookName}" "${dummy[@]}" ; do
+    _eval "${hook}" "$@"
+  done
+
+  return 0
+
 }
 
 
 # Run all hooks with the specified name, until one succeeds (returns a
 # zero exit code). If none succeed, return a non-zero exit code.
 runOneHook() {
-    local hookName="$1"
-    shift
-    local var="$hookName"
-    if [[ "$hookName" =~ Hook$ ]]; then var+=s; else var+=Hooks; fi
-    eval "local -a dummy=(\"\${$var[@]}\")"
-    for hook in "_callImplicitHook 1 $hookName" "${dummy[@]}"; do
-        if _eval "$hook" "$@"; then
-            return 0
-        fi
-    done
-    return 1
+
+  local hookName
+  local var
+
+  hookName="${1}" ; shift
+  var="${hookName}"
+
+  if [[ "${hookName}" =~ Hook$ ]] ; then
+    var+=s
+  else
+    var+=Hooks
+  fi
+
+  eval "local -a dummy=(\"\${$var[@]}\")"
+
+  for hook in "_callImplicitHook 1 ${hookName}" "${dummy[@]}" ; do
+    if _eval "${hook}" "$@" ; then
+      return 0
+    fi
+  done
+
+  return 1
+
 }
 
 
@@ -48,27 +72,49 @@ runOneHook() {
 # environment variables) and from shell scripts (as functions). If you
 # want to allow multiple hooks, use runHook instead.
 _callImplicitHook() {
-    local def="$1"
-    local hookName="$2"
-    case "$(type -t $hookName)" in
-        (function|alias|builtin) $hookName;;
-        (file) source $hookName;;
-        (keyword) :;;
-        (*) if [ -z "${!hookName}" ]; then return "$def"; else eval "${!hookName}"; fi;;
-    esac
+
+  local def
+  local hookName
+
+  def="${1}"
+  hookName="${2}"
+
+  case "$(type -t ${hookName})" in
+    'function'|'alias'|'builtin')
+      ${hookName}
+      ;;
+    'file')
+      source ${hookName}
+      ;;
+    'keyword')
+      :
+      ;;
+    *)
+      if [[ -z "${!hookName}" ]] ; then
+        return "${def}"
+      else
+        eval "${!hookName}"
+      fi
+      ;;
+  esac
+
 }
 
 
 # A function wrapper around ‘eval’ that ensures that ‘return’ inside
 # hooks exits the hook, not the caller.
 _eval() {
-    local code="$1"
-    shift
-    if [ "$(type -t $code)" = function ]; then
-        eval "$code \"\$@\""
-    else
-        eval "$code"
-    fi
+
+  local code
+
+  code="${1}" ; shift
+
+  if [[ "$(type -t ${code})" == 'function' ]] ; then
+    eval "$code \"\$@\""
+  else
+    eval "$code"
+  fi
+
 }
 
 
@@ -78,26 +124,34 @@ _eval() {
 nestingLevel=0
 
 startNest() {
-    nestingLevel=$(($nestingLevel + 1))
-    echo -en "\033[$1p"
+
+  nestingLevel=$(( ${nestingLevel} + 1 ))
+  echo -en "\033[$1p"
+
 }
 
 stopNest() {
-    nestingLevel=$(($nestingLevel - 1))
+
+    nestingLevel=$(( ${nestingLevel} - 1 ))
     echo -en "\033[q"
+
 }
 
 header() {
-    startNest "$2"
-    echo "$1"
+
+    startNest "${2}"
+    echo "${1}"
+
 }
 
 # Make sure that even when we exit abnormally, the original nesting
 # level is properly restored.
 closeNest() {
-    while [ $nestingLevel -gt 0 ]; do
-        stopNest
-    done
+
+  while [[ ${nestingLevel} -gt 0 ]] ; do
+    stopNest
+  done
+
 }
 
 
@@ -222,45 +276,51 @@ runHook addInputsHook
 
 # Recursively find all build inputs.
 findInputs() {
-    local pkg="$1"
-    local var=$2
-    local propagatedBuildInputsFile=$3
 
-    case ${!var} in
-        *\ $pkg\ *)
-            return 0
-            ;;
-    esac
+  local pkg
+  local var
+  local propagatedBuildInputsFile
 
-    eval $var="'${!var} $pkg '"
+  pkg="${1}"
+  var=${2}
+  propagatedBuildInputsFile=${3}
 
-    if ! [ -e "$pkg" ]; then
-        echo "build input $pkg does not exist" >&2
-        exit 1
-    fi
+  case ${!var} in
+    *\ $pkg\ *)
+      return 0
+      ;;
+  esac
 
-    if [ -f "$pkg" ]; then
-        source "$pkg"
-    fi
+  eval $var="'${!var} $pkg '"
 
-    if [ -f "$pkg/nix-support/setup-hook" ]; then
-        source "$pkg/nix-support/setup-hook"
-    fi
+  if ! [ -e "$pkg" ] ; then
+    echo "build input $pkg does not exist" >&2
+    exit 1
+  fi
 
-    if [ -f "$pkg/nix-support/$propagatedBuildInputsFile" ]; then
-        for i in $(cat "$pkg/nix-support/$propagatedBuildInputsFile"); do
-            findInputs "$i" $var $propagatedBuildInputsFile
-        done
-    fi
+  if [ -f "$pkg" ] ; then
+    source "$pkg"
+  fi
+
+  if [ -f "$pkg/nix-support/setup-hook" ] ; then
+    source "$pkg/nix-support/setup-hook"
+  fi
+
+  if [ -f "$pkg/nix-support/$propagatedBuildInputsFile" ] ; then
+    for i in $(cat "$pkg/nix-support/$propagatedBuildInputsFile") ; do
+      findInputs "$i" $var $propagatedBuildInputsFile
+    done
+  fi
+
 }
 
 crossPkgs=""
-for i in $buildInputs $defaultBuildInputs $propagatedBuildInputs; do
+for i in $buildInputs $defaultBuildInputs $propagatedBuildInputs ; do
     findInputs $i crossPkgs propagated-build-inputs
 done
 
 nativePkgs=""
-for i in $nativeBuildInputs $defaultNativeBuildInputs $propagatedNativeBuildInputs; do
+for i in $nativeBuildInputs $defaultNativeBuildInputs $propagatedNativeBuildInputs ; do
     findInputs $i nativePkgs propagated-native-build-inputs
 done
 
@@ -345,14 +405,14 @@ export NIX_INDENT_MAKE=1
 # means that we're supposed to try and auto-detect the number of
 # available CPU cores at run-time.
 
-if [ -z "${NIX_BUILD_CORES:-}" ]; then
-  NIX_BUILD_CORES="1"
-elif [ "$NIX_BUILD_CORES" -le 0 ]; then
+if [[ -z "${NIX_BUILD_CORES:-}" ]] ; then
+  NIX_BUILD_CORES=1
+elif [[ ${NIX_BUILD_CORES} -le 0 ]] ; then
   NIX_BUILD_CORES=$(nproc 2>/dev/null || true)
-  if expr >/dev/null 2>&1 "$NIX_BUILD_CORES" : "^[0-9][0-9]*$"; then
+  if expr > /dev/null 2>&1 ${NIX_BUILD_CORES} : "^[0-9][0-9]*$" ; then
     :
   else
-    NIX_BUILD_CORES="1"
+    NIX_BUILD_CORES=1
   fi
 fi
 export NIX_BUILD_CORES
