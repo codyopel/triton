@@ -48,11 +48,11 @@ let
       # Fix paths
       sed \
         -e 's,/opt/sublime_text/,,' \
-        -i sublime_text.desktop
-      # Fix filenames
-      sed \
         -e 's,sublime-text,sublime_text,' \
         -i sublime_text.desktop
+
+      # Rename icon file
+      mv -v Icon/256x256/sublime-text.png Icon/256x256/sublime_text.png
     '';
 
     nativeBuildInputs = [
