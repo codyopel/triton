@@ -1,7 +1,6 @@
 { stdenv, fetchurl
 , pkgconfig
 , libiconv
-, libintlOrEmpty
 
 , cogl
 #, directfb
@@ -104,7 +103,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     pkgconfig
     libiconv
-  ] ++ libintlOrEmpty;
+  ];
 
   propagatedBuildInputs = [
     fontconfig
@@ -129,7 +128,6 @@ stdenv.mkDerivation rec {
     pixman
     #poppler
     xorg.xcbutil
-    zlib
   ];
 
   postInstall = ''
