@@ -1,8 +1,8 @@
 { stdenv, fetchurl
+, autoreconfHook
 , coreutils
 , gettext
 , gobjectIntrospection
-, libintlOrEmpty
 , pkgconfig
 
 , glib
@@ -11,22 +11,33 @@
 , libpng
 , libX11
 , jasper
+, shared_mime_info
 }:
 
 stdenv.mkDerivation rec {
   name = "gdk-pixbuf-${version}";
-  versionMajor = "2.33";
-  versionMinor = "1";
+  versionMajor = "2.32";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gdk-pixbuf/${versionMajor}/${name}.tar.xz";
-    sha256 = "12q8nlrh8svf3msj2k69pi21zjpxdlh1872py0p4w86qkfrmh8qk";
+    sha256 = "0ib1jap60xkv74ndha06y8ziglpspp77fz62skzfy4rv2by0dayk";
   };
 
   setupHook = ./setup-hook.sh;
 
+  postPatch = ''
+    # The configure script only tests glib for mimetype detection support if
+    # --enable-gio-sniffing=auto, this patches it to run the test and explicitly
+    # fail if glib isn't configured correctly.
+    sed -e '/x$enable_gio_sniffing/ s/xauto/xyes/' -i configure.ac
+    sed -e 's|\[gio_can_sniff=no\]|\[gio_can_sniff=no, AC_MSG_ERROR(gio cannot determine mimetype)\]|' \
+        -i configure.ac
+  '';
+
   configureFlags = [
+    # TODO: fix glib to support gio sniffing
     "--disable-gio-sniffing"
     "--enable-rebuilds"
     "--enable-nls"
@@ -52,11 +63,12 @@ stdenv.mkDerivation rec {
   ];
 
   nativeBuildInputs = [
+    autoreconfHook
     coreutils
     gettext
     gobjectIntrospection
     pkgconfig
-  ] ++ libintlOrEmpty;
+  ];
 
   propagatedBuildInputs = [
     glib
