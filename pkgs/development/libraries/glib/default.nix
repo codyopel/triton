@@ -5,6 +5,7 @@
 , pkgconfig
 , python
 
+, attr
 , libiconv
 , zlib
 , libffi
@@ -98,12 +99,9 @@ stdenv.mkDerivation rec {
   );
 
   configureFlags = [
-    "--enable-shared"
-    # Static is necessary for qemu-nix to support static userspace translators
-    "--enable-static"
     "--disable-selinux"
     "--disable-fam"
-    "--disable-xattr"
+    "--enable-xattr"
     "--enable-libelf"
     "--disable-gtk-doc"
     "--disable-gtk-doc-html"
@@ -114,7 +112,6 @@ stdenv.mkDerivation rec {
     "--disable-coverage"
     "--enable-Bsymbolic"
     "--enable-compile-warnings"
-    "--with-threads=posix"
     # internal pcre is not patched to support gcc5, among other fixes
     "--with-pcre=system"
   ];
@@ -128,6 +125,7 @@ stdenv.mkDerivation rec {
   ];
 
   propagatedBuildInputs = [
+    attr
     libiconv
     libffi
     pcre
@@ -150,14 +148,20 @@ stdenv.mkDerivation rec {
     export TZDIR="${tzdata}/share/zoneinfo"
     export XDG_CACHE_HOME="$TMP"
     export XDG_RUNTIME_HOME="$TMP"
+    export XDG_RUNTIME_DIR="$TMP"
     export HOME="$TMP"
     export XDG_DATA_DIRS="${desktop_file_utils}/share:${shared_mime_info}/share"
     export G_TEST_DBUS_DAEMON="${dbus_daemon}/bin/dbus-daemon"
+    # Make sure that everything that uses D-Bus is creating its own temporary
+    # session rather than polluting the developer's (or failing, on buildds)
+    export DBUS_SESSION_BUS_ADDRESS='this-should-not-be-used-and-will-fail'
+    # Let's get failing tests' stdout and stderr so we have some information
+    # when a build fails
+    export VERBOSE=1
   '';
 
   # TODO: fix or disable failing tests
   inherit doCheck;
-  dontDisableStatic = true;
   enableParallelBuilding = true;
   DETERMINISTIC_BUILD = 1;
 
