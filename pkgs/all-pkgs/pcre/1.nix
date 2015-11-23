@@ -14,12 +14,11 @@ with {
 };
 
 stdenv.mkDerivation rec {
-  name = "pcre-8.38-RC1";
+  name = "pcre-8.38";
 
   src = fetchurl {
-    #url = "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${name}.tar.bz2";
-    url = "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/Testing/${name}.tar.bz2";
-    sha256 = "140dm4xb91gmm8c2xgj5ddncw8kh7pmky1nknmnhg55h0x00ldqn";
+    url = "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/${name}.tar.bz2";
+    sha256 = "1pvra19ljkr5ky35y2iywjnsckrs9ch2anrf5b0dc91hw8v2vq5r";
   };
 
   configureFlags = [
