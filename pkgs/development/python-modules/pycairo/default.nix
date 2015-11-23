@@ -36,4 +36,6 @@ if isPyPy then throw "pycairo not supported for interpreter ${python.executable}
   '';
   buildPhase = "${python.executable} waf";
   installPhase = "${python.executable} waf install";
+
+  enableParallelBuilding = true;
 }
