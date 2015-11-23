@@ -1,4 +1,7 @@
-{ stdenv, fetchurl, attr }:
+{ stdenv, fetchurl
+, attr
+, gettext
+}:
 
 stdenv.mkDerivation rec {
   name = "acl-2.2.52";
@@ -10,12 +13,13 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--enable-shared"
-    "--disable-gettext"
-    "--enable-lib64"
+    "--enable-gettext"
+    "--disable-lib64"
   ];
 
   buildInputs = [
     attr
+    gettext
   ];
 
   postPatch = ''
@@ -29,6 +33,11 @@ stdenv.mkDerivation rec {
     "install-lib"
     "install-dev"
   ];
+
+  preFixup = ''
+    # Remove static object
+    rm -vf $out/lib/*.a
+  '';
 
   enableParallelBuilding = true;
 
