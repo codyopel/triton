@@ -1,15 +1,20 @@
 { stdenv, fetchurl
 , bison
 , flex
-, libtool
 , pkgconfig
 
-, cairo
 , glib
 , libffi
-, libintlOrEmpty
 , python
+# Tests
+, cairo
 }:
+
+with {
+  inherit (stdenv.lib)
+    optionals
+    wtFlag;
+};
 
 stdenv.mkDerivation rec {
   name = "gobject-introspection-${versionMajor}.${versionMinor}";
@@ -28,7 +33,7 @@ stdenv.mkDerivation rec {
     ./absolute_shlib_path.patch
   ];
 
-  patchPhase = ''
+  postPatch = ''
     patchShebangs tests/gi-tester
 
     # patchShebangs does not catch @PYTHON@
@@ -43,18 +48,19 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc-pdf"
     "--disable-doctool"
     "--enable-Bsymbolic"
-    "--with-cairo"
+    "--without-cairo"
+    (wtFlag "cairo" doCheck null)
     "--with-python=${python.interpreter}"
   ];
 
   buildInputs = [
     bison
-    cairo
     flex
-    libtool
     pkgconfig
     python
-  ] ++ libintlOrEmpty;
+  ] ++ optionals doCheck [
+    cairo
+  ];
 
   propagatedBuildInputs = [
     glib
@@ -63,7 +69,7 @@ stdenv.mkDerivation rec {
 
   postInstall = "rm -rvf $out/share/gtk-doc";
 
-  doCheck = true;
+  doCheck = false;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
