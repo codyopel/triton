@@ -1,5 +1,7 @@
 { stdenv, fetchurl, gnome3, pkgconfig, gtk3, intltool, glib
-, udev, itstool, libxml2, makeWrapper, libnotify, libcanberra_gtk3 }:
+, udev, itstool, libxml2, makeWrapper, libnotify, libcanberra_gtk3
+, gobjectIntrospection
+}:
 
 stdenv.mkDerivation rec {
   name = "gnome-bluetooth-${version}";
@@ -14,7 +16,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig intltool glib gtk3 udev libxml2 gnome3.defaultIconTheme
                   makeWrapper gnome3.gsettings_desktop_schemas itstool
-                  libnotify libcanberra_gtk3 ];
+                  libnotify libcanberra_gtk3
+                  gobjectIntrospection ];
 
   preFixup = ''
     wrapProgram "$out/bin/bluetooth-sendto" \
