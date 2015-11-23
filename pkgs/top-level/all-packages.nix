@@ -3873,9 +3873,9 @@ let
     cross = null;
     libcCross = if crossSystem != null then libcCross else null;
 
-    isl = isl_0_11;
+    isl = null;
 
-    cloog = cloog_0_18_0;
+    cloog = null;
   }));
 
   gcc5 = lowPrio (wrapCC (callPackage ../development/compilers/gcc/5 {
