@@ -1,11 +1,13 @@
 { stdenv, fetchurl
 , cmake
+, makeWrapper
 , perl
 , pkgconfig
 
 , glib
 , gnome3
 , gtk3
+, librsvg
 }:
 
 stdenv.mkDerivation rec {
@@ -19,6 +21,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     cmake
+    makeWrapper
     perl
     pkgconfig
   ];
@@ -27,7 +30,14 @@ stdenv.mkDerivation rec {
     glib
     gnome3.vte
     gtk3
+    # librsvg is only needed to set GDK_PIXBUF_MODULE_FILE
+    librsvg
   ];
+
+  preFixup = ''
+    wrapProgram $out/bin/sakura \
+      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE"
+  '';
 
   enableParallelBuilding = true;
 
