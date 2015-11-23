@@ -1,7 +1,6 @@
 { stdenv, fetchurl
 , makeWrapper
 
-, acl
 , expat
 , xz
 }:
@@ -41,7 +40,6 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    acl
     expat
     xz
   ];
