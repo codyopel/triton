@@ -40,6 +40,7 @@ buildPythonPackage rec {
   # The check phase was not executed in the previous
   # non-buildPythonPackage setup - not sure why not.
   doCheck = false;
+  enableParallelBuilding = true;
 
   postInstall = ''
     rm $out/bin/pygtk-codegen-2.0
