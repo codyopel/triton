@@ -13,6 +13,7 @@
 with {
   inherit (stdenv.lib)
     optionals
+    optionalString
     wtFlag;
 };
 
@@ -34,11 +35,20 @@ stdenv.mkDerivation rec {
   ];
 
   postPatch = ''
-    patchShebangs tests/gi-tester
-
     # patchShebangs does not catch @PYTHON@
     sed -e 's|#!/usr/bin/env @PYTHON@|#!${python.interpreter}|' \
         -i tools/g-ir-tool-template.in
+  '' + optionalString doCheck ''
+    patchShebangs tests/gi-tester
+
+    # Fix tests broken by absolute_shlib_path.patch
+    sed -e 's|shared-library="|shared-library="/unused/|' -i \
+      tests/scanner/GtkFrob-1.0-expected.gir \
+      tests/scanner/Utility-1.0-expected.gir \
+      tests/scanner/Typedefs-1.0-expected.gir \
+      tests/scanner/GetType-1.0-expected.gir \
+      tests/scanner/SLetter-1.0-expected.gir \
+      tests/scanner/Regress-1.0-expected.gir
   '';
 
   configureFlags = [
@@ -48,15 +58,16 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc-pdf"
     "--disable-doctool"
     "--enable-Bsymbolic"
-    "--without-cairo"
     (wtFlag "cairo" doCheck null)
-    "--with-python=${python.interpreter}"
   ];
 
-  buildInputs = [
+  nativeBuildInputs = [
     bison
     flex
     pkgconfig
+  ];
+
+  buildInputs = [
     python
   ] ++ optionals doCheck [
     cairo
@@ -69,7 +80,7 @@ stdenv.mkDerivation rec {
 
   postInstall = "rm -rvf $out/share/gtk-doc";
 
-  doCheck = false;
+  doCheck = true;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
