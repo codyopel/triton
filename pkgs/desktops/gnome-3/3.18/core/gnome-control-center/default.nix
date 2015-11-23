@@ -62,6 +62,20 @@ stdenv.mkDerivation rec {
     ./vpn_plugins_path.patch
   ];
 
+  configureFlags = [
+    "--disable-maintainer-mode"
+    "--disable-debug"
+    "--enable-compile-warnings"
+    "--enable-nls"
+    "--disable-documentation"
+    "--enable-ibus"
+    "--enable-cups"
+    "--disable-update-mimedb"
+    "--disable-more-warnings"
+    "--with-x"
+    "--without-cheese"
+  ];
+
   propagatedUserEnvPkgs = [
     gnome3.gnome_themes_standard
     gnome3.libgnomekbd
@@ -120,20 +134,25 @@ stdenv.mkDerivation rec {
   ];
 
   preBuild = ''
-    substituteInPlace tz.h --replace "/usr/share/zoneinfo/zone.tab" "${tzdata}/share/zoneinfo/zone.tab"
-    substituteInPlace panels/datetime/tz.h --replace "/usr/share/zoneinfo/zone.tab" "${tzdata}/share/zoneinfo/zone.tab"
+    substituteInPlace tz.h \
+      --replace "/usr/share/zoneinfo/zone.tab" "${tzdata}/share/zoneinfo/zone.tab"
+    substituteInPlace panels/datetime/tz.h \
+      --replace "/usr/share/zoneinfo/zone.tab" "${tzdata}/share/zoneinfo/zone.tab"
 
     # hack to make test-endianess happy
     mkdir -p $out/share/locale
-    substituteInPlace panels/datetime/test-endianess.c --replace "/usr/share/locale/" "$out/share/locale/"
+    substituteInPlace panels/datetime/test-endianess.c \
+      --replace "/usr/share/locale/" "$out/share/locale/"
   '';
 
   preFixup = with gnome3; ''
     wrapProgram $out/bin/gnome-control-center \
       --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
       --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:${sound-theme-freedesktop}/share:$out/share:$out/share/gnome-control-center:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-    for i in $out/share/applications/*; do
-      substituteInPlace $i --replace "gnome-control-center" "$out/bin/gnome-control-center"
+
+    for i in $out/share/applications/* ; do
+      substituteInPlace $i \
+        --replace "gnome-control-center" "$out/bin/gnome-control-center"
     done
   '';
 
