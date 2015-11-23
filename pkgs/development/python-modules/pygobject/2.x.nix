@@ -22,6 +22,8 @@ stdenv.mkDerivation rec {
     mv $out/lib/${python.libPrefix}/site-packages/{pygtk.pth,${name}.pth}
   '';
 
+  enableParallelBuilding = true;
+
   meta = {
     homepage = http://live.gnome.org/PyGObject;
     description = "Python bindings for Glib";

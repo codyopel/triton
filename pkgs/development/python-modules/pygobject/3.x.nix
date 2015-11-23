@@ -32,6 +32,8 @@ stdenv.mkDerivation rec {
     bzip2
   ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "Python bindings for Glib";
     homepage = http://live.gnome.org/PyGObject;
