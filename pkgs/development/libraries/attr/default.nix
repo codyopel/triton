@@ -1,4 +1,6 @@
-{ stdenv, fetchurl }:
+{ stdenv, fetchurl
+, gettext
+}:
 
 stdenv.mkDerivation rec {
   name = "attr-2.4.47";
@@ -10,8 +12,12 @@ stdenv.mkDerivation rec {
 
   configureFlags = [
     "--enable-shared"
-    "--disable-gettext"
-    "--enable-lib64"
+    "--enable-gettext"
+    "--disable-lib64"
+  ];
+
+  buildInputs = [
+    gettext
   ];
 
   installTargets = [
@@ -19,6 +25,11 @@ stdenv.mkDerivation rec {
     "install-lib"
     "install-dev"
   ];
+
+  preFixup = ''
+    # Remove static object
+    rm -vf $out/lib/*.a
+  '';
 
   enableParallelBuilding = true;
 
