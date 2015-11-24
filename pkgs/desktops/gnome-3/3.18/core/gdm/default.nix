@@ -1,45 +1,95 @@
-{ stdenv, fetchurl, pkgconfig, glib, itstool, libxml2, xorg, dbus
-, intltool, accountsservice, libX11, gnome3, systemd, gnome_session
-, gtk, libcanberra_gtk3, pam, libtool, gobjectIntrospection }:
+{ stdenv, fetchurl
+, gobjectIntrospection
+, intltool
+, itstool
+, libtool
+, pkgconfig
+
+, glib
+, libxml2
+, xorg
+, dbus
+, accountsservice
+, libX11
+, gnome3
+, systemd
+, gnome_session
+, gtk3
+, libcanberra_gtk3
+, pam
+}:
 
 stdenv.mkDerivation rec {
-  inherit (import ./src.nix fetchurl) name src;
+  name = "gdm-${version}";
+  versionMajor = "3.14";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
+
+  src = fetchurl {
+    url = "mirror://gnome/sources/gdm/${versionMajor}/${name}.tar.xz";
+    sha256 = "e20eb61496161ad95b1058dbf8aea9b7b004df4d0ea6b0fab4401397d9db5930";
+  };
+
+  # Disable Access Control because our X does not support
+  # FamilyServerInterpreted yet
+  patches = [
+    ./xserver_path.patch
+    ./sessions_dir.patch
+    ./disable_x_access_control.patch
+    ./no-dbus-launch.patch
+  ];
+
+  configureFlags = [
+    "--sysconfdir=/etc"
+    "--localstatedir=/var"
+    "--with-systemd=yes"
+    "--with-systemdsystemunitdir=$(out)/etc/systemd/system"
+  ];
 
   # Only needed to make it build
   preConfigure = ''
-    substituteInPlace ./configure --replace "/usr/bin/X" "${xorg.xorgserver}/bin/X"
+    substituteInPlace ./configure \
+      --replace "/usr/bin/X" "${xorg.xorgserver}/bin/X"
   '';
 
-  configureFlags = [ "--sysconfdir=/etc"
-                     "--localstatedir=/var"
-                     "--with-systemd=yes"
-                     "--with-systemdsystemunitdir=$(out)/etc/systemd/system" ];
+  nativeBuildInputs = [
+    gobjectIntrospection
+    intltool
+    itstool
+    libtool
+    pkgconfig
+  ];
 
   buildInputs = [
-    pkgconfig glib itstool libxml2 intltool
-    accountsservice gnome3.dconf systemd
-    gobjectIntrospection libX11 gtk
-    libcanberra_gtk3 pam libtool
+    accountsservice
+    glib
+    gnome3.dconf
+    gtk3
+    libcanberra_gtk3
+    libxml2
+    pam
+    systemd
+    xorg.libX11
     xorg.libXi
     xorg.libXrandr
   ];
 
-  #enableParallelBuilding = true; # problems compiling
-
   preBuild = ''
-    substituteInPlace daemon/gdm-simple-slave.c --replace 'BINDIR "/gnome-session' '"${gnome_session}/bin/gnome-session'
+    substituteInPlace daemon/gdm-simple-slave.c \
+      --replace 'BINDIR "/gnome-session' '"${gnome_session}/bin/gnome-session'
   '';
 
-  # Disable Access Control because our X does not support FamilyServerInterpreted yet
-  patches = [ ./xserver_path.patch ./sessions_dir.patch
-              ./disable_x_access_control.patch ./no-dbus-launch.patch ];
+  installFlags = [
+    "sysconfdir=$(out)/etc"
+    "dbusconfdir=$(out)/etc/dbus-1/system.d"
+  ];
 
-  installFlags = [ "sysconfdir=$(out)/etc" "dbusconfdir=$(out)/etc/dbus-1/system.d" ];
+  enableParallelBuilding = false;
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Projects/GDM;
-    description = "A program that manages graphical display servers and handles graphical user logins";
-    platforms = platforms.linux;
+    description = "Manages display servers and graphical user logins";
     maintainers = gnome3.maintainers;
+    platforms = platforms.linux;
   };
 }
