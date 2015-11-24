@@ -1,6 +1,6 @@
 { stdenv, fetchurl
 , zlib
-, apngSupport ? false
+, apngSupport ? true
 }:
 
 let
