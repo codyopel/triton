@@ -5,24 +5,36 @@ let
   version = "55.1";
 in
 stdenv.mkDerivation {
-  name = pname + "-" + version;
+  name = "icu4c-" + version;
 
   src = fetchurl {
-    url = "http://download.icu-project.org/files/${pname}/${version}/${pname}-"
+    url = "http://download.icu-project.org/files/icu4c/${version}/icu4c-"
       + (stdenv.lib.replaceChars ["."] ["_"] version) + "-src.tgz";
     sha256 = "0ys5f5spizg45qlaa31j2lhgry0jka2gfha527n4ndfxxz5j4sz1";
   };
 
   postUnpack = ''
-    sourceRoot=''${sourceRoot}/source
-    echo Source root reset to ''${sourceRoot}
+    sourceRoot=$sourceRoot/source
   '';
+
+  configureFlags = [
+    "--disable-debug"
+    "--enable-release"
+    #"--enable-strict"
+    "--enable-draft"
+    "--enable-rpath"
+    "--enable-extras"
+    "--enable-icuio"
+    "--disable-layout"
+    "--disable-layoutex"
+    "--enable-tools"
+    "--enable-tests"
+    "--disable-samples"
+  ];
 
   preConfigure = ''
-    sed -i -e "s|/bin/sh|${stdenv.shell}|" configure
+    patchShebangs configure
   '';
-
-  configureFlags = "--disable-debug";
 
   enableParallelBuilding = true;
 
