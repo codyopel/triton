@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
     "--enable-rpath"
     "--enable-nls"
     "--disable-backup-scripts"
-    "--with-posic-acls"
+    "--with-posix-acls"
     "--with-included-regex"
     "--without-selinux"
     "--with-xattrs"
@@ -38,7 +38,7 @@ stdenv.mkDerivation rec {
     acl
   ];
 
-  doCheck = true;
+  doCheck = false;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
