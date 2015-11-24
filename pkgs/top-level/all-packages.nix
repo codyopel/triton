@@ -476,6 +476,8 @@ let
     qt4 = null;
   };
 
+  gnome-mpv = callPackage ../all-pkgs/gnome-mpv { };
+
   libgudev = callPackage ../all-pkgs/libgudev { };
 
   lightdm_gtk = callPackage ../all-pkgs/lightdm {
