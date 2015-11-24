@@ -506,6 +506,7 @@ let
     youtube-dl = pythonPackages.youtube-dl;
   };
 
+  ncmpcpp = callPackage ../all-pkgs/ncmpcpp { };
 
   pcre = callPackage ../all-pkgs/pcre/1.nix {
     unicodeSupport = config.pcre.unicode or true;
@@ -11978,8 +11979,6 @@ let
   mpc_cli = callPackage ../applications/audio/mpc { };
 
   ncmpc = callPackage ../applications/audio/ncmpc { };
-
-  ncmpcpp = callPackage ../applications/audio/ncmpcpp { };
 
   normalize = callPackage ../applications/audio/normalize { };
 
