@@ -22,6 +22,10 @@ stdenv.mkDerivation rec {
     "--disable-trace"
   ];
 
+  NIX_CFLAGS_COMPILE = [
+    "-std=gnu89"
+  ];
+
   nativeBuildInputs = [
     autoreconfHook
     perl
