@@ -41,6 +41,14 @@
 
 # Extra options
 , prefix ? ""
+
+# Patch sources
+# Set latency_msec in module-loopback (Default: 200)
+, loopbackLatencyMsec ? "1"
+# Set default resampler (Default: speex-float-1)
+# See `resample-method` in manpage for pulse-daemon.conf, resample-methods.nix
+# or run `pulseaudio --dump-resample-methods` for possible values.
+, resampleMethod ? "soxr-vhq"
 }:
 
 with {
@@ -52,7 +60,11 @@ with {
     wtFlag
     optionals
     optionalString;
+  inherit (builtins.getAttr resampleMethod (import ./resample-methods.nix))
+    resampleMethodString;
 };
+
+assert resampleMethodString != null;
 
 let
   libOnly = prefix == "lib";
@@ -119,7 +131,17 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./caps-fix.patch
+    ./pulseaudio-default-resampler.patch
   ];
+
+  postPatch = ''
+    # Allow patching default latency_msec
+    sed -e 's/DEFAULT_LATENCY_MSEC 200/DEFAULT_LATENCY_MSEC ${loopbackLatencyMsec}/' \
+        -i src/modules/module-loopback.c
+    # Allow patching default resampler
+    sed -e 's/unique_jhsdjhsdf_string/${resampleMethodString}/' \
+        -i src/pulsecore/resampler.c
+  '';
 
   configureFlags = [
     (otFlag "localstatedir" true "/var")
