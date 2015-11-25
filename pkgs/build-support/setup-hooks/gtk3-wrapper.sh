@@ -42,7 +42,8 @@ wrapGtk3AppsHook() {
     gtk3AppsWrapperArgs+=("--prefix ${v} : ${dummy}")
   done
 
-  if [[ -z "${dontWrapGApps}" ]] ; then
+  if [[ "${dontWrapGtk3Apps}" != true && \
+        -n "${gtk3AppsWrapperArgs[@]}" ]] ; then
     for i in \
       "${prefix}/bin/"* \
       "${prefix}/libexec/"* ; do
