@@ -472,15 +472,60 @@ let
 ################################################################################
 ################################################################################
 
+  at_spi2_core = callPackage ../all-pkgs/at-spi2-core { };
+
+  at_spi2_atk = callPackage ../all-pkgs/at-spi2-atk { };
+
+  atk = callPackage ../all-pkgs/atk { };
+
+  atkmm = callPackage ../all-pkgs/atkmm { };
+
   avxsynth = callPackage ../all-pkgs/avxsynth {
     qt4 = null;
   };
 
+  cairo = callPackage ../all-pkgs/cairo { };
+
+  cairomm = callPackage ../all-pkgs/cairomm { };
+
+  gdk_pixbuf = callPackage ../all-pkgs/gdk-pixbuf { };
+
+  glib = callPackage ../all-pkgs/glib { };
+  # checked version separate to break recursion
+  glib-tested = glib.override {
+    doCheck = true;
+  };
+
+  glib_networking = callPackage ../all-pkgs/glib-networking { };
+
+  glibmm = callPackage ../all-pkgs/glibmm { };
+
   gnome-mpv = callPackage ../all-pkgs/gnome-mpv { };
 
+  granite = callPackage ../all-pkgs/granite { };
+
+  gtk2 = callPackage ../all-pkgs/gtk+/2.x.nix { };
+  gtk3 = callPackage ../all-pkgs/gtk+/3.x.nix { };
+  gtk = pkgs.gtk2;
   gtk3Wrapper = makeSetupHook {
     deps = [ makeWrapper ];
   } ../build-support/setup-hooks/gtk3-wrapper.sh;
+
+  # Remove this legacy garbage
+  gtkLibs = {
+    inherit (pkgs) glib glibmm atk atkmm cairo pango pangomm gdk_pixbuf gtk
+      gtkmm;
+  };
+
+  gtkmm_2 = callPackage ../all-pkgs/gtkmm/2.x.nix { };
+  gtkmm_3 = callPackage ../all-pkgs/gtkmm/3.x.nix { };
+  gtkmm = gtkmm_3;
+
+  gvfs = callPackage ../all-pkgs/gvfs {
+    gconf = gnome.GConf;
+  };
+
+  harfbuzz = callPackage ../all-pkgs/harfbuzz { };
 
   libgudev = callPackage ../all-pkgs/libgudev { };
 
@@ -512,10 +557,18 @@ let
 
   ncmpcpp = callPackage ../all-pkgs/ncmpcpp { };
 
+  pango = callPackage ../all-pkgs/pango { };
+
+  pangomm = callPackage ../all-pkgs/pangomm { };
+
+  pangox_compat = callPackage ../all-pkgs/pangox-compat { };
+
   pcre = callPackage ../all-pkgs/pcre/1.nix {
     unicodeSupport = config.pcre.unicode or true;
   };
   pcre2 = callPackage ../all-pkgs/pcre/2.nix { };
+
+  pixman = callPackage ../all-pkgs/pixman { };
 
   sublime-text = callPackage ../all-pkgs/sublime-text { };
 
@@ -5883,10 +5936,6 @@ let
 
   attr = callPackage ../development/libraries/attr { };
 
-  at_spi2_core = callPackage ../development/libraries/at-spi2-core { };
-
-  at_spi2_atk = callPackage ../development/libraries/at-spi2-atk { };
-
   aqbanking = callPackage ../development/libraries/aqbanking { };
 
   aubio = callPackage ../development/libraries/aubio { };
@@ -6401,45 +6450,7 @@ let
 
   gtkmathview = callPackage ../development/libraries/gtkmathview { };
 
-  gtkLibs = {
-    inherit (pkgs) glib glibmm atk atkmm cairo pango pangomm gdk_pixbuf gtk
-      gtkmm;
-  };
-
-  glib = callPackage ../development/libraries/glib { };
-  glib-tested = glib.override { doCheck = true; }; # checked version separate to break cycles
-  glibmm = callPackage ../development/libraries/glibmm { };
-
-  glib_networking = callPackage ../development/libraries/glib-networking {};
-
-  atk = callPackage ../development/libraries/atk { };
-  atkmm = callPackage ../development/libraries/atkmm { };
-
-  pixman = callPackage ../development/libraries/pixman { };
-
-  cairo = callPackage ../development/libraries/cairo { };
-  cairomm = callPackage ../development/libraries/cairomm { };
-
-  pango = callPackage ../development/libraries/pango { };
-  pangomm = callPackage ../development/libraries/pangomm { };
-
-  pangox_compat = callPackage ../development/libraries/pangox-compat { };
-
-  gdk_pixbuf = callPackage ../development/libraries/gdk-pixbuf { };
-
   gnome-sharp = callPackage ../development/libraries/gnome-sharp {};
-
-  granite = callPackage ../development/libraries/granite { };
-
-  gtk2 = callPackage ../development/libraries/gtk+/2.x.nix { };
-
-  gtk3 = callPackage ../development/libraries/gtk+/3.x.nix { };
-
-  gtk = pkgs.gtk2;
-
-  gtkmm_2 = callPackage ../development/libraries/gtkmm/2.x.nix { };
-  gtkmm_3 = callPackage ../development/libraries/gtkmm/3.x.nix { };
-  gtkmm = gtkmm_3;
 
   gtkmozembedsharp = callPackage ../development/libraries/gtkmozembed-sharp {
     gtksharp = gtk-sharp;
@@ -6459,8 +6470,6 @@ let
 
   gts = callPackage ../development/libraries/gts { };
 
-  gvfs = callPackage ../development/libraries/gvfs { gconf = gnome.GConf; };
-
   gwenhywfar = callPackage ../development/libraries/gwenhywfar { gnutls = gnutls33; };
 
   hamlib = callPackage ../development/libraries/hamlib { };
@@ -6471,8 +6480,6 @@ let
 
   heimdalFull = callPackage ../development/libraries/kerberos/heimdal.nix { };
   libheimdal = heimdalFull.override { type = "lib"; };
-
-  harfbuzz = callPackage ../development/libraries/harfbuzz { };
 
   hawknl = callPackage ../development/libraries/hawknl { };
 
