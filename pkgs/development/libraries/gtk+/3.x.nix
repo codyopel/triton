@@ -15,6 +15,7 @@
 , gdk_pixbuf
 , glib
 , gnome3
+, gtk3Wrapper
 , json_glib
 , librsvg
 , libxkbcommon
@@ -94,6 +95,7 @@ stdenv.mkDerivation rec {
     gdk_pixbuf # pkgconfig
     glib # pkgconfig
     gnome3.adwaita-icon-theme
+    gtk3Wrapper
     pango # pkgconfig
     xorg.libICE
     xorg.libSM

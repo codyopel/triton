@@ -478,6 +478,10 @@ let
 
   gnome-mpv = callPackage ../all-pkgs/gnome-mpv { };
 
+  gtk3Wrapper = makeSetupHook {
+    deps = [ makeWrapper ];
+  } ../build-support/setup-hooks/gtk3-wrapper.sh;
+
   libgudev = callPackage ../all-pkgs/libgudev { };
 
   lightdm_gtk = callPackage ../all-pkgs/lightdm {
