@@ -48,7 +48,7 @@
 # Set default resampler (Default: speex-float-1)
 # See `resample-method` in manpage for pulse-daemon.conf, resample-methods.nix
 # or run `pulseaudio --dump-resample-methods` for possible values.
-, resampleMethod ? "soxr-vhq"
+, resampleMethod ? "speex-float-10"
 }:
 
 with {
