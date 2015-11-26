@@ -28,15 +28,6 @@ stdenv.mkDerivation rec {
     "--with-pkcs11-modules=$$out/lib/pkcs11/"
   ];
 
-  preFixup = ''
-    wrapProgram "$out/bin/gnome-keyring" \
-      --prefix XDG_DATA_DIRS : "${glib}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
-    wrapProgram "$out/bin/gnome-keyring-daemon" \
-      --prefix XDG_DATA_DIRS : "${glib}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
-  '';
-
-  dontWrapGtk3Apps = true;
-
   meta = with stdenv.lib; {
     platforms = platforms.linux;
     maintainers = gnome3.maintainers;

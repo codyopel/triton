@@ -86,13 +86,8 @@ stdenv.mkDerivation rec {
   ];
 
   preFixup = ''
-    wrapProgram "$out/libexec/gnome-settings-daemon-localeexec" \
-      --prefix GI_TYPELIB_PATH : "$GI_TYPELIB_PATH" \
-      --prefix PATH : "${glib}/bin" \
-      --prefix XDG_DATA_DIRS : "$out/share:$GSETTINGS_SCHEMAS_PATH"
+    gtk3WrapperArgs+=("--prefix PATH : ${glib}/bin")
   '';
-
-  dontWrapGtk3Apps = true;
 
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;

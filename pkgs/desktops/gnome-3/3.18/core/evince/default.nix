@@ -87,16 +87,6 @@ stdenv.mkDerivation rec {
     xorg.libXfixes
   ];
 
-  preFixup = ''
-    # Tell Glib/GIO about the MIME info directory, which is used
-    # by `g_file_info_get_content_type ()'.
-    wrapProgram "$out/bin/evince" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${gtk3}/share:${shared_mime_info}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
-
-  '';
-
-  dontWrapGtk3Apps = true;
   doCheck = false; # would need pythonPackages.dogTail, which is missing
 
   meta = with stdenv.lib; {
