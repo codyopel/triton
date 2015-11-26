@@ -1,5 +1,10 @@
-{ stdenv, fetchurl, libX11, pkgconfig, libXext, libdrm, libXfixes, wayland, libffi
-, mesa ? null
+{ stdenv, fetchurl
+, pkgconfig
+
+, libdrm
+, libffi
+, wayland
+, xorg
 }:
 
 stdenv.mkDerivation rec {
@@ -10,14 +15,34 @@ stdenv.mkDerivation rec {
     sha256 = "0bjfb5s8dk3lql843l91ffxzlq47isqks5sj19cxh7j3nhzw58kz";
   };
 
-  buildInputs = [ libX11 libXext pkgconfig libdrm libXfixes wayland libffi mesa ];
+  configureFlags = [
+    "--disable-docs"
+    "--enable-drm"
+    "--enable-x11"
+    "--enable-glx"
+    "--enable-egl"
+    "--enable-wayland"
+    #"--enable-dummy-driver"
+    #"--with-drivers-path"
+  ];
 
-  configureFlags = stdenv.lib.optional (mesa != null) "--enable-glx";
+  nativeBuildInputs = [
+    pkgconfig
+  ];
+
+  buildInputs = [
+    libdrm
+    libffi
+    wayland
+    xorg.libX11
+    xorg.libXext
+    xorg.libXfixes
+  ];
 
   meta = with stdenv.lib; {
+    description = "Video Acceleration API (VAAPI)";
     homepage = http://www.freedesktop.org/wiki/Software/vaapi;
     license = licenses.mit;
-    description = "VAAPI library: Video Acceleration API";
     platforms = platforms.unix;
   };
 }
