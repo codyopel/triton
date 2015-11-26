@@ -38,17 +38,27 @@ wrapGtk3AppsHook() {
     'GST_PLUGIN_SYSTEM_PATH_1_0' \
     'GI_TYPELIB_PATH' \
     'GRL_PLUGIN_PATH' ; do
-    eval dummy="\$$v"
+
+    if [[ -z "${v}" ]] ; then
+      continue
+    fi
+
+    eval dummy="\$${v}"
+
+    if [[ -z "${dummy}" ]] ; then
+      continue
+    fi
+
     gtk3AppsWrapperArgs+=("--prefix ${v} : ${dummy}")
   done
 
-  if [[ "${dontWrapGtk3Apps}" != true && \
-        -n "${gtk3AppsWrapperArgs[@]}" ]] ; then
+  if test -z "${dontWrapGtk3Apps}" && \
+     [[ -n "${gtk3AppsWrapperArgs[@]}" ]] ; then
     for i in \
       "${prefix}/bin/"* \
       "${prefix}/libexec/"* ; do
       echo "Wrapping GTK+3 app ${i}"
-      wrapProgram "${i}" "${gtk3AppsWrapperArgs[@]}"
+      wrapProgram "${i}" ${gtk3AppsWrapperArgs[@]}
     done
   fi
 
