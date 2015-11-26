@@ -1,7 +1,6 @@
 { stdenv, fetchurl
 , intltool
 , itstool
-, makeWrapper
 , pkgconfig
 
 , gobjectIntrospection
@@ -66,7 +65,6 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     intltool
     itstool
-    makeWrapper
     pkgconfig
   ];
 
@@ -106,12 +104,10 @@ stdenv.mkDerivation rec {
   ];
 
   preFixup = ''
-    wrapProgram "$out/bin/totem" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "$GST_PLUGIN_SYSTEM_PATH_1_0" \
-      --prefix GRL_PLUGIN_PATH : "${gnome3.grilo-plugins}/lib/grilo-0.2" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-
+    gtk3AppsWrapperArgs+=(
+      "--prefix GST_PLUGIN_SYSTEM_PATH_1_0 : $GST_PLUGIN_SYSTEM_PATH_1_0"
+      "--prefix GRL_PLUGIN_PATH : ${gnome3.grilo-plugins}/lib/grilo-0.2"
+    )
   '';
 
   doCheck = true;

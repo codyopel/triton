@@ -9,7 +9,6 @@
 , glib
 , libnotify
 , gtkspell3
-, makeWrapper
 , itstool
 , shared_mime_info
 , libical
@@ -103,16 +102,7 @@ in stdenv.mkDerivation rec {
     highlight
     gnome3.libgweather
     gnome3.gsettings_desktop_schemas
-    makeWrapper
   ];
-
-  preFixup = ''
-    for f in $out/bin/* $out/libexec/*; do
-      wrapProgram "$f" \
-        --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-        --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-    done
-  '';
 
   doCheck = true;
   enableParallelBuilding = true;

@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, makeWrapper, pkgconfig, intltool, itstool, libvirt-glib
+{ stdenv, fetchurl, pkgconfig, intltool, itstool, libvirt-glib
 , glib, gobjectIntrospection, libxml2, gtk3, gtkvnc, libvirt, spice_gtk
 , spice_protocol, libuuid, libsoup, libosinfo, systemd, tracker, vala
 , libcap_ng, libcap, yajl, gmp, gdbm, cyrus_sasl, gnome3, librsvg
@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
   doCheck = true;
 
   buildInputs = [
-    makeWrapper pkgconfig intltool itstool libvirt-glib glib
+    pkgconfig intltool itstool libvirt-glib glib
     gobjectIntrospection libxml2 gtk3 gtkvnc libvirt spice_gtk spice_protocol
     libuuid libsoup libosinfo systemd tracker vala libcap_ng libcap yajl gmp
     gdbm cyrus_sasl gnome3.defaultIconTheme libusb libarchive
@@ -24,12 +24,7 @@ stdenv.mkDerivation rec {
   ];
 
   preFixup = ''
-    for prog in "$out/bin/"*; do
-        wrapProgram "$prog" \
-            --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-            --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH" \
-            --prefix PATH : "${mtools}/bin:${cdrkit}/bin:${libcdio}/bin"
-    done
+    gtk3AppsWrapperArgs+=("--prefix PATH : ${mtools}/bin:${cdrkit}/bin:${libcdio}/bin")
   '';
 
   meta = with stdenv.lib; {

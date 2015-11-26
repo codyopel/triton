@@ -4,7 +4,6 @@
 , pkgconfig
 , gtk3
 , glib
-, makeWrapper
 , itstool
 , gnupg
 , libsoup
@@ -36,7 +35,6 @@ stdenv.mkDerivation rec {
     itstool
     gnome3.gcr
     gnome3.gsettings_desktop_schemas
-    makeWrapper
     gnupg
     gdk_pixbuf
     gnome3.defaultIconTheme
@@ -51,12 +49,6 @@ stdenv.mkDerivation rec {
     openssh
     libxml2
   ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/seahorse" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   enableParallelBuilding = true;
 

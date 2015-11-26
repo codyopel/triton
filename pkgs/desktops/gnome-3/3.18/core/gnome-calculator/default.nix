@@ -5,7 +5,6 @@
 , bash
 , gtk3
 , glib
-, makeWrapper
 , itstool
 , gnome3
 , librsvg
@@ -48,14 +47,7 @@ stdenv.mkDerivation rec {
     gnome3.defaultIconTheme
     librsvg
     gnome3.gsettings_desktop_schemas
-    makeWrapper
   ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/gnome-calculator" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$out/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/action/show/Apps/Calculator;

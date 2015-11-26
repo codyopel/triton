@@ -24,6 +24,8 @@ stdenv.mkDerivation rec {
 
   '';
 
+  dontWrapGtk3Apps = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/EyeOfGnome; 
     platforms = platforms.linux;

@@ -1,6 +1,6 @@
 { stdenv, intltool, fetchurl, pkgconfig, gtk3
 , glib, desktop_file_utils, bash, appdata-tools
-, makeWrapper, gnome3, file, itstool, libxml2
+, gnome3, file, itstool, libxml2
 , gobjectIntrospection
 }:
 
@@ -28,7 +28,7 @@ stdenv.mkDerivation rec {
     gobjectIntrospection
     pkgconfig gtk3 intltool itstool glib appdata-tools
                   gnome3.yelp_tools libxml2 file desktop_file_utils
-                  gnome3.gsettings_desktop_schemas makeWrapper ];
+                  gnome3.gsettings_desktop_schemas ];
 
   preFixup = ''
     wrapProgram "$out/bin/gucharmap" \

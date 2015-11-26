@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, file, intltool, glib, gtk3, libxklavier, makeWrapper, gnome3 }:
+{ stdenv, fetchurl, pkgconfig, file, intltool, glib, gtk3, libxklavier, gnome3 }:
 
 stdenv.mkDerivation rec {
   name = "libgnomekbd-3.6.0";
@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     sha256 = "c41ea5b0f64da470925ba09f9f1b46b26b82d4e433e594b2c71eab3da8856a09";
   };
 
-  buildInputs = [ pkgconfig file intltool glib gtk3 libxklavier makeWrapper ];
+  buildInputs = [ pkgconfig file intltool glib gtk3 libxklavier ];
 
   preFixup = ''
     wrapProgram $out/bin/gkbd-keyboard-display \

@@ -1,7 +1,7 @@
 { stdenv, intltool, fetchurl, libgweather, libnotify
 , pkgconfig, gtk3, glib, gsound
-, makeWrapper, itstool, libcanberra_gtk3, libtool
-, gnome3, librsvg, gdk_pixbuf, geoclue2, wrapGAppsHook
+, itstool, libcanberra_gtk3, libtool
+, gnome3, librsvg, gdk_pixbuf, geoclue2
 , libxml2
 }:
 
@@ -11,11 +11,10 @@ stdenv.mkDerivation rec {
   doCheck = true;
 
   buildInputs = [ pkgconfig gtk3 glib intltool itstool libcanberra_gtk3
-                  gnome3.gsettings_desktop_schemas makeWrapper
+                  gnome3.gsettings_desktop_schemas
                   gdk_pixbuf gnome3.defaultIconTheme librsvg
                   gnome3.gnome_desktop gnome3.geocode_glib geoclue2
                   libgweather libnotify libtool gsound
-                  wrapGAppsHook
                   libxml2
   ];
 

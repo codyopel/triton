@@ -5,7 +5,6 @@
 , pkgconfig
 , gtk3, glib
 , bash
-, makeWrapper
 , itstool
 , libxml2
 , gnome3
@@ -43,18 +42,11 @@ stdenv.mkDerivation rec {
     itstool
     libxml2
     gnome3.gsettings_desktop_schemas
-    makeWrapper
     file
     gdk_pixbuf
     gnome3.defaultIconTheme
     librsvg
   ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/baobab" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$out/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   doCheck = true;
 

@@ -92,6 +92,8 @@ stdenv.mkDerivation rec {
       --prefix XDG_DATA_DIRS : "$out/share:$GSETTINGS_SCHEMAS_PATH"
   '';
 
+  dontWrapGtk3Apps = true;
+
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;
     platforms = platforms.linux;

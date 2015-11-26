@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, gnome3, gtk3, wrapGAppsHook
+{ stdenv, fetchurl, pkgconfig, gnome3, gtk3
 , intltool, itstool, libxml2, systemd }:
 
 stdenv.mkDerivation rec {
@@ -7,7 +7,7 @@ stdenv.mkDerivation rec {
   configureFlags = [ "--disable-tests" ];
 
   buildInputs = [
-    pkgconfig gtk3 wrapGAppsHook intltool itstool libxml2
+    pkgconfig gtk3 intltool itstool libxml2
     systemd gnome3.defaultIconTheme
   ];
 

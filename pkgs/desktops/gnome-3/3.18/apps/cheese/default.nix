@@ -1,11 +1,11 @@
-{ stdenv, intltool, fetchurl, wrapGAppsHook, gnome-video-effects, libcanberra_gtk3
+{ stdenv, intltool, fetchurl, gnome-video-effects, libcanberra_gtk3
 , pkgconfig, gtk3, glib, clutter_gtk, clutter-gst_2, udev, gst_all_1, itstool
 , adwaita-icon-theme, librsvg, gdk_pixbuf, gnome3, gnome_desktop, libxml2 }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
-  buildInputs = [ pkgconfig gtk3 glib intltool wrapGAppsHook gnome-video-effects itstool
+  buildInputs = [ pkgconfig gtk3 glib intltool gnome-video-effects itstool
                   gdk_pixbuf adwaita-icon-theme librsvg udev gst_all_1.gstreamer libxml2
                   gst_all_1.gst-plugins-base gst_all_1.gst-plugins-good gnome_desktop
                   gst_all_1.gst-plugins-bad clutter_gtk clutter-gst_2

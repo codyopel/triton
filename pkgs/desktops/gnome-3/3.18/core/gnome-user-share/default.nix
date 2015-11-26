@@ -1,6 +1,6 @@
 { stdenv, intltool, fetchurl, apacheHttpd_2_2, nautilus
 , pkgconfig, gtk3, glib, libxml2, gnused
-, bash, makeWrapper, itstool, libnotify, libtool, mod_dnssd
+, bash, itstool, libnotify, libtool, mod_dnssd
 , gnome3, librsvg, gdk_pixbuf, file, libcanberra_gtk3 }:
 
 stdenv.mkDerivation rec {
@@ -20,19 +20,13 @@ stdenv.mkDerivation rec {
                      "--with-nautilusdir=$(out)/lib/nautilus/extensions-3.0" ];
 
   buildInputs = [ pkgconfig gtk3 glib intltool itstool libxml2 libtool
-                  makeWrapper file gdk_pixbuf gnome3.defaultIconTheme librsvg
+                  file gdk_pixbuf gnome3.defaultIconTheme librsvg
                   nautilus libnotify libcanberra_gtk3 ];
 
   postInstall = ''
     mkdir -p $out/share/gsettings-schemas/$name
     mv $out/share/glib-2.0 $out/share/gsettings-schemas/$name
     ${glib}/bin/glib-compile-schemas $out/share/gsettings-schemas/$name/glib-2.0/schemas
-  '';
-
-  preFixup = ''
-    wrapProgram "$out/libexec/gnome-user-share-webdav" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "$out/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
   '';
 
   meta = with stdenv.lib; {

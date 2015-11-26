@@ -2,7 +2,6 @@
 , gettext
 , intltool
 , libtool
-, makeWrapper
 , pkgconfig
 
 , glib
@@ -72,7 +71,6 @@ stdenv.mkDerivation rec {
     pkgconfig
     intltool
     libtool
-    makeWrapper
   ];
 
   buildInputs = [
@@ -111,13 +109,6 @@ stdenv.mkDerivation rec {
     xorg.libXrender
     zenity
   ];
-
-  
-
-  preFixup = ''
-    wrapProgram "$out/bin/mutter" \
-      --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;

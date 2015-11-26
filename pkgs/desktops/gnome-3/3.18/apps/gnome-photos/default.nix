@@ -1,7 +1,7 @@
 { stdenv, intltool, fetchurl, exempi, libxml2
 , pkgconfig, gtk3, glib
 , makeWrapper, itstool, gegl, babl, lcms2
-, desktop_file_utils, gmp, libmediaart, wrapGAppsHook
+, desktop_file_utils, gmp, libmediaart
 , gnome3, librsvg, gdk_pixbuf, libexif }:
 
 stdenv.mkDerivation rec {
@@ -16,8 +16,7 @@ stdenv.mkDerivation rec {
                   gdk_pixbuf gnome3.defaultIconTheme librsvg exempi
                   gnome3.gfbgraph gnome3.grilo-plugins gnome3.grilo
                   gnome3.gnome_online_accounts gnome3.gnome_desktop
-                  lcms2 libexif gnome3.tracker libxml2 desktop_file_utils
-                  wrapGAppsHook ];
+                  lcms2 libexif gnome3.tracker libxml2 desktop_file_utils ];
 
   enableParallelBuilding = true;
 

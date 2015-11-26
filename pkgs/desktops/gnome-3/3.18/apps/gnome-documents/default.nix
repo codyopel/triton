@@ -3,7 +3,7 @@
 , makeWrapper, itstool, libxslt, webkitgtk
 , gnome3, librsvg, gdk_pixbuf, libsoup, docbook_xsl
 , gobjectIntrospection, json_glib, inkscape, poppler_utils
-, gmp, desktop_file_utils, wrapGAppsHook }:
+, gmp, desktop_file_utils }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
@@ -18,15 +18,15 @@ stdenv.mkDerivation rec {
                   gdk_pixbuf gnome3.defaultIconTheme librsvg evince
                   libsoup webkitgtk gjs gobjectIntrospection gnome3.rest
                   gnome3.tracker gnome3.libgdata gnome3.gnome_online_accounts
-                  gnome3.gnome_desktop gnome3.libzapojit json_glib
-                  wrapGAppsHook ];
+                  gnome3.gnome_desktop gnome3.libzapojit json_glib ];
 
   enableParallelBuilding = true;
 
   preFixup = ''
-    substituteInPlace $out/bin/gnome-documents --replace gapplication "${glib}/bin/gapplication"
+    substituteInPlace $out/bin/gnome-documents \
+      --replace gapplication "${glib}/bin/gapplication"
 
-    gappsWrapperArgs+=(--run 'if [ -z "$XDG_CACHE_DIR" ]; then XDG_CACHE_DIR=$HOME/.cache; fi; if [ -w "$XDG_CACHE_DIR/.." ]; then mkdir -p "$XDG_CACHE_DIR/gnome-documents"; fi')
+    gtk3AppsWrapperArgs+=(--run 'if [ -z "$XDG_CACHE_DIR" ]; then XDG_CACHE_DIR=$HOME/.cache; fi; if [ -w "$XDG_CACHE_DIR/.." ]; then mkdir -p "$XDG_CACHE_DIR/gnome-documents"; fi')
   '';
 
   meta = with stdenv.lib; {

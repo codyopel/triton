@@ -1,6 +1,6 @@
 { stdenv, intltool, fetchurl
 , pkgconfig, gtk3, glib
-, bash, makeWrapper, itstool
+, bash, itstool
 , gnome3, librsvg, gdk_pixbuf
 , harfbuzz
 }:
@@ -18,13 +18,7 @@ stdenv.mkDerivation rec {
     harfbuzz
     pkgconfig gtk3 glib intltool itstool gnome3.gnome_desktop
                   gdk_pixbuf gnome3.defaultIconTheme librsvg
-                  gnome3.gsettings_desktop_schemas makeWrapper ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/gnome-font-viewer" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$out/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
+                  gnome3.gsettings_desktop_schemas ];
 
   meta = with stdenv.lib; {
     description = "Program that can preview fonts and create thumbnails for fonts";

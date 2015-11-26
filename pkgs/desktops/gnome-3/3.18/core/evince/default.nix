@@ -96,6 +96,7 @@ stdenv.mkDerivation rec {
 
   '';
 
+  dontWrapGtk3Apps = true;
   doCheck = false; # would need pythonPackages.dogTail, which is missing
 
   meta = with stdenv.lib; {

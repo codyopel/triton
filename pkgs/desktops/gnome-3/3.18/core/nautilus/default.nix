@@ -1,6 +1,6 @@
 { stdenv, fetchurl, pkgconfig, libxml2, dbus_glib, shared_mime_info, libexif
 , gtk, gnome3, libunique, intltool, gobjectIntrospection
-, libnotify, makeWrapper, exempi, librsvg, tracker
+, libnotify, exempi, librsvg, tracker
 , xorg
 }:
 
@@ -19,16 +19,9 @@ stdenv.mkDerivation rec {
     pkgconfig libxml2 dbus_glib shared_mime_info libexif gtk libunique intltool
     exempi librsvg
     gnome3.gnome_desktop gnome3.adwaita-icon-theme
-    gnome3.gsettings_desktop_schemas libnotify makeWrapper tracker
+    gnome3.gsettings_desktop_schemas libnotify tracker
     xorg.libICE xorg.libSM
   ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/nautilus" \
-      --prefix GI_TYPELIB_PATH : "$GI_TYPELIB_PATH" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:$out/share:$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   patches = [ ./extension_dir.patch ];
 

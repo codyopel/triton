@@ -4,7 +4,6 @@
 , ibus
 , intltool
 , upower
-, makeWrapper
 , libcanberra_gtk3
 , accountsservice
 , libpwquality
@@ -133,7 +132,6 @@ stdenv.mkDerivation rec {
     libgudev
     networkmanager
     modemmanager
-    makeWrapper
     gnome3.gnome-bluetooth
     cups
     xorg.libSM
@@ -152,10 +150,6 @@ stdenv.mkDerivation rec {
   '';
 
   preFixup = with gnome3; ''
-    wrapProgram $out/bin/gnome-control-center \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:${sound-theme-freedesktop}/share:$out/share:$out/share/gnome-control-center:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-
     for i in $out/share/applications/* ; do
       substituteInPlace $i \
         --replace "gnome-control-center" "$out/bin/gnome-control-center"

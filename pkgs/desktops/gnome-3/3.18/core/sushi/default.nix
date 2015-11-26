@@ -12,7 +12,6 @@
 , webkitgtk
 , libmusicbrainz5
 , icu
-, makeWrapper
 , gst_all_1
 , gdk_pixbuf
 , librsvg
@@ -56,16 +55,7 @@ stdenv.mkDerivation rec {
     webkitgtk
     gnome3.evince
     icu
-    makeWrapper
   ];
-
-  preFixup = ''
-    wrapProgram $out/libexec/sushi-start \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix GI_TYPELIB_PATH : "$GI_TYPELIB_PATH" \
-      --prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "$GST_PLUGIN_SYSTEM_PATH_1_0" \
-      --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   enableParallelBuilding = true;
 

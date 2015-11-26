@@ -1,13 +1,13 @@
 { stdenv, intltool, fetchurl, gdk_pixbuf, adwaita-icon-theme
 , telepathy_glib, gjs, itstool, telepathy_idle
-, pkgconfig, gtk3, glib, librsvg, gnome3, wrapGAppsHook }:
+, pkgconfig, gtk3, glib, librsvg, gnome3 }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
   propagatedUserEnvPkgs = [ telepathy_idle ];
 
-  buildInputs = [ pkgconfig gtk3 glib intltool itstool adwaita-icon-theme wrapGAppsHook
+  buildInputs = [ pkgconfig gtk3 glib intltool itstool adwaita-icon-theme
                   telepathy_glib gjs gdk_pixbuf librsvg ];
 
   enableParallelBuilding = true;

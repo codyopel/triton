@@ -1,6 +1,5 @@
 { stdenv, fetchurl
 , intltool
-, makeWrapper
 , pkgconfig
 
 , avahi
@@ -50,7 +49,6 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     intltool
-    makeWrapper
     pkgconfig
   ];
 
@@ -70,12 +68,7 @@ stdenv.mkDerivation rec {
     telepathy_glib
     xorg.libSM
     zlib
-];
-
-  preFixup = ''
-    wrapProgram "$out/libexec/vino-server" \
-      --prefix XDG_DATA_DIRS : "$out/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
+  ];
 
   doCheck = true;
   enableParallelBuilding = true;

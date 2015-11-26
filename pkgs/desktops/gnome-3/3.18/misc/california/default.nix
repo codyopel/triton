@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, intltool, pkgconfig, gtk3, vala, makeWrapper
+{ stdenv, fetchurl, intltool, pkgconfig, gtk3, vala
 , gnome3, glib, libsoup, libgdata, sqlite, itstool, xdg_utils }:
 
 let
@@ -14,15 +14,9 @@ stdenv.mkDerivation rec {
 
   propagatedUserEnvPkgs = [ gnome3.gnome_themes_standard ];
 
-  buildInputs = [ makeWrapper intltool pkgconfig vala glib gtk3 gnome3.libgee
+  buildInputs = [ intltool pkgconfig vala glib gtk3 gnome3.libgee
     libsoup libgdata gnome3.gnome_online_accounts gnome3.evolution_data_server
     sqlite itstool xdg_utils gnome3.gsettings_desktop_schemas ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/california" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${gnome3.defaultIconTheme}/share:${gnome3.gnome_themes_standard}/share:$out/share:$GSETTINGS_SCHEMAS_PATH:${gnome3.gsettings_desktop_schemas}/share"
-  '';
 
   enableParallelBuilding = true;
 

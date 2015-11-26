@@ -1,7 +1,7 @@
 { stdenv, intltool, fetchurl, webkitgtk, pkgconfig, gtk3, glib
 , file, librsvg, gnome3, gdk_pixbuf, sqlite
 , bash, makeWrapper, itstool, libxml2, libxslt, icu, gst_all_1
-, wrapGAppsHook }:
+}:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ pkgconfig gtk3 glib webkitgtk intltool itstool sqlite
                   libxml2 libxslt icu file makeWrapper gnome3.yelp_xsl
                   librsvg gdk_pixbuf gnome3.defaultIconTheme
-                  gnome3.gsettings_desktop_schemas wrapGAppsHook
+                  gnome3.gsettings_desktop_schemas
                   gst_all_1.gst-plugins-base gst_all_1.gst-plugins-good ];
 
   meta = with stdenv.lib; {

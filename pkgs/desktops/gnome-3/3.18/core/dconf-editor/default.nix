@@ -9,7 +9,6 @@
 , intltool
 , docbook_xsl_ns
 , docbook_xsl
-, makeWrapper
 }:
 
 stdenv.mkDerivation rec {
@@ -35,14 +34,8 @@ stdenv.mkDerivation rec {
     intltool
     docbook_xsl
     docbook_xsl_ns
-    makeWrapper
     gnome3.dconf
   ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/dconf-editor" \
-      --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;

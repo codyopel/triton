@@ -3,7 +3,6 @@
 , glib
 , libxslt
 , gtk
-, makeWrapper
 , webkitgtk
 , json_glib
 , rest
@@ -51,7 +50,6 @@ stdenv.mkDerivation rec {
     json_glib
     rest
     gnome_common
-    makeWrapper
     libsecret
     dbus_glib
     telepathy_glib
@@ -63,12 +61,6 @@ stdenv.mkDerivation rec {
     docbook_xsl
     gnome3.defaultIconTheme
   ];
-
-  preFixup = ''
-    for f in "$out/libexec/"*; do
-      wrapProgram "$f" --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
-    done
-  '';
 
   enableParallelBuilding = true;
 

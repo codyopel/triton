@@ -6,7 +6,7 @@
 , telepathy_logger, libnotify, clutter, libsoup, gnutls
 , evolution_data_server
 , libcanberra_gtk3, p11_kit, farstream, libtool, shared_mime_info
-, bash, makeWrapper, itstool, libxml2, libxslt, icu, libgee  }:
+, bash, itstool, libxml2, libxslt, icu, libgee  }:
 
 # TODO: enable more features
 
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [ folks telepathy_logger evolution_data_server
                             telepathy_mission_control ];
   buildInputs = [ pkgconfig gtk3 glib webkitgtk intltool itstool
-                  libxml2 libxslt icu file makeWrapper
+                  libxml2 libxslt icu file
                   telepathy_glib clutter_gtk clutter-gst_2 cogl
                   gst_all_1.gstreamer gst_all_1.gst-plugins-base
                   gcr libsecret libpulseaudio gnome3.yelp_xsl gdk_pixbuf
@@ -38,14 +38,6 @@ stdenv.mkDerivation rec {
   NIX_CFLAGS_COMPILE = [ "-I${dbus_glib}/include/dbus-1.0"
                          "-I${dbus_libs}/include/dbus-1.0"
                          "-I${dbus_libs}/lib/dbus-1.0/include" ];
-
-  preFixup = ''
-    for f in $out/bin/* $out/libexec/*; do
-      wrapProgram $f \
-        --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-        --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${gnome3.gnome_themes_standard}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
-    done
-  '';
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Empathy;

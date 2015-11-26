@@ -1,6 +1,6 @@
 { stdenv, intltool, fetchurl
 , pkgconfig, gtk3, glib
-, bash, makeWrapper, itstool, libxml2
+, bash, itstool, libxml2
 , gnome3, librsvg, gdk_pixbuf, file }:
 
 stdenv.mkDerivation rec {
@@ -14,13 +14,7 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [ gdk_pixbuf gnome3.defaultIconTheme librsvg ];
 
   buildInputs = [ pkgconfig gtk3 glib intltool itstool libxml2 file
-                  gnome3.gsettings_desktop_schemas makeWrapper ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/gnome-dictionary" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "${gtk3}/share:${gnome3.gnome_themes_standard}/share:$out/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
+                  gnome3.gsettings_desktop_schemas ];
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Dictionary;

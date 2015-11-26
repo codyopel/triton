@@ -1,7 +1,7 @@
 { stdenv, intltool, fetchurl, gdk_pixbuf, tracker
-, python3, libxml2, python3Packages, libnotify, wrapGAppsHook
+, python3, libxml2, python3Packages, libnotify
 , pkgconfig, gtk3, glib, cairo
-, makeWrapper, itstool, gnome3, librsvg, gst_all_1 }:
+, itstool, gnome3, librsvg, gst_all_1 }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
@@ -13,9 +13,9 @@ stdenv.mkDerivation rec {
                   gnome3.grilo gnome3.grilo-plugins libxml2
                   python3Packages.pygobject libnotify
                   python3Packages.pycairo python3Packages.dbus gnome3.totem-pl-parser
-                  gst_all_1.gstreamer gst_all_1.gst-plugins-base wrapGAppsHook
+                  gst_all_1.gstreamer gst_all_1.gst-plugins-base
                   gst_all_1.gst-plugins-good gst_all_1.gst-plugins-bad
-                  gnome3.gsettings_desktop_schemas makeWrapper tracker ];
+                  gnome3.gsettings_desktop_schemas tracker ];
 
   wrapPrefixVariables = [ "PYTHONPATH" ];
 

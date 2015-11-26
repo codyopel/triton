@@ -3,7 +3,6 @@
 
 , gnome3
 , gtk3
-, wrapGAppsHook
 , intltool
 , gjs
 , gdk_pixbuf
@@ -25,7 +24,6 @@ stdenv.mkDerivation rec {
   buildInputs = [
     pkgconfig
     gtk3
-    wrapGAppsHook
     intltool
     gjs
     gdk_pixbuf

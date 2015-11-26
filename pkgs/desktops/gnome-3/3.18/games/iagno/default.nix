@@ -1,11 +1,11 @@
-{ stdenv, fetchurl, pkgconfig, gtk3, gnome3, gdk_pixbuf, librsvg, wrapGAppsHook
+{ stdenv, fetchurl, pkgconfig, gtk3, gnome3, gdk_pixbuf, librsvg
 , intltool, itstool, libcanberra_gtk3, libxml2, dconf }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
   buildInputs = [ pkgconfig gtk3 gnome3.defaultIconTheme gdk_pixbuf librsvg
-                  dconf libxml2 libcanberra_gtk3 wrapGAppsHook itstool intltool ];
+                  dconf libxml2 libcanberra_gtk3 itstool intltool ];
 
   enableParallelBuilding = true;
 

@@ -1,13 +1,13 @@
 { stdenv, fetchurl, intltool, pkgconfig, gnome3, gtk3
 , gobjectIntrospection, gdk_pixbuf, librsvg, autoreconfHook
-, geoclue2, wrapGAppsHook, folks, libchamplain, gfbgraph, file, libsoup }:
+, geoclue2, folks, libchamplain, gfbgraph, file, libsoup }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
   doCheck = true;
 
-  buildInputs = [ pkgconfig intltool gobjectIntrospection wrapGAppsHook
+  buildInputs = [ pkgconfig intltool gobjectIntrospection
                   gtk3 geoclue2 gnome3.gjs gnome3.libgee folks gfbgraph
                   gnome3.geocode_glib libchamplain file libsoup
                   gdk_pixbuf librsvg autoreconfHook

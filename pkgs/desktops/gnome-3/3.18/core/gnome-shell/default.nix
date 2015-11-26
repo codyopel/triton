@@ -180,6 +180,7 @@ stdenv.mkDerivation rec {
     echo "${unzip}/bin" > $out/${passthru.mozillaPlugin}/extra-bin-path
   '';
 
+  dontWrapGtk3Apps = true;
   enableParallelBuilding = true;
 
   passthru = {

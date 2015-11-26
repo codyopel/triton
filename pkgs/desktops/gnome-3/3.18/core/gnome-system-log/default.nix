@@ -1,5 +1,5 @@
 { stdenv, intltool, fetchurl, pkgconfig
-, bash, gtk3, glib, makeWrapper
+, bash, gtk3, glib
 , itstool, gnome3, librsvg, gdk_pixbuf, libxml2 }:
 
 stdenv.mkDerivation rec {
@@ -18,13 +18,7 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [ gdk_pixbuf gnome3.defaultIconTheme librsvg ];
 
   buildInputs = [ bash pkgconfig gtk3 glib intltool itstool
-                  gnome3.gsettings_desktop_schemas makeWrapper libxml2 ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/gnome-system-log" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "${gtk3}/share:${gnome3.gnome_themes_standard}/share:$out/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-  '';
+                  gnome3.gsettings_desktop_schemas libxml2 ];
 
   meta = with stdenv.lib; {
     homepage = https://help.gnome.org/users/gnome-system-log/3.9/;

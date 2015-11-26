@@ -1,7 +1,6 @@
 { fetchurl, stdenv
 , gettext
 , intltool
-, makeWrapper
 , pkgconfig
 
 , db
@@ -91,7 +90,6 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     gettext
     intltool
-    makeWrapper
     pkgconfig
   ];
 
@@ -124,13 +122,6 @@ stdenv.mkDerivation rec {
     python
     vala
   ];
-
-  preFixup = ''
-    for f in "$out/libexec/"* ; do
-      wrapProgram "$f" \
-        --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
-    done
-  '';
 
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;

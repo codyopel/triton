@@ -1,5 +1,5 @@
 { stdenv, fetchurl, intltool, pkgconfig, gtk3, vala
-, makeWrapper, gdk_pixbuf, cmake, desktop_file_utils
+, gdk_pixbuf, cmake, desktop_file_utils
 , libnotify, libcanberra, libsecret, gmime
 , libpthreadstubs, sqlite
 , gnome3, librsvg, gnome_doc_utils, webkitgtk }:
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
 
   propagatedUserEnvPkgs = [ gnome3.gnome_themes_standard ];
 
-  buildInputs = [ intltool pkgconfig gtk3 makeWrapper cmake desktop_file_utils gnome_doc_utils
+  buildInputs = [ intltool pkgconfig gtk3 cmake desktop_file_utils gnome_doc_utils
                   vala webkitgtk libnotify libcanberra gnome3.libgee libsecret gmime sqlite
                   libpthreadstubs gnome3.gsettings_desktop_schemas gnome3.gcr
                   gdk_pixbuf librsvg gnome3.defaultIconTheme ];
@@ -29,12 +29,6 @@ stdenv.mkDerivation rec {
   postInstall = ''
     mkdir -p $out/share/gsettings-schemas/${name}/
     mv $out/share/glib-2.0 $out/share/gsettings-schemas/${name}
-  '';
-
-  preFixup = ''
-    wrapProgram "$out/bin/geary" \
-      --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-      --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS:${gnome3.gnome_themes_standard}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
   '';
 
   enableParallelBuilding = true;

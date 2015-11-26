@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, gnome3, gtk3, wrapGAppsHook
+{ stdenv, fetchurl, pkgconfig, gnome3, gtk3
 , libgtop, intltool, itstool, libxml2, nmap, inetutils }:
 
 stdenv.mkDerivation rec {
@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [
-    pkgconfig gtk3 wrapGAppsHook libgtop intltool itstool libxml2
+    pkgconfig gtk3 libgtop intltool itstool libxml2
     gnome3.defaultIconTheme
   ];
 

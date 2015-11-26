@@ -1,11 +1,11 @@
-{ stdenv, fetchurl, pkgconfig, gnome3, gtk3, wrapGAppsHook
+{ stdenv, fetchurl, pkgconfig, gnome3, gtk3
 , webkitgtk, intltool }:
 
 stdenv.mkDerivation rec {
   inherit (import ./src.nix fetchurl) name src;
 
   buildInputs = [
-    pkgconfig gtk3 wrapGAppsHook webkitgtk intltool gnome3.defaultIconTheme
+    pkgconfig gtk3 webkitgtk intltool gnome3.defaultIconTheme
   ];
 
   meta = with stdenv.lib; {

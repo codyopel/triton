@@ -3,7 +3,6 @@
 , gobjectIntrospection
 , intltool
 , itstool
-, makeWrapper
 , pkgconfig
 
 , libxml2
@@ -166,7 +165,6 @@ stdenv.mkDerivation rec {
     intltool
     itstool
     libxslt
-    makeWrapper
     pkgconfig
     vala
   ];
@@ -225,14 +223,6 @@ stdenv.mkDerivation rec {
     upower
     #utillinux
   ];
-
-  preFixup = ''
-    for f in $out/bin/* $out/libexec/* ; do
-      wrapProgram $f \
-        --set GDK_PIXBUF_MODULE_FILE "$GDK_PIXBUF_MODULE_FILE" \
-        --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$out/share:$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH"
-    done
-  '';
 
   enableParallelBuilding = true;
 

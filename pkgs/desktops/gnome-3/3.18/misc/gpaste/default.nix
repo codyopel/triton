@@ -34,6 +34,8 @@ stdenv.mkDerivation rec {
       done
     '';
 
+    dontWrapGtk3Apps = true;
+
   meta = with stdenv.lib; {
     homepage = https://github.com/Keruspe/GPaste;
     description = "Clipboard management system with GNOME3 integration";

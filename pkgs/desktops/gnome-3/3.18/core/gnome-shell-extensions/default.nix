@@ -5,7 +5,6 @@
 , gtk3
 , glib
 , bash
-, makeWrapper
 , itstool
 , gnome3
 , file
@@ -29,7 +28,6 @@ stdenv.mkDerivation rec {
     libgtop
     intltool
     itstool
-    makeWrapper
     file
   ];
 

@@ -1,7 +1,6 @@
 { stdenv, fetchurl
 , intltool
 , libxslt
-, makeWrapper
 , pkgconfig
 
 , atk
@@ -33,7 +32,6 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     intltool
     libxslt
-    makeWrapper
     pkgconfig
   ];
 
@@ -57,11 +55,6 @@ stdenv.mkDerivation rec {
 
   doCheck = false;
   enableParallelBuilding = false; # issues on hydra
-
-  preFixup = ''
-    wrapProgram "$out/bin/gcr-viewer" \
-      --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   meta = with stdenv.lib; {
     platforms = platforms.linux;

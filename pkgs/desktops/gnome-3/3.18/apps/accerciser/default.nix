@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, gnome3, gtk3, wrapGAppsHook
+{ stdenv, fetchurl, pkgconfig, gnome3, gtk3
 , itstool, libxml2, python3, python3Packages, pyatspi, at_spi2_core
 , dbus, intltool, libwnck3 }:
 
@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [
-    pkgconfig gtk3 wrapGAppsHook itstool libxml2 python3 pyatspi
+    pkgconfig gtk3 itstool libxml2 python3 pyatspi
     python3Packages.pygobject python3Packages.ipython
     at_spi2_core dbus intltool libwnck3 gnome3.defaultIconTheme
   ];

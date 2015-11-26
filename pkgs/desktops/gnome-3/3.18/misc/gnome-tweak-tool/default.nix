@@ -80,6 +80,7 @@ stdenv.mkDerivation rec {
       --prefix PYTHONPATH : "$PYTHONPATH:$(toPythonPath $out)"
   '';
 
+  dontWrapGtk3Apps = true;
   doCheck = true;
   enableParallelBuilding = true;
 
