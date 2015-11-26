@@ -1,4 +1,4 @@
-{ stdenv, fetchurl
+{ stdenv, fetchhg
 , cmake
 , pkgconfig
 
@@ -7,12 +7,13 @@
 
 stdenv.mkDerivation rec {
   name = "eigen-${version}";
-  version = "3.2.6";
-  
-  src = fetchurl {
-    url = "http://bitbucket.org/eigen/eigen/get/${version}.tar.gz";
-    name = "eigen-${version}.tar.gz";
-    sha256 = "0my9gy73kjg53zy83p3cahmm9y0zjh3l4r3nhihd2ikiqwalxqdn";
+  # Not all C++11 fixes have been backported to 3.2, use 3.3-pre
+  version = "2015-11-24";
+
+  src = fetchhg {
+    url = "https://bitbucket.org/eigen/eigen";
+    rev = "6105862db40fe8fa832c56963ecc8a4d99415d35";
+    sha256 = "0ll6x4y5apbxdsk0y2m4j7m0qx7ff6clfwk3d7fxprjsdsqyc9j0";
   };
 
   cmakeFlags = [
@@ -24,7 +25,7 @@ stdenv.mkDerivation rec {
   NIX_CFLAGS_COMPILE = [
     "-std=c++11"
   ];
-  
+
   nativeBuildInputs = [
     cmake
     pkgconfig
