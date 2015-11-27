@@ -70,40 +70,42 @@ stdenv.mkDerivation rec {
   postAutoreconf = "patch -p1 < ${./webcore-svg-libxml-cflags.patch}";
 
   configureFlags = [
-    #(wtFlag "gtk" true "2.0")
-    (wtFlag "gtk" (gtk3 != null) "3.0")
-
-    # requires gtk2 for plugin process
-    (enFlag "webkit2" true null)
-
-    (enFlag "spellcheck" true null)
-
-    #(enFlag "driectfb-target" true null)
-    (enFlag "x11-target" true null)
-    (enFlag "wayland-target" true null)
-
-    (enFlag "glx" false null)
-    (enFlag "gles2" true null)
-    (enFlag "egl" true null)
-    (enFlag "webgl" true null)
-    (enFlag "accelerated-compositing" true null)
-    (enFlag "gamepad" false null) 
-    (enFlag "svg" true null)
-    (enFlag "svg-fonts" true null)
-    (enFlag "opcode-stats" false null) # !jit
-    #(enFlag "css-filters" true null)
-    (enFlag "introspection" true null)
-    (enFlag "credential-storage" true null)
-    (enFlag "geolocation" true null)
-    (enFlag "video" true null)
-    (enFlag "web-audio" true null)
-    (enFlag "battery-status" false null)
-    # tests???
-    (enFlag "coverage" true null)
-    (enFlag "jit" true null) # disables ftl
-    (enFlag "ftl-jit" false null) # llvm
-    (enFlag "dependency-tracking" true null)
-    #(enFlag "gtk-doc" false null)
+    "--enable-largefile"
+    "--enable-webkit1"
+    "--disable-webkit2"
+    "--disable-debug"
+    "--disable-developer-mode"
+    "--enable-optimizations"
+    "--enable-x11-target"
+    "--enable-wayland-target"
+    "--disable-win32-target"
+    "--disable-quartz-target"
+    "--disable-directfb-target"
+    "--enable-spellcheck"
+    "--enable-credential-storage"
+    "--disable-glx"
+    "--enable-egl"
+    "--enable-gles2"
+    "--disable-gamepad"
+    "--enable-video"
+    "--enable-geolocation"
+    "--enable-svg"
+    "--enable-svg-fonts"
+    "--enable-web-audio"
+    "--disable-battery-status"
+    "--disable-coverage"
+    "--enable-fast-malloc"
+    "--disable-debug-symbols"
+    "--enable-webgl"
+    "--enable-accelerated-compositing"
+    "--enable-jit"
+    "--disable-ftl-jit" # llvm
+    "--disable-opcode-stats"
+    "--enable-introspection"
+    "--enable-glibtest"
+    "--enable-schemas-compile"
+    "--disable-maintainer-mode"
+    "--with-gtk=3.0"
   ];
 
   nativeBuildInputs = [
