@@ -63,12 +63,10 @@ stdenv.mkDerivation rec {
   postInstall = ''
     substituteInPlace "$out/share/xgreeters/lightdm-gtk-greeter.desktop" \
       --replace "Exec=lightdm-gtk-greeter" "Exec=$out/sbin/lightdm-gtk-greeter"
-
-    wrapProgram "$out/sbin/lightdm-gtk-greeter" \
-      --prefix XDG_DATA_DIRS ":" "${hicolor_icon_theme}/share"
   '';
 
   doCheck = true;
+  dontWrapGtk3Apps = true;
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
