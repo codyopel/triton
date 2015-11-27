@@ -31,11 +31,13 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "network-manager-${version}";
-  version = "1.0.2";
+  name = "networkmanager-${version}";
+  versionMajor = "1.0";
+  versionMinor = "2";
+  version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "mirror://gnome/sources/NetworkManager/1.0/" +
+    url = "mirror://gnome/sources/NetworkManager/${versionMajor}/" +
           "NetworkManager-${version}.tar.xz";
     sha256 = "1zq8jm1rc7n7amqa9xz1v93w2jnczg6942gyijsdpgllfiq8b4rm";
   };
@@ -70,11 +72,14 @@ stdenv.mkDerivation rec {
   preConfigure = ''
     substituteInPlace tools/glib-mkenums \
       --replace /usr/bin/perl ${perl}/bin/perl
+
     substituteInPlace src/ppp-manager/nm-ppp-manager.c \
       --replace /sbin/modprobe /run/current-system/sw/sbin/modprobe
+
     substituteInPlace src/devices/nm-device.c \
       --replace /sbin/modprobe /run/current-system/sw/sbin/modprobe
-    configureFlags="$configureFlags --with-udev-dir=$out/lib/udev"
+
+    configureFlagsArray+=("--with-udev-dir=$out/lib/udev")
   '';
 
   nativeBuildInputs = [
@@ -107,7 +112,7 @@ stdenv.mkDerivation rec {
   ];
 
   preInstall = ''
-    installFlagsArray=( "sysconfdir=$out/etc" "localstatedir=$out/var" )
+    installFlagsArray+=( "sysconfdir=$out/etc" "localstatedir=$out/var" )
   '';
 
   postInstall = ''
