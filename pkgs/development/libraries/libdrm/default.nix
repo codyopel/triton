@@ -1,4 +1,9 @@
-{ stdenv, fetchurl, pkgconfig, libpthreadstubs, libpciaccess, udev, valgrind }:
+{ stdenv, fetchurl
+, pkgconfig
+
+, libpthreadstubs
+, libpciaccess
+}:
 
 stdenv.mkDerivation rec {
   name = "libdrm-2.4.65";
@@ -8,26 +13,46 @@ stdenv.mkDerivation rec {
     sha256 = "71960ac8bde7d710992b1bc8879935e8300a870c36bd06f22412d0447e3d96c4";
   };
 
-  nativeBuildInputs = [ pkgconfig ];
-  buildInputs = [ libpthreadstubs libpciaccess ]
-    ++ stdenv.lib.optional stdenv.isLinux udev;
+  configureFlags = [
+    "--enable-largefile"
+    # Udev is only used by tests now.
+    "--disable-udev"
+    "--enable-libkms"
+    "--enable-intel"
+    "--enable-radeon"
+    "--enable-amdgpu"
+    "--enable-nouveau"
+    "--enable-vmxgfx" # vmware
+    "--enable-omap-experimental-api"
+    "--enable-exynos-experimental-api"
+    "--enable-freedreno"
+    "--disable-freedreno-kgsl"
+    "--enable-tegra-experimental-api"
+    "--disable-install-test-programs"
+    "--disable-cairo-tests"
+    "--disable-manpages"
+    "--disable-valgrind"
+    #"--with-xsltproc"
+    #"--with-kernel-source"
+  ];
 
-  patches = stdenv.lib.optional stdenv.isDarwin ./libdrm-apple.patch;
+  nativeBuildInputs = [
+    pkgconfig
+  ];
 
-  preConfigure = stdenv.lib.optionalString stdenv.isDarwin
-    "echo : \\\${ac_cv_func_clock_gettime=\'yes\'} > config.cache";
+  buildInputs = [
+    libpthreadstubs
+    libpciaccess
+  ];
 
-  configureFlags = [ "--enable-freedreno" "--disable-valgrind" ]
-    ++ stdenv.lib.optional stdenv.isLinux "--enable-udev"
-    ++ stdenv.lib.optional stdenv.isDarwin "-C";
-
-  crossAttrs.configureFlags = configureFlags ++ [ "--disable-intel" ];
-
-  meta = {
-    homepage = http://dri.freedesktop.org/libdrm/;
+  meta = with stdenv.lib; {
     description = "Library for accessing the kernel's Direct Rendering Manager";
-    license = "bsd";
-    maintainers = [ stdenv.lib.maintainers.urkud ];
-    platforms = stdenv.lib.platforms.unix;
+    homepage = http://dri.freedesktop.org/libdrm/;
+    license = licenses.bsd3;
+    maintainers = [ ];
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
