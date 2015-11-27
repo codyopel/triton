@@ -1,27 +1,30 @@
 { stdenv, fetchurl, fetchpatch
-, pkgconfig
-, intltool
-, flex
-, bison
 , autoreconfHook
+, bison
+, flex
+, intltool
+, makedepend
+, pkgconfig
+, python
+, pythonPackages
 , substituteAll
 
-, python
 , libxml2Python
-, file
+
 , expat
-, makedepend
-, pythonPackages
+, file
+, libclc
 , libdrm
-, xorg
-, wayland
-, udev
-, llvmPackages
+, libelf
 , libffi
 , libomxil-bellagio
-, libvdpau
-, libelf
 , libva
+, libvdpau
+, llvmPackages
+, udev
+, wayland
+, xorg
+
 , grsecEnabled
 # Texture floats are patented, see docs/patents.txt
 , enableTextureFloats ? false
@@ -54,6 +57,11 @@ let
   version = "11.0.5";
   # this is the default search path for DRI drivers
   driverLink = "/run/opengl-driver" + optionalString stdenv.isi686 "-32";
+  clang =
+    if llvmPackages ? clang-unwrapped then
+      llvmPackages.clang-unwrapped
+    else
+      llvmPackages.clang;
 in
 
 stdenv.mkDerivation {
@@ -70,13 +78,12 @@ stdenv.mkDerivation {
   patches = [
     # fix for grsecurity/PaX
     ./glx_ro_text_segm.patch
-    # TODO: revive ./dricore-gallium.patch when it gets ported (from Ubuntu),
-    #  as it saved ~35 MB in $drivers; watch https://launchpad.net/ubuntu/+source/mesa/+changelog
-  ] ++ optional stdenv.isLinux
-      (substituteAll {
-        src = ./dlopen-absolute-paths.diff;
-        inherit udev;
-      });
+  ] ++ optional stdenv.isLinux (
+    substituteAll {
+      src = ./dlopen-absolute-paths.diff;
+      inherit udev;
+    }
+  );
 
   postPatch = ''
     patchShebangs .
@@ -85,11 +92,11 @@ stdenv.mkDerivation {
       --replace _EGL_DRIVER_SEARCH_DIR '"${driverLink}"'
   '';
 
-  outputs = [ "out" "drivers" "osmesa" ];
-
   configureFlags = [
     "--sysconfdir=/etc"
     "--localstatedir=/var"
+    "--enable-largefile"
+    "--disable-debug"
     # slight performance degradation, enable only for grsec
     (enFlag "glx-rts" grsecEnabled null)
     "--disable-mangling"
@@ -111,16 +118,15 @@ stdenv.mkDerivation {
     "--enable-nine" # Direct3D in Wine
     "--enable-xvmc"
     "--enable-vdpau"
-    # TODO: add libomxil-bellagio support
-    "--disable-omx"
-    # FIXME: fix libva detection
-    "--disable-va"
-
-    # TODO: Figure out how to enable opencl without having a runtime
-    #       dependency on clang
+    "--enable-omx"
+    "--enable-va"
+    # TODO: Figure out how to enable opencl without having a
+    #       runtime dependency on clang
+    # FIXME: fix opencl
+    #        llvm/invocation.cpp:25:45: fatal error: \
+    #        clang/Frontend/CompilerInstance.h: No such file
     "--disable-opencl"
     "--disable-opencl-icd"
-
     "--disable-xlib-glx"
     "--disable-r600-llvm-compiler"
     "--disable-gallium-tests"
@@ -139,7 +145,7 @@ stdenv.mkDerivation {
     "--with-dri-searchpath=${driverLink}/lib/dri"
     "--with-dri-drivers=i915,i965,nouveau,radeon,r200,swrast"
     #osmesa-bits=8
-    #clang-libdir
+    #"--with-clang-libdir=${clang}/lib"
     "--with-egl-platforms=x11,wayland,drm"
     #llvm-prefix
     #xvmc-libdir
@@ -150,43 +156,46 @@ stdenv.mkDerivation {
   ];
 
   nativeBuildInputs = [
-    pkgconfig
-    python
-    makedepend
+    autoreconfHook
+    bison
     file
     flex
-    bison
+    intltool
+    makedepend
+    pkgconfig
+    python
     pythonPackages.Mako
   ];
 
   propagatedBuildInputs = [
-    xorg.libXdamage
-    xorg.libXxf86vm
-    libdrm
+    wayland
   ];
 
   buildInputs = [
-    autoreconfHook
-    intltool
     expat
-    libxml2Python
+    libclc
+    libdrm
+    libelf
+    libffi
+    libomxil-bellagio
+    libva
+    libvdpau
+    #libxml2Python
     llvmPackages.llvm
-    xorg.glproto
+    udev
     xorg.dri2proto
     xorg.dri3proto
-    xorg.presentproto
+    xorg.glproto
     xorg.libX11
-    xorg.libXext
     xorg.libxcb
-    xorg.libXt
+    xorg.libXdamage
+    xorg.libXext
     xorg.libXfixes
     xorg.libxshmfence
-    libffi
-    wayland
-    libvdpau
-    libelf
-    xorg.libXvMC /* libomxil-bellagio libva */
-    udev
+    xorg.libXt
+    xorg.libXvMC
+    xorg.libXxf86vm
+    xorg.presentproto
   ];
 
   installFlags = [
@@ -232,10 +241,11 @@ stdenv.mkDerivation {
   '' + /* move vdpau drivers to $drivers/lib, so they are found */ ''
     mv "$drivers"/lib/vdpau/* "$drivers"/lib/ && rmdir "$drivers"/lib/vdpau
   '';
-  #ToDo: @vcunat isn't sure if drirc will be found when in $out/etc/, but it doesn't seem important ATM
 
-  enableParallelBuilding = true;
+  outputs = [ "out" "drivers" "osmesa" ];
+
   doCheck = false;
+  enableParallelBuilding = true;
 
   passthru = {
     inherit
@@ -247,7 +257,7 @@ stdenv.mkDerivation {
   meta = with stdenv.lib; {
     description = "An open source implementation of OpenGL";
     homepage = http://www.mesa3d.org/;
-    license = "bsd";
+    license = licenses.mit;
     maintainers = with maintainers; [ ];
     platforms = platforms.mesaPlatforms;
   };
