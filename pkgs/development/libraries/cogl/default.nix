@@ -96,30 +96,30 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
+    atk
     bzip2
-    gdk_pixbuf
+    cairo
     gobjectIntrospection
     gst_all_1.gstreamer
     gst_all_1.gst-plugins-base
-    libdrm
+    json_glib
+    pango
     xorg.libXfixes
   ];
 
   propagatedBuildInputs = [
-    atk # pkgconfig
-    cairo # pkgconfig
-    glib # pkgconfig
-    json_glib
+    gdk_pixbuf
+    glib
+    libdrm
     libxkbcommon
-    mesa_noglu # pkgconfig
-    pango
+    mesa_noglu
     wayland
     xorg.libX11
-    xorg.libXcomposite # pkgconfig
+    xorg.libXcomposite
     xorg.libXdamage
-    xorg.libXext # pkgconfig
+    xorg.libXext
     xorg.libXi
-    xorg.libXrandr # pkgconfig
+    xorg.libXrandr
   ];
 
   doCheck = false;
