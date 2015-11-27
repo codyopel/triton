@@ -3,18 +3,14 @@
 , libiconv
 
 , cogl
-#, directfb
 , expat
 , fontconfig
 , freetype
 , glib
-, libdrm
 , libpng
-#, librsvg
 , libspectre
 , lzo
 , pixman
-#, poppler
 , mesa_noglu
 #, qt4
 , xorg
@@ -40,11 +36,11 @@ stdenv.mkDerivation rec {
     "--disable-gtk-doc-pdf"
     "--disable-gcov"
     "--disable-valgrind"
-    (enFlag "xlib" (xorg.libX11 != null && xorg.libXext != null) null)
-    (enFlag "xlib-xrender" (xorg.libXrender != null) null)
-    (enFlag "xcb" (xorg.libxcb != null) null)
-    (enFlag "xlib-xcb" (xorg.libxcb != null) null)
-    (enFlag "xcb-shm" (xorg.libxcb != null) null)
+    "--enable-xlib"
+    "--enable-xlib-xrender"
+    "--enable-xcb"
+    "--enable-xlib-xcb"
+    "--enable-xcb-shm"
     # TODO: qt
     "--disable-qt"
     "--disable-quartz"
@@ -56,11 +52,9 @@ stdenv.mkDerivation rec {
     "--disable-skia"
     "--disable-os2"
     "--disable-beos"
-    (enFlag "drm" (libdrm != null) null)
     "--disable-drm"
-    # TODO: gallium support
     "--disable-gallium"
-    (enFlag "png" (libpng != null) null)
+    "--enable-libpng"
     "--enable-gl"
     "--disable-glesv2"
     # FIXME: cogl recursion
@@ -81,7 +75,7 @@ stdenv.mkDerivation rec {
     "--enable-tee"
     "--enable-xml"
     "--enable-pthread"
-    (enFlag "gobject" (glib != null) null)
+    "--enable-gobject"
     "--disable-full-testing"
     "--disable-trace"
     "--enable-interpreter"
@@ -90,7 +84,7 @@ stdenv.mkDerivation rec {
     "--with-x"
     #(wtFlag "skia" true "yes")
     #(wtFlag "skia-build-type" true "Release")
-    "--with-gallium=${mesa_noglu}"
+    "--without-gallium"
   ];
 
   preConfigure = ''
@@ -119,14 +113,9 @@ stdenv.mkDerivation rec {
   ];
 
   buildInputs = [
-    #cogl
-    #directfb
     expat
-    libdrm
-    #librsvg
     lzo
     pixman
-    #poppler
     xorg.xcbutil
   ];
 
