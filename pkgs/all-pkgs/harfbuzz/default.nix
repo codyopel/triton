@@ -19,11 +19,11 @@ with {
 };
 
 stdenv.mkDerivation rec {
-  name = "harfbuzz-1.1.0";
+  name = "harfbuzz-1.1.1";
 
   src = fetchurl {
     url = "http://www.freedesktop.org/software/harfbuzz/release/${name}.tar.bz2";
-    sha256 = "0svixcn5bn3kbyzjm1xb5sk1fjsym8mi4kksbrbdw3p68xclln0g";
+    sha256 = "0v7hl39lvlx0qg1n0fbg83xz70ndvgra5y3c0109v9kg4xvnldhc";
   };
 
   postPatch = optionalString doCheck ''
