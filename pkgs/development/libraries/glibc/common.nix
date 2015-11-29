@@ -11,7 +11,7 @@ cross:
 
 let
 
-  version = "2.22";
+  version = "2.21";
 
 in
 
@@ -42,16 +42,31 @@ stdenv.mkDerivation ({
       /* Don't use /etc/ld.so.preload, but /etc/ld-nix.so.preload.  */
       ./dont-use-system-ld-so-preload.patch
 
+      /* Add blowfish password hashing support.  This is needed for
+         compatibility with old NixOS installations (since NixOS used
+         to default to blowfish). */
+      ./glibc-crypt-blowfish.patch
+
       /* The command "getconf CS_PATH" returns the default search path
          "/bin:/usr/bin", which is inappropriate on NixOS machines. This
          patch extends the search path by "/run/current-system/sw/bin". */
       ./fix_path_attribute_in_getconf.patch
+
+      ./security-4a28f4d5.patch
+      ./security-bdf1ff05.patch
+      ./cve-2014-8121.patch
+      ./cve-2015-1781.patch
     ];
 
   postPatch =
+    # Needed for glibc to build with the gnumake 3.82
+    # http://comments.gmane.org/gmane.linux.lfs.support/31227
+    ''
+      sed -i 's/ot \$/ot:\n\ttouch $@\n$/' manual/Makefile
+    ''
     # nscd needs libgcc, and we don't want it dynamically linked
     # because we don't want it to depend on bootstrap-tools libs.
-    ''
+    + ''
       echo "LDFLAGS-nscd += -static-libgcc" >> nscd/Makefile
     ''
     # Replace the date and time in nscd by a prefix of $out.
@@ -62,6 +77,13 @@ stdenv.mkDerivation ({
     + ''
       cat ${./glibc-remove-datetime-from-nscd.patch} \
         | sed "s,@out@,$out," | patch -p1
+         | sed "s,@out@,$out," | patch -p1
+    ''
+    # CVE-2014-8121, see https://bugzilla.redhat.com/show_bug.cgi?id=1165192
+    + ''
+      substituteInPlace ./nss/nss_files/files-XXX.c \
+        --replace 'status = internal_setent (stayopen);' \
+                  'status = internal_setent (1);'
     '';
 
   configureFlags =
@@ -125,7 +147,7 @@ stdenv.mkDerivation ({
 
   src = fetchurl {
     url = "mirror://gnu/glibc/glibc-${version}.tar.gz";
-    sha256 = "1rcby0cqgswgqaxyqz0yqc4zizb1kvpi5vlfqp7dh3sa132109m6";
+    sha256 = "0f4prv4c0fcpi85wv4028wqxn075197gwxhgf0vp571fiw2pi3wd";
   };
 
   # Remove absolute paths from `configure' & co.; build out-of-tree.
@@ -152,18 +174,7 @@ stdenv.mkDerivation ({
   meta = {
     homepage = http://www.gnu.org/software/libc/;
     description = "The GNU C Library";
-
-    longDescription =
-      '' Any Unix-like operating system needs a C library: the library which
-         defines the "system calls" and other basic facilities such as
-         open, malloc, printf, exit...
-
-         The GNU C library is used as the C library in the GNU system and
-         most systems with the Linux kernel.
-      '';
-
     license = stdenv.lib.licenses.lgpl2Plus;
-
     maintainers = [ ];
     #platforms = stdenv.lib.platforms.linux;
   } // meta;
