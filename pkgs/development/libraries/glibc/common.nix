@@ -77,7 +77,6 @@ stdenv.mkDerivation ({
     + ''
       cat ${./glibc-remove-datetime-from-nscd.patch} \
         | sed "s,@out@,$out," | patch -p1
-         | sed "s,@out@,$out," | patch -p1
     ''
     # CVE-2014-8121, see https://bugzilla.redhat.com/show_bug.cgi?id=1165192
     + ''
