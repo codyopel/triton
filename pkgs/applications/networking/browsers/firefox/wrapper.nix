@@ -74,7 +74,7 @@ stdenv.mkDerivation {
     echo ${browser} > $out/nix-support/propagated-user-env-packages
   '';
 
-  donWrapGtk3Apps = true;
+  dontWrapGtk3Apps = true;
   preferLocalBuild = true;
 
   # Let each plugin tell us (through its `mozillaPlugin') attribute

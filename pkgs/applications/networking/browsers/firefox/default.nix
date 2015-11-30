@@ -205,7 +205,7 @@ stdenv.mkDerivation rec {
     "$out/bin/firefox" --version
   '';
 
-  donWrapGtk3Apps = true;
+  dontWrapGtk3Apps = true;
   enableParallelBuilding = true;
 
   passthru = {
