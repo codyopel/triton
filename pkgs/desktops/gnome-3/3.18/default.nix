@@ -44,6 +44,7 @@ let
     nautilus-sendto dconf-editor vinagre gnome-weather gnome-logs
     gnome-maps gnome-characters gnome-calendar accerciser gnome-nettool
     gnome-getting-started-docs
+    gnome-builder
   ];
 
   gamesPackages = with gnome3; [ swell-foop lightsoff iagno
@@ -116,6 +117,8 @@ let
   gnome-backgrounds = callPackage ./core/gnome-backgrounds { };
 
   gnome-bluetooth = callPackage ./core/gnome-bluetooth { };
+
+  gnome-builder = callPackage ./core/gnome-builder { };
 
   gnome-contacts = callPackage ./core/gnome-contacts { };
 
