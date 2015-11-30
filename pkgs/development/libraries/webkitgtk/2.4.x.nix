@@ -72,7 +72,7 @@ stdenv.mkDerivation rec {
   configureFlags = [
     "--enable-largefile"
     "--enable-webkit1"
-    "--disable-webkit2"
+    "--enable-webkit2"
     "--disable-debug"
     "--disable-developer-mode"
     "--enable-optimizations"
