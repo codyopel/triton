@@ -1,24 +1,72 @@
-{stdenv, fetchurl, cmake, zlib, python, libssh2, openssl, http-parser}:
+{stdenv, fetchurl
+, cmake
+, pkgconfig
+, python
+
+, curl
+, ctags
+, http-parser
+, libssh2
+, openssl
+, zlib
+
+, tests ? true
+}:
+
+with {
+  inherit (stdenv.lib)
+    cmFlag
+    optionals;
+};
 
 stdenv.mkDerivation rec {
-  version = "0.23.2";
+  version = "0.23.4";
   name = "libgit2-${version}";
 
   src = fetchurl {
     name = "${name}.tar.gz";
     url = "https://github.com/libgit2/libgit2/tarball/v${version}";
-    sha256 = "1d3901bmgvdnmzrx21afi1d0llsqmca3ckj942p0i2wpdpr1kbcp";
+    sha256 = "0ss9cpcm4mr7060x9xg7nap4mqnnc1gv98xmmfz6qhmasfhcijxv";
   };
 
-  cmakeFlags = "-DTHREADSAFE=ON";
+  cmakeFlags = [
+    "-DBUILD_SHARED_LIBS=ON"
+    "-DTHREADSAFE=ON"
+    (cmFlag "BUILD_CLAR" tests)
+    "-DBUILD_EXAMPLES=OFF"
+    "-DTAGS=ON"
+    "-DPROFILE=OFF"
+    "-DENABLE_TRACE=OFF"
+    "-DUSE_ICONV=ON"
+    "-DUSE_SSH=ON"
+    "-DUSE_GSSAPI=OFF"
+    "-DVALGRIND=OFF"
+    "-DCURL=ON"
+  ];
 
-  nativeBuildInputs = [ cmake python ];
-  buildInputs = [ zlib libssh2 openssl http-parser ];
+  nativeBuildInputs = [
+    cmake
+    pkgconfig
+  ] ++ optionals tests [
+    python
+  ];
 
-  meta = {
-    description = "the Git linkable library";
+  buildInputs = [
+    curl
+    ctags
+    http-parser
+    libssh2
+    openssl
+    zlib
+  ];
+
+  meta = with stdenv.lib; {
+    description = "The Git linkable library";
     homepage = http://libgit2.github.com/;
-    license = stdenv.lib.licenses.gpl2;
-    platforms = with stdenv.lib.platforms; all;
+    license = licenses.gpl2;
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
