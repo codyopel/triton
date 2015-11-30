@@ -10,9 +10,13 @@
 with stdenv;
 let
   # Prefer openssl
-  cryptoStr = if shouldUsePkg openssl != null then "openssl"
-    else if shouldUsePkg libgcrypt != null then "libgcrypt"
-      else "none";
+  cryptoStr =
+    if shouldUsePkg openssl != null then
+      "openssl"
+    else if shouldUsePkg libgcrypt != null then
+      "libgcrypt"
+    else
+      "none";
   crypto = {
     openssl = openssl;
     libgcrypt = libgcrypt;
@@ -48,7 +52,7 @@ stdenv.mkDerivation rec {
     (mkEnable false                      "examples-build" null)
   ];
 
-  postInstall = optionalString (!stdenv.isDarwin) (''
+  postInstall = ''
     sed -i \
   '' + optionalString (optZlib != null) ''
       -e 's,\(-lz\),-L${optZlib}/lib \1,' \
@@ -58,13 +62,13 @@ stdenv.mkDerivation rec {
       -e 's,\(-lgcrypt\),-L${libgcrypt}/lib \1,' \
   '' + ''
       $out/lib/libssh2.la
-  '');
+  '';
 
   meta = {
     description = "A client-side C library implementing the SSH2 protocol";
     homepage = http://www.libssh2.org;
     license = licenses.gpl2;
+    maintainers = with maintainers; [ wkennington ];
     platforms = platforms.all;
-    maintainers = with maintainers; [ urkud wkennington ];
   };
 }
