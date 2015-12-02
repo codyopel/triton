@@ -10,9 +10,9 @@
   };
   "legacy340" = {
     versionMajor = "340";
-    versionMinor = "93";
-    sha256i686   = "04nni59asg8n4jyb2x6ahksqqz66ncp838dmf8g5wn9c61cc30aa";
-    sha256x86_64 = "0hs8qll6acl45gmbigimj9r1jab86041cbvwmdwcf5csaykk1clg";
+    versionMinor = "96";
+    sha256i686   = "13j739gg1igll88xpfsx46m7pan4fwpzx5hqdskkdc0srmw2f3n4";
+    sha256x86_64 = "1i0lri76ghhr4c6fdlv5gwzd99n70hv3kw21w51anb55msr9s3r8";
   };
   "long-lived" = {
     versionMajor = "352";
