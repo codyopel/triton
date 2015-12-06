@@ -33,15 +33,14 @@ stdenv.mkDerivation rec {
   patchFlags = "-p0";
 
   patches =
-    (let
+    let
       patch = nr: sha256:
         fetchurl {
           url = "mirror://gnu/bash/${realName}-patches/${shortName}-${nr}";
           inherit sha256;
         };
     in
-      import ./bash-4.3-patches.nix patch) 
-      ++ stdenv.lib.optional stdenv.isCygwin ./cygwin-bash-4.3.33-1.src.patch;
+    import ./bash-4.3-patches.nix patch;
 
   crossAttrs = {
     configureFlags = baseConfigureFlags +
