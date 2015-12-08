@@ -2945,8 +2945,6 @@ let
 
   rtorrent = callPackage ../tools/networking/p2p/rtorrent { };
 
-  rtorrent-git = callPackage ../tools/networking/p2p/rtorrent/git.nix { };
-
   rubber = callPackage ../tools/typesetting/rubber { };
 
   rxp = callPackage ../tools/text/xml/rxp { };

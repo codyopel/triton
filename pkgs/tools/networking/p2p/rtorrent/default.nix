@@ -1,30 +1,87 @@
-{ stdenv, fetchurl, libtorrent, ncurses, pkgconfig, libsigcxx, curl
-, zlib, openssl, xmlrpc_c
+{ stdenv, fetchurl, fetchFromGitHub
+, autoreconfHook
+, pkgconfig
+
+, cppunit
+, curl
+, libsigcxx
+, libtorrent
+, ncurses
+, openssl
+, xmlrpc_c
+, zlib
+
+, colorSupport ? false
 }:
+
+with {
+  inherit (stdenv.lib)
+    optional;
+};
 
 stdenv.mkDerivation rec {
   name = "rtorrent-${version}";
-  version = "0.9.6";
+  version = "2015-09-07";
 
-  src = fetchurl {
-    url = "http://rtorrent.net/downloads/${name}.tar.gz";
-    sha256 = "03jvzw9pi2mhcm913h8qg0qw9gwjqc6lhwynb1yz1y163x7w4s8y";
+  src = fetchFromGitHub {
+    owner = "rakshasa";
+    repo = "rtorrent";
+    rev = "62cb5a4605c0664bc522e0e0da9c72f09cf643a9";
+    sha256 = "0l2kqkbfl5l7drmqdqdryq1p0fpz05aghxrqd29fs4j9bx0djnaw";
   };
 
-  buildInputs = [ libtorrent ncurses pkgconfig libsigcxx curl zlib openssl xmlrpc_c ];
-  configureFlags = "--with-xmlrpc-c";
+  patches = optional colorSupport (fetchurl {
+    # Optional patch adds support for custom configurable colors
+    # https://github.com/Chlorm/chlorm_overlay/blob/master/net-p2p/rtorrent/README.md
+    url = "https://gist.githubusercontent.com/codyopel/a816c2993f8013b5f4d6/raw/b952b32da1dcf14c61820dfcf7df00bc8918fec4/rtorrent-color.patch";
+    sha256 = "00gcl7yq6261rrfzpz2k8bd7mffwya0ifji1xqcvhfw50syk8965";
+  });
 
-  # postInstall = ''
-  #   mkdir -p $out/share/man/man1 $out/share/rtorrent
-  #   mv doc/rtorrent.1 $out/share/man/man1/rtorrent.1
-  #   mv doc/rtorrent.rc $out/share/rtorrent/rtorrent.rc
-  # '';
+  configureFlags = [
+    "--disable-debug"
+    "--disable-extra-debug"
+    "--disable-werror"
+    "--disable-c++0x"
+    "--enable-ipv6"
+    "--enable-largefile"
+    "--with-statvfs"
+    "--with-statfs"
+    "--with-ncurses"
+    "--with-ncursesw"
+    "--with-xmlrpc-c"
+  ];
+
+  nativeBuildInputs = [
+    autoreconfHook
+    pkgconfig
+  ];
+
+  buildInputs = [
+    cppunit
+    curl
+    libsigcxx
+    libtorrent
+    ncurses
+    openssl
+    xmlrpc_c
+    zlib
+  ];
+
+  postInstall = ''
+    mkdir -p $out/share/rtorrent
+    mv doc/rtorrent.rc $out/share/rtorrent/rtorrent.rc
+  '';
+
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
-    homepage = https://github.com/rakshasa/rtorrent/;
-    description = "An ncurses client for libtorrent, ideal for use with screen, tmux, or dtach";
-
-    platforms = platforms.unix;
-    maintainers = with maintainers; [ simons ebzzry ];
+    description = "An ncurses client for libtorrent";
+    homepage = http://libtorrent.rakshasa.no/;
+    license = licenses.gpl2;
+    maintainers = with maintainers; [ codyopel ];
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
