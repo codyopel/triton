@@ -1,7 +1,11 @@
 { stdenv, fetchurl, findXMLCatalogs
 
 # Optional Dependencies
-, icu ? null, python ? null, readline ? null, zlib ? null, xz ? null
+, icu ? null
+, python ? null
+, readline ? null
+, zlib ? null
+, xz ? null
 }:
 
 #TODO: share most stuff between python and non-python builds, perhaps via multiple-output
@@ -18,13 +22,14 @@ let
     "\${out}/lib/${python.libPrefix}/site-packages";
 in
 with stdenv.lib;
+
 stdenv.mkDerivation rec {
   name = "libxml2-${version}";
-  version = "2.9.2";
+  version = "2.9.3";
 
   src = fetchurl {
     url = "http://xmlsoft.org/sources/${name}.tar.gz";
-    sha256 = "1g6mf03xcabmk5ing1lwqmasr803616gb2xhn7pll10x2l5w6y2i";
+    sha256 = "0bd17g6znn2r98gzpjppsqjg33iraky4px923j3k8kdl8qgy7sad";
   };
 
   buildInputs = [ optIcu optPython optReadline optZlib optXz ];
@@ -43,16 +48,16 @@ stdenv.mkDerivation rec {
 
   enableParallelBuilding = true;
 
+  passthru = {
+    inherit version;
+    pythonSupport = python != null;
+  };
+
   meta = with stdenv.lib; {
     homepage = http://xmlsoft.org/;
     description = "An XML parsing library for C";
     license = licenses.mit;
+    maintainers = with maintainers; [ wkennington ];
     platforms = platforms.unix;
-    maintainers = with maintainers; [ eelco wkennington ];
-  };
-
-  passthru = {
-    inherit version;
-    pythonSupport = python != null;
   };
 }
