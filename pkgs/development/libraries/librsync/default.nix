@@ -1,5 +1,5 @@
 { stdenv, fetchurl
-, autoreconfHook
+, cmake
 , perl
 
 , bzip2
@@ -9,25 +9,15 @@
 
 stdenv.mkDerivation rec {
   name = "librsync-${version}";
-  version = "1.0.0";
+  version = "2.0.0";
 
   src = fetchurl {
     url = "https://github.com/librsync/librsync/archive/v${version}.tar.gz";
-    sha256 = "1ndgzh9zlf8aaqs5sjxsrlb0lhrgv6zy73pqjd6yh34n2s2rk591";
+    sha256 = "0s91mqzmk64kk7qp9kl9va511lgh9wny92bp74wj10w9888xvi5m";
   };
 
-  configureFlags = [
-    "--enable-shared"
-    "--enable-largefile"
-    "--disable-trace"
-  ];
-
-  NIX_CFLAGS_COMPILE = [
-    "-std=gnu89"
-  ];
-
   nativeBuildInputs = [
-    autoreconfHook
+    cmake
     perl
   ];
 
@@ -40,6 +30,8 @@ stdenv.mkDerivation rec {
   crossAttrs = {
     dontStrip = true;
   };
+
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Implementation of the rsync remote-delta algorithm";
