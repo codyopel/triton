@@ -1,15 +1,31 @@
-{ stdenv, fetchurl, pkgconfig
+{ stdenv, fetchurl
+, perl
+, pkgconfig
 
-# Optional Dependencies
-, zlib ? null, openssl ? null, libssh2 ? null, libnghttp2 ? null, c-ares ? null
-, gss ? null, rtmpdump ? null, openldap ? null, libidn ? null
+# Optional
+, zlib ? null
+, openssl ? null
+, libssh2 ? null
+, libnghttp2 ? null
+, c-ares ? null
+, gss ? null
+, rtmpdump ? null
+, openldap ? null
+, libidn ? null
 
 # Extra arguments
 , suffix ? ""
 }:
 
-with stdenv;
-with stdenv.lib;
+with {
+  inherit (stdenv)
+    shouldUsePkg;
+  inherit (stdenv.lib)
+    mkEnable
+    mkWith
+    optionalString;
+};
+
 let
   isFull = suffix == "full";
   nameSuffix = optionalString (suffix != "") "-${suffix}";
@@ -27,26 +43,15 @@ let
   optOpenldap = if !isFull then null else shouldUsePkg openldap;
   optLibidn = if !isFull then null else shouldUsePkg libidn;
 in
+
 stdenv.mkDerivation rec {
   name = "curl${nameSuffix}-${version}";
-  version = "7.44.0";
+  version = "7.46.0";
 
   src = fetchurl {
     url = "http://curl.haxx.se/download/curl-${version}.tar.bz2";
-    sha256 = "050q6i20lbh7dyyhva2sbp8dbyp6sghlkbpvq2bvcasqwsx4298y";
+    sha256 = "1bcm646jgq70mpkwa6n6skff9fzbb4y4liqvzaq6sjzdv36jdmxp";
   };
-
-  # Use pkgconfig only when necessary
-  nativeBuildInputs = [ pkgconfig ];
-  propagatedBuildInputs = [
-    optZlib optOpenssl optLibssh2 optLibnghttp2 optC-ares
-    optGss optRtmpdump optOpenldap optLibidn
-  ];
-
-  # Make curl honor CURL_CA_BUNDLE & SSL_CERT_FILE
-  postConfigure = ''
-    echo '#define CURL_CA_BUNDLE (getenv("CURL_CA_BUNDLE") ? getenv("CURL_CA_BUNDLE") : getenv("SSL_CERT_FILE"))' >> lib/curl_config.h
-  '';
 
   configureFlags = [
     (mkEnable true                    "http"              null)
@@ -75,10 +80,13 @@ stdenv.mkDerivation rec {
     (mkWith   (optOpenssl != null)    "ssl"               null)
     (mkWith   false                   "gnutls"            null)
     (mkWith   false                   "polarssl"          null)
+    (mkWith   false                   "mbedtls"           null)
     (mkWith   false                   "cyassl"            null)
     (mkWith   false                   "nss"               null)
     (mkWith   false                   "axtls"             null)
+    (mkWith   false                   "libpsl"            null)
     (mkWith   false                   "libmetalink"       null)
+    #(mkWith   false                   "zsh-functions-dir" null)
     (mkWith   (optLibssh2 != null)    "libssh2"           null)
     (mkWith   (optRtmpdump!= null)    "librtmp"           null)
     (mkEnable false                   "versioned-symbols" null)
@@ -94,11 +102,33 @@ stdenv.mkDerivation rec {
     (mkEnable true                    "rt"                null)
   ];
 
-  meta = {
+  postConfigure = ''
+    # Make curl honor CURL_CA_BUNDLE & SSL_CERT_FILE
+    echo '#define CURL_CA_BUNDLE (getenv("CURL_CA_BUNDLE") ? getenv("CURL_CA_BUNDLE") : getenv("SSL_CERT_FILE"))' >> lib/curl_config.h
+  '';
+
+  nativeBuildInputs = [
+    perl
+    pkgconfig
+  ];
+
+  propagatedBuildInputs = [
+    optZlib
+    optOpenssl
+    optLibssh2
+    optLibnghttp2
+    optC-ares
+    optGss
+    optRtmpdump
+    optOpenldap
+    optLibidn
+  ];
+
+  meta = with stdenv.lib; {
     description = "A command line tool for transferring files with URL syntax";
-    homepage    = http://curl.haxx.se/;
-    license     = licenses.mit;
-    platforms   = platforms.all;
-    maintainers = with maintainers; [ lovek323 wkennington ];
+    homepage = http://curl.haxx.se/;
+    license = licenses.mit;
+    maintainers = with maintainers; [ wkennington ];
+    platforms = platforms.all;
   };
 }
