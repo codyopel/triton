@@ -26,12 +26,12 @@ with {
 stdenv.mkDerivation rec {
   name = "lightdm-${version}";
   versionMajor = "1.16";
-  versionMinor = "5";
+  versionMinor = "6";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "https://launchpad.net/lightdm/${versionMajor}/${version}/+download/${name}.tar.xz";
-    sha256 = "1qb3gvwdm2rymwn8rb1qc4gyam226xmvy2fq5rvmrcmgxblmi34c";
+    sha256 = "0v1ay8xvk9v9fx0g8kcy593dxxma60y6cl9ax591yg7shs4d7xgq";
   };
 
   patches = [
