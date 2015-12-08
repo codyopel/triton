@@ -13,11 +13,11 @@ with stdenv.lib;
 assert x11Support -> pinentry != null;
 
 stdenv.mkDerivation rec {
-  name = "gnupg-2.1.8";
+  name = "gnupg-2.1.10";
 
   src = fetchurl {
     url = "mirror://gnupg/gnupg/${name}.tar.bz2";
-    sha256 = "18w14xp0ynzzwpklyplkzbrncds1hly4k2gjx115swch8qgd1f53";
+    sha256 = "1ybcsazjm21i2ys1wh49cz4azmqz7ghx5rb6hm4gm93i2zc5igck";
   };
 
   postPatch = stdenv.lib.optionalString stdenv.isLinux ''
