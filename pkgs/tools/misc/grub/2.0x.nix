@@ -39,7 +39,7 @@ let
   canEfi = any (system: stdenv.system == system) (mapAttrsToList (name: _: name) efiSystems);
   inPCSystems = any (system: stdenv.system == system) (mapAttrsToList (name: _: name) pcSystems);
 
-  version = "2.x-2015-10-13";
+  version = "2.x-2015-12-03";
 
   unifont_bdf = fetchurl {
     url = "http://unifoundry.com/unifont-5.1.20080820.bdf.gz";
@@ -61,9 +61,18 @@ stdenv.mkDerivation rec {
 
   src = fetchFromSavannah {
     repo = "grub";
-    rev = "a3645c1240a0b89c3b51593bd3efc14fe66d67cf";
-    sha256 = "0vxc2hi4qgv3hm90q6m3s5a9xi3j40fkc0wqv09hfkw25rabqk60";
+    rev = "a03c1034f6062e69075056c8f31b90e159ce5244";
+    sha256 = "13spksy7aavf7gq6r4xc1mp3ahkidhxxgrwz6mz11hvwnyg3ysa6";
   };
+
+  # save target that grub is compiled for
+  grubTarget =
+    if efiSupport then
+      "${efiSystems.${stdenv.system}.target}-efi"
+    else if inPCSystems then
+      "${pcSystems.${stdenv.system}.target}-pc"
+    else
+      "";
 
   patches = [
     ./fix-bash-completion.patch
@@ -75,26 +84,16 @@ stdenv.mkDerivation rec {
     mv grub-2.02~beta2/po po
     sh autogen.sh
     gunzip < "${unifont_bdf}" > "unifont.bdf"
-    sed -i "configure" \
-        -e "s|/usr/src/unifont.bdf|$PWD/unifont.bdf|g"
+    sed -e "s|/usr/src/unifont.bdf|$PWD/unifont.bdf|g" -i ./configure
   '';
 
-  nativeBuildInputs = [
-    autogen
-    flex bison
-    python
-    autoconf
-    automake
-  ];
-
-  buildInputs = [
-    ncurses
-    libusb
-    freetype
-    gettext
-    devicemapper
-  ] ++ optional doCheck qemu
-    ++ optional zfsSupport zfs;
+  configureFlags = [ ]
+    ++ optional zfsSupport "--enable-libzfs"
+    ++ optionals efiSupport [
+      "--with-platform=efi"
+      "--target=${efiSystems.${stdenv.system}.target}"
+      "--program-prefix="
+    ];
 
   preConfigure = ''
     for i in "tests/util/"*.in ; do
@@ -114,22 +113,23 @@ stdenv.mkDerivation rec {
         -e's/qemu-system-i386/qemu-system-x86_64 -nodefaults/g'
   '';
 
-  configureFlags = [ ]
-    ++ optional zfsSupport "--enable-libzfs"
-    ++ optionals efiSupport [
-      "--with-platform=efi"
-      "--target=${efiSystems.${stdenv.system}.target}"
-      "--program-prefix="
-    ];
+  nativeBuildInputs = [
+    autoconf
+    autogen
+    automake
+    bison
+    flex
+    python
+  ];
 
-  # save target that grub is compiled for
-  grubTarget =
-    if efiSupport then
-      "${efiSystems.${stdenv.system}.target}-efi"
-    else if inPCSystems then
-      "${pcSystems.${stdenv.system}.target}-pc"
-    else
-      "";
+  buildInputs = [
+    devicemapper
+    freetype
+    gettext
+    libusb
+    ncurses
+  ] ++ optional doCheck qemu
+    ++ optional zfsSupport zfs;
 
   postInstall = ''
     paxmark pms $out/sbin/grub-{probe,bios-setup}
@@ -142,6 +142,9 @@ stdenv.mkDerivation rec {
     description = "GNU GRUB, the Grand Unified Boot Loader";
     homepage = http://www.gnu.org/software/grub/;
     license = licenses.gpl3Plus;
-    platforms = platforms.gnu;
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
