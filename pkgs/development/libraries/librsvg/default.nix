@@ -22,12 +22,12 @@ with {
 stdenv.mkDerivation rec {
   name = "librsvg-${version}";
   versionMajor = "2.40";
-  versionMinor = "11";
+  versionMinor = "12";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url    = "mirror://gnome/sources/librsvg/${versionMajor}/${name}.tar.xz";
-    sha256 = "00ifd9wjjjsw0ybk5j6qs4yyh66jj34hjmggy6dhrgfy8ksw06k1";
+    sha256 = "0l5mzwlw6k20hvndvk5xllks20xbddr7b93rsvs9jf5zg11hrr7z";
   };
 
   configureFlags = [
