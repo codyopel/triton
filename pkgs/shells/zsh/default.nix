@@ -17,10 +17,10 @@ with {
 };
 
 let
-  version = "5.1.1";
+  version = "5.2";
   documentation = fetchurl {
     url = "mirror://sourceforge/zsh/zsh-${version}-doc.tar.gz";
-    sha256 = "0p99dr7kck0a6im1w9qiiz2ai78mgy53gbbn87bam9ya2885gf05";
+    sha256 = "1r9r91gmrrflzl0yq10bib9gxbqyhycb09hcx28m2g3vv9skmccj";
   };
 in
 
@@ -29,7 +29,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "mirror://sourceforge/zsh/zsh-${version}.tar.gz";
-    sha256 = "11shllzhq53fg8ngy3bgbmpf09fn2czifg7hsb41nxi3410mpvcl";
+    sha256 = "0dsr450v8nydvpk8ry276fvbznlrjgddgp7zvhcw4cv69i9lr4ps";
   };
 
   patchPhase = ''
@@ -40,40 +40,36 @@ stdenv.mkDerivation {
     rm -f ./Test/C02cond.ztst
   '';
 
-  patches = [
-    ./zsh-5.1.0-gcc-5.patch
-  ];
-
   configureFlags = [
-    "--enable-dynamic"
-    "--enable-dynamic-nss"
-    "--disable-ansi2knr"
+    "--disable-zsh-debug"
     # Internal malloc is broken
     "--disable-zsh-mem"
-    "--enable-stack-allocation"
-
-    "--enable-pcre"
-    "--enable-cap"
-    "--enable-maildir-support"
-    "--enable-gdbm"
-    "--with-tcsetpgrp"
-    "--enable-function-subdirs"
-    "--with-term-lib=ncursesw"
-    "--enable-readnullcmd=pager"
-    "--enable-locale"
-    "--enable-multibyte"
-
+    "--disable-zsh-mem-debug"
+    "--disable-zsh-mem-warning"
+    "--disable-zsh-secure-free"
+    "--disable-zsh-valgrind"
+    "--disable-zsh-hash-debug"
+    # Test fail with stack allocation enabled >=5.2
+    "--disable-stack-allocation"
     #"--enable-zshenv="
     "--enable-zprofile=$(out)/etc/zprofile"
     #"--enable-zlogin="
     #"--enable-zlogout="
-
-    # Debug
-    (enFlag "zsh-debug" debugging null)
-    (enFlag "zsh-mem-debug" debugging null)
-    (enFlag "zsh-mem-warning" debugging null)
-    (enFlag "zsh-secure-free" debugging null)
-    (enFlag "zsh-hash-debug" debugging null)
+    "--enable-dynamic"
+    "--enable-locale"
+    "--disable-ansi2knr"
+    "--enable-function-subdirs"
+    "--enable-maildir-support"
+    "--enable-readnullcmd=pager"
+    "--enable-pcre"
+    "--enable-cap"
+    "--enable-gdbm"
+    "--enable-largefile"
+    "--enable-multibyte"
+    "--disable-libc-musl"
+    "--enable-dynamic-nss"
+    "--with-term-lib=ncursesw"
+    "--with-tcsetpgrp"
   ];
 
   nativeBuildInputs = [
@@ -119,16 +115,17 @@ stdenv.mkDerivation {
     mv $out/etc/zprofile $out/etc/zprofile_zwc_is_used
   '';
 
-  enableParallelBuilding = true;
-
-  # Disabled Test/C02cond.ztst, requires filesystem timestamps
   doCheck = true;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "The Z command shell";
     homepage = "http://www.zsh.org/";
     license = licenses.mit;
     maintainers = with maintainers; [ codyopel ];
-    platforms = platforms.unix;
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
