@@ -2161,8 +2161,6 @@ let
 
   libtorrent = callPackage ../tools/networking/p2p/libtorrent { };
 
-  libtorrent-git = callPackage ../tools/networking/p2p/libtorrent/git.nix { };
-
   libiberty = callPackage ../development/libraries/libiberty { };
 
   libibverbs = callPackage ../development/libraries/libibverbs { };

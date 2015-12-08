@@ -1,21 +1,70 @@
-{ stdenv, fetchurl, pkgconfig, openssl, libsigcxx, zlib }:
+{ stdenv, fetchFromGitHub
+, autoreconfHook
+, pkgconfig
+
+, cppunit
+, openssl
+, libsigcxx
+, libtool
+, zlib
+}:
 
 stdenv.mkDerivation rec {
   name = "libtorrent-${version}";
-  version = "0.13.6";
+  version = "2015-10-20";
 
-  src = fetchurl {
-    url = "http://rtorrent.net/downloads/${name}.tar.gz";
-    sha256 = "012s1nwcvz5m5r4d2z9klgy2n34kpgn9kgwgzxm97zgdjs6a0f18";
+  src = fetchFromGitHub {
+    owner = "rakshasa";
+    repo = "libtorrent";
+    rev = "14e793b75dac95c51ad64ff9cd2dc6772b68c625";
+    sha256 = "1rr5ac2h9rwcrdzzw7357frg0l2d0az6m4zjshzk182q0darcblg";
   };
 
-  buildInputs = [ pkgconfig openssl libsigcxx zlib ];
+  configureFlags = [
+    "--disable-debug"
+    "--disable-extra-debug"
+    "--disable-werror"
+    "--disable-c++0x"
+    "--enable-largefile"
+    "--enable-aligned"
+    "--enable-interrupt-socket"
+    "--enable-openssl"
+    # Flag is not a proper boolean
+    #"--disable-cyrus-rc4"
+    "--enable-mincore"
+    "--enable-ipv6"
+    "--enable-instrumentation"
+    "--with-kqueue"
+    "--with-epoll"
+    "--with-posix-fallocate"
+    #"--with-address-space=1024mb"
+    "--with-statvfs"
+    "--with-statfs"
+    "--with-zlib"
+  ];
+
+  nativeBuildInputs = [
+    autoreconfHook
+    pkgconfig
+  ];
+  
+  buildInputs = [
+    cppunit
+    libsigcxx
+    openssl
+    zlib
+  ];
+
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
-    homepage = https://github.com/rakshasa/libtorrent/;
-    description = "A BitTorrent library written in C++ for *nix, with focus on high performance and good code";
-
-    platforms = platforms.unix;
-    maintainers = with maintainers; [ simons ebzzry ];
+    description = " High performance BitTorrent library for unix";
+    homepage = http://libtorrent.rakshasa.no/;
+    license = licenses.gpl2;
+    maintainers = with maintainers; [ codyopel ];
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
