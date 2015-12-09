@@ -146,7 +146,7 @@ rec {
 
   # Gnome
   gnome = [
-    http://gnome.mirrors.pair.com/
+    http://gnome.mirrors.pair.com/pub/gnome/
     # This one redirects to some mirror closeby, so it should be all you need.
     http://download.gnome.org/
   ];
