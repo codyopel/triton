@@ -9149,11 +9149,6 @@ let
 
   samba = callPackage ../servers/samba {
     pythonPackages = python2Packages;
-    kerberos = null;  # Bundle kerberos because samba uses internal, non-stable functions
-    dbus = if stdenv.isLinux then dbus else null;
-    libibverbs = if stdenv.isLinux then libibverbs else null;
-    librdmacm = if stdenv.isLinux then librdmacm else null;
-    systemd = if stdenv.isLinux then systemd else null;
   };
 
   samba_light = lowPrio (samba.override {

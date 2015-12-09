@@ -4,7 +4,6 @@
 , socket_wrapper, uid_wrapper, libarchive
 
 # source3/wscript optionals
-, kerberos ? null
 , zlib ? null
 , openldap ? null
 , cups ? null
@@ -34,24 +33,15 @@
 , systemd ? null
 }:
 
-assert kerberos != null -> zlib != null;
-
 let
-  bundledLibs =
-    if kerberos != null && kerberos.implementation == "heimdal" then
-      "NONE"
-    else
-      "com_err";
+  bundledLibs = "com_err";
   hasGnutls = gnutls != null && libgcrypt != null && libgpgerror != null;
-  isKrb5OrNull =
-    if kerberos != null && kerberos.implementation == "krb5" then
-      true
-    else
-      null;
   #hasInfinibandOrNull = if libibverbs != null && librdmacm != null then true else null;
   hasInfinibandOrNull = null;  # TODO(wkennington): Reenable after fixed
 in
+
 with stdenv.lib;
+
 stdenv.mkDerivation rec {
   name = "samba-4.3.2";
 
@@ -63,7 +53,7 @@ stdenv.mkDerivation rec {
   patches = [
     ./4.x-no-persistent-install.patch
     ./4.x-fix-ctdb-deps.patch
-  ] ++ optional (kerberos != null) ./4.x-heimdal-compat.patch;
+  ];
 
   postPatch = ''
     # Removes absolute paths in scripts
@@ -122,7 +112,8 @@ stdenv.mkDerivation rec {
     (mkEnable hasGnutls            "gnutls" null)
 
     # wscript options
-    (mkWith   isKrb5OrNull         "system-mitkrb5"    null)
+    # Use bundled kerberos because samba requires a non-release version
+    #"--with-system-mitkrb5"
     (if hasGnutls then null else "--without-ad-dc")
 
     # ctdb/wscript
@@ -162,7 +153,6 @@ stdenv.mkDerivation rec {
     uid_wrapper
     libarchive
 
-    kerberos
     zlib
     openldap
     cups
