@@ -17475,26 +17475,6 @@ let
     };
   };
 
-  pythonefl_1_15 = buildPythonPackage rec {
-    name = "python-efl-${version}";
-    version = "1.15.0";
-    src = pkgs.fetchurl {
-      url = "http://download.enlightenment.org/rel/bindings/python/${name}.tar.gz";
-      sha256 = "1k3vb7pb70l2v1s2mzg91wvmncq93vb04vn60pzdlrnbcns0grhi";
-    };
-    preConfigure = ''
-      export NIX_CFLAGS_COMPILE="$(pkg-config --cflags efl) -I${self.dbus}/include/dbus-1.0 $NIX_CFLAGS_COMPILE"
-    '';
-    buildInputs = with self; [ pkgs.pkgconfig pkgs.e19.efl pkgs.e19.elementary ];
-    meta = {
-      description = "Python bindings for EFL and Elementary";
-      homepage = http://enlightenment.org/;
-      maintainers = with maintainers; [ matejc tstrobel ftrvxmtrx ];
-      platforms = platforms.linux;
-      license = licenses.gpl3;
-    };
-  };
-
   toposort = buildPythonPackage rec {
     name = "toposort-${version}";
     version = "1.1";

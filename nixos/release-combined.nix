@@ -85,7 +85,6 @@ in rec {
         (all nixos.tests.proxy)
         (all nixos.tests.simple)
         (all nixos.tests.udisks2)
-        (all nixos.tests.xfce)
 
         nixpkgs.tarball
         (all nixpkgs.emacs)

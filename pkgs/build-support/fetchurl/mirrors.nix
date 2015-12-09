@@ -151,10 +151,6 @@ rec {
     http://download.gnome.org/
   ];
 
-  xfce = [
-    http://archive.xfce.org/
-  ];
-
   # X.Org
   xorg = [
     http://xorg.mirrors.pair.com/

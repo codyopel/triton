@@ -288,7 +288,6 @@ in rec {
   tests.tomcat = callTest tests/tomcat.nix {};
   tests.udisks2 = callTest tests/udisks2.nix {};
   tests.virtualbox = hydraJob (import tests/virtualbox.nix { system = "x86_64-linux"; });
-  tests.xfce = callTest tests/xfce.nix {};
   tests.bootBiosCdrom = forAllSystems (system: hydraJob (import tests/boot.nix { inherit system; }).bootBiosCdrom);
   tests.bootBiosUsb = forAllSystems (system: hydraJob (import tests/boot.nix { inherit system; }).bootBiosUsb);
   tests.bootUefiCdrom = forAllSystems (system: hydraJob (import tests/boot.nix { inherit system; }).bootUefiCdrom);
@@ -318,11 +317,6 @@ in rec {
       { services.xserver.enable = true;
         services.xserver.displayManager.kdm.enable = true;
         services.xserver.desktopManager.kde4.enable = true;
-      });
-
-    xfce = makeClosure ({ pkgs, ... }:
-      { services.xserver.enable = true;
-        services.xserver.desktopManager.xfce.enable = true;
       });
 
     # Linux/Apache/PostgreSQL/PHP stack.
