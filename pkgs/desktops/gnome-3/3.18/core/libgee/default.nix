@@ -17,6 +17,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ autoconf vala pkgconfig glib gobjectIntrospection ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Utility library providing GObject-based interfaces and classes for commonly used data structures";
     license = licenses.lgpl21Plus;

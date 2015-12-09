@@ -10,6 +10,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ glib pkgconfig gtk3 intltool itstool libxml2 libarchive
                   gnome3.defaultIconTheme attr bzip2 acl gdk_pixbuf librsvg ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/FileRoller;
     description = "Archive manager for the GNOME desktop environment";

@@ -37,6 +37,8 @@ stdenv.mkDerivation rec {
 
   patchFlags = "-p0";
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Contacts;
     description = "Contacts is GNOME's integrated address book";

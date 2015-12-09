@@ -5,6 +5,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig gnome3.yelp itstool libxml2 intltool ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = "https://help.gnome.org/users/gnome-help/${gnome3.version}";
     description = "User and system administration help for the GNOME desktop";

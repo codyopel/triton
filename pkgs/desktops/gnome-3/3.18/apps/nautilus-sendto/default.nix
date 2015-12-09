@@ -13,6 +13,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ glib pkgconfig gobjectIntrospection intltool ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Integrates Evolution and Pidgin into the Nautilus file manager";
     maintainers = gnome3.maintainers;

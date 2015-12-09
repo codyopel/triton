@@ -20,6 +20,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ bash pkgconfig gtk3 glib intltool itstool
                   gnome3.gsettings_desktop_schemas libxml2 ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://help.gnome.org/users/gnome-system-log/3.9/;
     description = "Graphical, menu-driven viewer that you can use to view and monitor your system logs";

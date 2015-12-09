@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig libxml2 glib ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.unix;
   };

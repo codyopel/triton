@@ -12,6 +12,8 @@ in stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig glib libcanberra gobjectIntrospection libtool ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Projects/GSound;
     description = "Small library for playing system sounds";

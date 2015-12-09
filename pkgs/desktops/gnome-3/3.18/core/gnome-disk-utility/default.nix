@@ -27,6 +27,8 @@ stdenv.mkDerivation rec {
                   librsvg udisks2 gnome3.gnome_settings_daemon
                   gnome3.gsettings_desktop_schemas libxml2 ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = http://en.wikipedia.org/wiki/GNOME_Disks;
     description = "A udisks graphical front-end";

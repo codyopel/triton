@@ -49,6 +49,8 @@ stdenv.mkDerivation rec {
     gnome3.gsettings_desktop_schemas
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/action/show/Apps/Calculator;
     description = "Application that solves mathematical equations and is suitable as a default application in a Desktop environment";

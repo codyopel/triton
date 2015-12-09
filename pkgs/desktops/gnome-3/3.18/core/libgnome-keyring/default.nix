@@ -11,6 +11,8 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [ glib gobjectIntrospection dbus_libs libgcrypt ];
   nativeBuildInputs = [ pkgconfig intltool ];
 
+  enableParallelBuilding = true;
+
   meta = {
     description = "Framework for managing passwords and other secrets";
     homepage = http://live.gnome.org/GnomeKeyring;

@@ -19,6 +19,8 @@ stdenv.mkDerivation rec {
                   libnotify libcanberra_gtk3
                   gobjectIntrospection ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://help.gnome.org/users/gnome-bluetooth/stable/index.html.en;
     description = "Application that let you manage Bluetooth in the GNOME destkop";

@@ -22,6 +22,8 @@ stdenv.mkDerivation rec {
       liboauth gcr gnome_online_accounts p11_kit openssl ];
 
   propagatedBuildInputs = [ json_glib ];
+
+  enableParallelBuilding = true;
       
   meta = with stdenv.lib; {
     description = "GData API library";

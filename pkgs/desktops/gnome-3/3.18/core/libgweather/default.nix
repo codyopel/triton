@@ -63,6 +63,8 @@ stdenv.mkDerivation rec {
     pango
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;
     platforms = platforms.linux;

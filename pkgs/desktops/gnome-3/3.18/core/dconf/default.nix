@@ -16,6 +16,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ vala libxslt pkgconfig glib dbus_glib gnome3.gtk3 libxml2
                   intltool docbook_xsl docbook_xsl_ns makeWrapper ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.linux;
     maintainers = gnome3.maintainers;

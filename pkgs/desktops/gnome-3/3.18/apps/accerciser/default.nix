@@ -18,6 +18,8 @@ stdenv.mkDerivation rec {
 
   wrapPrefixVariables = [ "PYTHONPATH" ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Accerciser;
     description = "Interactive Python accessibility explorer";

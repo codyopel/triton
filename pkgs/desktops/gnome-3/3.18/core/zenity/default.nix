@@ -20,6 +20,8 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ pkgconfig intltool gnome_doc_utils which ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.linux;
     maintainers = gnome3.maintainers;

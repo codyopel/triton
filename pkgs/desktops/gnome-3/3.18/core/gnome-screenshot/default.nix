@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ bash pkgconfig gtk3 glib intltool itstool libcanberra_gtk3
                   gnome3.gsettings_desktop_schemas ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = http://en.wikipedia.org/wiki/GNOME_Screenshot;
     description = "Utility used in the GNOME desktop environment for taking screenshots";

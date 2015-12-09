@@ -26,6 +26,8 @@ stdenv.mkDerivation rec {
     sqlite libxml2 libsoup glib gnome3.defaultIconTheme gnome_online_accounts
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Calendar;
     description = "Simple and beautiful calendar application for GNOME";

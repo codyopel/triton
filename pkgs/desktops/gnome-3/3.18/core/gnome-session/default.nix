@@ -59,6 +59,8 @@ stdenv.mkDerivation rec {
     mesa_noglu
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;
     platforms = platforms.linux;

@@ -88,6 +88,7 @@ stdenv.mkDerivation rec {
   ];
 
   doCheck = false; # would need pythonPackages.dogTail, which is missing
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "GNOME's document viewer";

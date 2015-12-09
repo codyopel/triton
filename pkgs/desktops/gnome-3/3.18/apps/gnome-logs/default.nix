@@ -11,6 +11,8 @@ stdenv.mkDerivation rec {
     systemd gnome3.defaultIconTheme
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Logs;
     description = "A log viewer for the systemd journal";

@@ -13,6 +13,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ intltool pkgconfig glib gobjectIntrospection ];
 
+  enableParallelBuilding = true;
+
   meta = {
     homepage = "http://www.gnome.org";
     description = "Gnome menu specification";

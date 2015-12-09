@@ -156,7 +156,6 @@ stdenv.mkDerivation rec {
     done
   '';
 
-  # https://bugzilla.gnome.org/show_bug.cgi?id=752596
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {

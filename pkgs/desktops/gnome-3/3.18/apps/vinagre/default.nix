@@ -7,6 +7,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ pkgconfig gtk3 vte libxml2 gtkvnc intltool libsecret
                   itstool makeWrapper gnome3.defaultIconTheme librsvg ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Vinagre;
     description = "Remote desktop viewer for GNOME";

@@ -22,6 +22,8 @@ stdenv.mkDerivation rec {
                   libgit2-glib gtkspell3 gnome3.gsettings_desktop_schemas gnome3.gtksourceview librsvg
                   gobjectIntrospection gnome3.adwaita-icon-theme ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/action/show/Apps/Gitg;
     description = "GNOME GUI client to view git repositories";

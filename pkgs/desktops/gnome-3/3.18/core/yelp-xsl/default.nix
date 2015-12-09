@@ -8,6 +8,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig intltool itstool libxml2 libxslt ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Yelp;
     description = "Yelp's universal stylesheets for Mallard and DocBook";

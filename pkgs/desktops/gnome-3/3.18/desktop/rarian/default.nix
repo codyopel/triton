@@ -10,6 +10,8 @@ stdenv.mkDerivation rec {
   buildInputs = [pkgconfig perl perlXMLParser libxml2 libxslt];
   configureFlags = "--with-xml-catalog=${docbook_xml_dtd_42}/xml/dtd/docbook/docbook.cat";
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.linux;
   };

@@ -48,6 +48,8 @@ stdenv.mkDerivation rec {
 
   postInstall = "rm -rf $out/share/gtk-doc";
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;
     platforms = platforms.linux;

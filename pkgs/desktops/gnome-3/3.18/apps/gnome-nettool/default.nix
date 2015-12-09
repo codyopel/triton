@@ -16,6 +16,8 @@ stdenv.mkDerivation rec {
 
   propagatedUserEnvPkgs = [ nmap inetutils ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = http://projects.gnome.org/gnome-network;
     description = "A collection of networking tools";

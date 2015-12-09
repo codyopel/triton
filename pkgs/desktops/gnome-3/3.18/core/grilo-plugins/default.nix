@@ -20,6 +20,8 @@ stdenv.mkDerivation rec {
                   gnome3.totem-pl-parser gnome3.rest gmime json_glib
                   avahi gnome3.libmediaart tracker intltool itstool ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/action/show/Projects/Grilo;
     description = "A collection of plugins for the Grilo framework";

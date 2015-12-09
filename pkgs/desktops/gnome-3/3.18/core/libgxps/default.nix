@@ -14,6 +14,8 @@ stdenv.mkDerivation rec {
 
   configureFlags = "--without-liblcms2";
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.linux;
   };

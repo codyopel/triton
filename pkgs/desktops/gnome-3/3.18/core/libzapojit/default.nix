@@ -47,6 +47,8 @@ stdenv.mkDerivation rec {
     rest
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.linux;
   };

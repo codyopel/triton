@@ -8,6 +8,8 @@ stdenv.mkDerivation rec {
     pkgconfig gtk3 webkitgtk intltool gnome3.defaultIconTheme
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://live.gnome.org/devhelp;
     description = "API documentation browser for GNOME";

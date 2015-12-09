@@ -16,6 +16,8 @@ stdenv.mkDerivation rec {
   buildInputs = [ pkgconfig gtk3 glib intltool itstool libxml2 file
                   gnome3.gsettings_desktop_schemas ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Dictionary;
     description = "Dictionary is the GNOME application to look up definitions";

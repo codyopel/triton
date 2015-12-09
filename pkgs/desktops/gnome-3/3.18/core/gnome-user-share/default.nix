@@ -29,6 +29,8 @@ stdenv.mkDerivation rec {
     ${glib}/bin/glib-compile-schemas $out/share/gsettings-schemas/$name/glib-2.0/schemas
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://help.gnome.org/users/gnome-user-share/3.8;
     description = "Service that exports the contents of the Public folder in your home directory on the local network";

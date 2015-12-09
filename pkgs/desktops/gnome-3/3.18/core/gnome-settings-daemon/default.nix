@@ -89,6 +89,8 @@ stdenv.mkDerivation rec {
     gtk3WrapperArgs+=("--prefix PATH : ${glib}/bin")
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;
     platforms = platforms.linux;

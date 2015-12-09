@@ -49,6 +49,7 @@ stdenv.mkDerivation rec {
   ];
 
   doCheck = true;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Baobab;

@@ -39,6 +39,8 @@ stdenv.mkDerivation rec {
                          "-I${dbus_libs}/include/dbus-1.0"
                          "-I${dbus_libs}/lib/dbus-1.0/include" ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Empathy;
     description = "Messaging program which supports text, voice, video chat, and file transfers over many different protocols";

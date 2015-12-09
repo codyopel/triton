@@ -28,6 +28,8 @@ stdenv.mkDerivation rec {
     "--with-pkcs11-modules=$$out/lib/pkcs11/"
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.linux;
     maintainers = gnome3.maintainers;

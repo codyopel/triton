@@ -35,6 +35,8 @@ stdenv.mkDerivation rec {
       --prefix XDG_DATA_DIRS : "${gnome3.gnome_themes_standard}/share:$out/share:$GSETTINGS_SCHEMAS_PATH"
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Gucharmap;
     description = "GNOME Character Map, based on the Unicode Character Database";

@@ -11,6 +11,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ pkgconfig intltool ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Projects/GnomeVideoEffects;
     platforms = platforms.linux;

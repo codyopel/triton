@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
 
   patches = [ ./soup.patch ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Maps;
     description = "A map application for GNOME 3";

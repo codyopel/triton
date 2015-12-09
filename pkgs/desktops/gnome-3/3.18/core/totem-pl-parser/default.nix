@@ -60,6 +60,8 @@ stdenv.mkDerivation rec {
     libxml2
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Videos;
     description = "Simple GObject-based library to parse and save a host of playlist formats";

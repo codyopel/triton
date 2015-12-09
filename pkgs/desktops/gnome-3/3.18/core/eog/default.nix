@@ -16,6 +16,8 @@ stdenv.mkDerivation rec {
     [ intltool pkgconfig itstool libxml2 libjpeg gtk glib libpeas makeWrapper librsvg
       gsettings_desktop_schemas shared_mime_info adwaita-icon-theme gnome_desktop libexif ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/EyeOfGnome; 
     platforms = platforms.linux;

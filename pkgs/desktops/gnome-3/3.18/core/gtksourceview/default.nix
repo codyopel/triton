@@ -74,6 +74,8 @@ stdenv.mkDerivation rec {
       --replace "@NIX_SHARE_PATH@" "$out/share"
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.linux;
     maintainers = gnome3.maintainers;

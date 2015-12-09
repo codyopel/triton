@@ -5,6 +5,8 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ intltool itstool libxml2 ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://live.gnome.org/DocumentationProject;
     description = "Help a new user get started in GNOME";

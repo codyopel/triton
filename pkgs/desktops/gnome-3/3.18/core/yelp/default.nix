@@ -16,6 +16,8 @@ stdenv.mkDerivation rec {
                   gnome3.gsettings_desktop_schemas
                   gst_all_1.gst-plugins-base gst_all_1.gst-plugins-good ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Yelp;
     description = "The help viewer in Gnome";

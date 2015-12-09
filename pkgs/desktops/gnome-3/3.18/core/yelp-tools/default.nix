@@ -6,6 +6,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ libxml2 libxslt itstool gnome3.yelp_xsl pkgconfig ];
 
   doCheck = true;
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Yelp/Tools;

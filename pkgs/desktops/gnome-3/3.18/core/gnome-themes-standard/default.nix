@@ -43,6 +43,8 @@ stdenv.mkDerivation rec {
     librsvg
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     maintainers = gnome3.maintainers;
     platforms = platforms.linux;

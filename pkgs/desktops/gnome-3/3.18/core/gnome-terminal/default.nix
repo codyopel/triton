@@ -25,6 +25,8 @@ stdenv.mkDerivation rec {
       gtk3AppsWrapperArgs+=("--prefix GIO_EXTRA_MODULES : ${gnome3.dconf}/lib/gio/modules")
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     platforms = platforms.linux;
     maintainers = gnome3.maintainers;

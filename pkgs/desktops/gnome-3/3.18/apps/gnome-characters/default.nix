@@ -32,6 +32,8 @@ stdenv.mkDerivation rec {
     gobjectIntrospection
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Utility to find and insert unusual characters";
     homepage = https://wiki.gnome.org/Design/Apps/CharacterMap;

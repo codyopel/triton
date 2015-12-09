@@ -9,6 +9,8 @@ stdenv.mkDerivation rec {
     libgweather gnome3.defaultIconTheme
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     homepage = https://wiki.gnome.org/Apps/Weather;
     description = "Access current weather conditions and forecasts";

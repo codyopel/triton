@@ -14,6 +14,8 @@ stdenv.mkDerivation rec {
    gnome3.defaultIconTheme
   ];
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "A GObject-based plugins engine";
     homepage = "http://ftp.acc.umu.se/pub/GNOME/sources/libpeas/";

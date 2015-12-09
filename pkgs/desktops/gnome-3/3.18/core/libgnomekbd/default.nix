@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
       --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
   '';
 
+  enableParallelBuilding = true;
+
   meta = with stdenv.lib; {
     description = "Keyboard management library";
     maintainers = gnome3.maintainers;
