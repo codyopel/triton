@@ -3079,8 +3079,6 @@ let
 
   storebrowse = callPackage ../tools/system/storebrowse { };
 
-  fusesmb = callPackage ../tools/filesystems/fusesmb { samba = samba3; };
-
   sl = callPackage ../tools/misc/sl { };
 
   socat = callPackage ../tools/networking/socat { };
@@ -9149,9 +9147,7 @@ let
       HTTPDate MailDKIM LWP IOSocketSSL;
   };
 
-  samba3 = callPackage ../servers/samba/3.x.nix { };
-
-  samba4 = callPackage ../servers/samba/4.x.nix {
+  samba = callPackage ../servers/samba {
     pythonPackages = python2Packages;
     kerberos = null;  # Bundle kerberos because samba uses internal, non-stable functions
     dbus = if stdenv.isLinux then dbus else null;
@@ -9160,22 +9156,7 @@ let
     systemd = if stdenv.isLinux then systemd else null;
   };
 
-  samba = samba4;
-
-  smbclient = samba;
-
-  # A lightweight Samba 3, useful for non-Linux-based OSes.
-  samba3_light = lowPrio (samba3.override {
-    pam = null;
-    fam = null;
-    cups = null;
-    acl = null;
-    openldap = null;
-    # libunwind 1.0.1 is not ported to GNU/Hurd.
-    libunwind = null;
-  });
-
-  samba4_light = lowPrio (samba4.override {
+  samba_light = lowPrio (samba.override {
     # source3/wscript optionals
     kerberos = null;
     zlib = null;
@@ -9206,8 +9187,6 @@ let
     librdmacm = null;
     systemd = null;
   });
-
-  samba_light = samba4_light;
 
   shairport-sync = callPackage ../servers/shairport-sync { };
 
