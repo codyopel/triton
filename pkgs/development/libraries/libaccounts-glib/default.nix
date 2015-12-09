@@ -1,4 +1,4 @@
-{ stdenv, fetchurl
+{ stdenv, fetchFromGitLab
 , autoreconfHook
 , gtk_doc
 , libtool
@@ -13,16 +13,18 @@
 
 stdenv.mkDerivation rec {
   name = "libaccounts-glib-${version}";
-  version = "1.18";
+  version = "1.19-pre";
 
-  src = fetchurl {
-    url = "https://gitlab.com/accounts-sso/libaccounts-glib/repository/" +
-          "archive.tar.gz?ref=${version}";
-    sha256 = "1602cysf4l779ygscl9ylxkrjy3zlradnmji347bzz5xamawzksv";
+  src = fetchFromGitLab {
+    owner = "accounts-sso";
+    repo = "libaccounts-glib";
+    rev = "61b5adaadc8efd1b8235580f0f8747fb62b40486";
+    #url = "https://gitlab.com/accounts-sso/libaccounts-glib/repository/" +
+    #      "archive.tar.gz?ref=${version}";
+    sha256 = "1znsrnhm50sp09979v4y6q244ibzzg51b602pbxys2vxwvmzwhfh";
   };
 
   postPatch = ''
-    export HAVE_GCOV_FALSE='#'
     gtkdocize --copy --flavour no-tmpl
   '';
 
@@ -42,6 +44,10 @@ stdenv.mkDerivation rec {
     "--disable-man"
   ];
 
+  makeFlags = [
+    "INTROSPECTION_TYPELIBDIR=$(out)/lib/girepository-1.0/"
+  ];
+
   nativeBuildInputs = [
     autoreconfHook
     gtk_doc
@@ -59,4 +65,6 @@ stdenv.mkDerivation rec {
     libxml2
     sqlite
   ];
+
+  enableParallelBuilding = true;
 }
