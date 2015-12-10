@@ -480,10 +480,8 @@ with stdenv.lib;
 
   ${optionalString (versionAtLeast version "3.17") "NFC? n"}
 
-  # Enable firmware loading via udev (legacy).
-  ${optionalString (versionAtLeast version "3.17") ''
-    FW_LOADER_USER_HELPER_FALLBACK y
-  ''}
+  # Disable the firmware helper fallback, udev doesn't implement it any more
+  FW_LOADER_USER_HELPER_FALLBACK n
  
   # Support x2APIC (which requires IRQ remapping).
   ${optionalString (stdenv.system == "x86_64-linux") ''
