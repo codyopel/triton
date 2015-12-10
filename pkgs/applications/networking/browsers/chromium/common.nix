@@ -65,7 +65,6 @@ let
     use_system_opus = true;
     use_system_snappy = true;
     use_system_speex = true;
-    use_system_ssl = false;
     use_system_stlport = true;
     use_system_xdg_utils = true;
     use_system_yasm = true;
@@ -157,7 +156,6 @@ let
       linux_link_pulseaudio = pulseSupport;
       disable_nacl = !enableNaCl;
       enable_hotwording = enableHotwording;
-      use_openssl = false;
       selinux = enableSELinux;
       use_cups = cupsSupport;
     } // {
@@ -176,6 +174,7 @@ let
     } // optionalAttrs proprietaryCodecs {
       # enable support for the H.264 codec
       proprietary_codecs = true;
+      enable_hangout_services_extension = true;
       ffmpeg_branding = "Chrome";
     } // optionalAttrs (stdenv.system == "x86_64-linux") {
       target_arch = "x64";
