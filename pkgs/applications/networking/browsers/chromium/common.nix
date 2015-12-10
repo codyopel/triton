@@ -23,7 +23,6 @@
 , enableSELinux ? false, libselinux ? null
 , enableNaCl ? false
 , enableHotwording ? false
-, useOpenSSL ? false, nss ? null, openssl ? null
 , gnomeSupport ? false, gnome ? null
 , gnomeKeyringSupport ? false, libgnome_keyring3 ? null
 , proprietaryCodecs ? true
@@ -66,7 +65,7 @@ let
     use_system_opus = true;
     use_system_snappy = true;
     use_system_speex = true;
-    use_system_ssl = useOpenSSL;
+    use_system_ssl = false;
     use_system_stlport = true;
     use_system_xdg_utils = true;
     use_system_yasm = true;
@@ -112,7 +111,6 @@ let
       which
       python perl pkgconfig
       nspr nss udev
-      (if useOpenSSL then openssl else nss)
       utillinux alsaLib
       bison gperf kerberos
       glib gtk dbus_glib
@@ -159,7 +157,7 @@ let
       linux_link_pulseaudio = pulseSupport;
       disable_nacl = !enableNaCl;
       enable_hotwording = enableHotwording;
-      use_openssl = useOpenSSL;
+      use_openssl = false;
       selinux = enableSELinux;
       use_cups = cupsSupport;
     } // {
