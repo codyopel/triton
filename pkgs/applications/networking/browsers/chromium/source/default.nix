@@ -1,6 +1,5 @@
 { stdenv, fetchurl, fetchpatch, patchutils, python
 , channel ? "stable"
-, useOpenSSL # XXX
 }:
 
 with stdenv.lib;
