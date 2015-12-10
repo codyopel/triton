@@ -9153,7 +9153,6 @@ let
 
   samba_light = lowPrio (samba.override {
     # source3/wscript optionals
-    kerberos = null;
     zlib = null;
     openldap = null;
     cups = null;
