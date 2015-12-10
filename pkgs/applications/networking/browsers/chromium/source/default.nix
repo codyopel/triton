@@ -36,8 +36,6 @@ in stdenv.mkDerivation {
       --exclude='*/.*'
   '';
 
-  opensslPatches = optional useOpenSSL openssl.patches;
-
   prePatch = ''
     for i in $outputs; do
       eval patchShebangs "\$$i"
@@ -45,11 +43,8 @@ in stdenv.mkDerivation {
   '';
 
   patches =
-    (if versionOlder version "45.0.0.0" then
-      singleton ./nix_plugin_paths_44.patch
-    else
-      singleton ./nix_plugin_paths_46.patch ++
-      optional (!versionOlder version "46.0.0.0") ./build_fixes_46.patch) ++
+    singleton ./nix_plugin_paths_46.patch ++
+    singleton ./build_fixes_46.patch ++
     singleton ./widevine.patch;
 
   patchPhase = let
@@ -72,8 +67,6 @@ in stdenv.mkDerivation {
       -e 's|/bin/echo|echo|' \
       -e "/python_arch/s/: *'[^']*'/: '""'/" \
       "$out/build/common.gypi" "$main/chrome/chrome_tests.gypi"
-  '' + optionalString useOpenSSL ''
-    cat $opensslPatches | patch -p1 -d "$bundled/openssl/openssl"
   '';
 
   passthru = {

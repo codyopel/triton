@@ -5,7 +5,7 @@
 , libevent, expat, libjpeg, snappy
 , libpng, libxml2, libxslt, libcap
 , xdg_utils, yasm, minizip, libwebp
-, libusb1, libexif, pciutils
+, libusb1, libexif, pciutils, nss
 
 , python, pythonPackages, perl, pkgconfig
 , nspr, udev, kerberos
@@ -111,7 +111,7 @@ let
     buildInputs = defaultDependencies ++ [
       which
       python perl pkgconfig
-      nspr udev
+      nspr nss udev
       (if useOpenSSL then openssl else nss)
       utillinux alsaLib
       bison gperf kerberos
