@@ -1,6 +1,7 @@
 { stdenv, fetchurl
 , gettext
 , intltool
+, makeWrapper
 , pkgconfig
 , python
 
@@ -16,12 +17,15 @@
 , libjack2
 , ladspaH
 , librdf
+, librsvg
 , libsndfile
 , lilv
 , lv2
+, qjackctl
 , serd
 , sord
 , sratom
+, webkitgtk_2_4
 , zita-convolver
 , zita-resampler
 , optimizationSupport ? false # Enable support for native CPU extensions
@@ -33,15 +37,16 @@ in
 
 stdenv.mkDerivation rec {
   name = "guitarix-${version}";
-  version = "0.33.0";
+  version = "0.34.0";
 
   src = fetchurl {
     url = "mirror://sourceforge/guitarix/guitarix2-${version}.tar.bz2";
-    sha256 = "1w6dg2n0alfjsx1iy6s53783invygwxk11p1i65cc3nq3zlidcgx";
+    sha256 = "0pamaq8iybsaglq6y1m1rlmz4wgbs2r6m24bj7x4fwg4grjvzjl8";
   };
 
   NIX_CFLAGS_COMPILE = [
     "-std=c++11"
+    "-I${eigen}/include/eigen3"
   ];
 
   nativeBuildInputs = [
@@ -64,12 +69,14 @@ stdenv.mkDerivation rec {
     libjack2
     ladspaH
     librdf
+    librsvg
     libsndfile
     lilv
     lv2
     serd
     sord
     sratom
+    webkitgtk_2_4
     zita-convolver
     zita-resampler
   ];
@@ -94,6 +101,10 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     python waf install
+  '';
+
+  preFixup = ''
+    gtk3AppsWrapperArgs+=("--prefix PATH : ${qjackctl}/bin")
   '';
 
   enableParallelBuilding = true;
