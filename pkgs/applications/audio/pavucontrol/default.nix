@@ -6,7 +6,7 @@
 , libpulseaudio
 , gtkmm
 , libcanberra_gtk3
-, makeWrapper
+, librsvg
 , gnome3
 }:
 
@@ -21,10 +21,7 @@ stdenv.mkDerivation rec {
   configureFlags = [
     "--enable-gtk3"
     "--disable-lynx"
-  ];
-
-  NIX_CFLAGS_COMPILE = [
-    "-std=c++11"
+    "--enable-nls"
   ];
 
   nativeBuildInputs = [
@@ -37,14 +34,9 @@ stdenv.mkDerivation rec {
     libpulseaudio
     gtkmm
     libcanberra_gtk3
-    makeWrapper
+    librsvg
     gnome3.defaultIconTheme
   ];
-
-  preFixup = ''
-    wrapProgram "$out/bin/pavucontrol" \
-     --prefix XDG_DATA_DIRS : "$XDG_ICON_DIRS"
-  '';
 
   enableParallelBuilding = true;
 
