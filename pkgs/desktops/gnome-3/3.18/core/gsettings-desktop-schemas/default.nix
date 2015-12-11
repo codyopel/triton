@@ -1,6 +1,15 @@
-{ stdenv, fetchurl, pkgconfig, intltool, glib, gobjectIntrospection
-  # just for passthru
-, gnome3, gtk3, gsettings_desktop_schemas }:
+{ stdenv, fetchurl
+, intltool
+, pkgconfig
+
+, glib
+, gnome3
+, gobjectIntrospection
+
+# just for passthru
+, gtk3
+, gsettings_desktop_schemas
+}:
 
 stdenv.mkDerivation rec {
   name = "gsettings-desktop-schemas-${version}";
@@ -14,15 +23,21 @@ stdenv.mkDerivation rec {
   };
 
   postPatch = ''
-    for file in "background" "screensaver"; do
+    for file in "background" "screensaver" ; do
       substituteInPlace "schemas/org.gnome.desktop.$file.gschema.xml.in" \
         --replace "@datadir@" "${gnome3.gnome-backgrounds}/share/"
     done
   '';
 
-  buildInputs = [ glib gobjectIntrospection ];
+  nativeBuildInputs = [
+    intltool
+    pkgconfig
+  ];
 
-  nativeBuildInputs = [ pkgconfig intltool ];
+  buildInputs = [
+    glib
+    gobjectIntrospection
+  ];
 
   enableParallelBuilding = true;
 
