@@ -72,12 +72,12 @@ stdenv.mkDerivation rec {
   configureFlags = [
     "--enable-largefile"
     "--enable-webkit1"
-    "--enable-webkit2"
+    "--disable-webkit2"
     "--disable-debug"
     "--disable-developer-mode"
     "--enable-optimizations"
     "--enable-x11-target"
-    "--enable-wayland-target"
+    "--disable-wayland-target" # gtk3?
     "--disable-win32-target"
     "--disable-quartz-target"
     "--disable-directfb-target"
@@ -105,7 +105,7 @@ stdenv.mkDerivation rec {
     "--enable-glibtest"
     "--enable-schemas-compile"
     "--disable-maintainer-mode"
-    "--with-gtk=3.0"
+    "--with-gtk=2.0"
   ];
 
   nativeBuildInputs = [
