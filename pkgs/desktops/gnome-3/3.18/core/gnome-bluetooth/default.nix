@@ -1,6 +1,16 @@
-{ stdenv, fetchurl, gnome3, pkgconfig, gtk3, intltool, glib
-, udev, itstool, libxml2, libnotify, libcanberra_gtk3
+{ stdenv, fetchurl
 , gobjectIntrospection
+, intltool
+, itstool
+, pkgconfig
+
+, glib
+, gnome3
+, gtk3
+, libcanberra_gtk3
+, libnotify
+, libxml2
+, udev
 }:
 
 stdenv.mkDerivation rec {
@@ -14,18 +24,47 @@ stdenv.mkDerivation rec {
     sha256 = "0jaa9nbygdvcqp9k4p4iy2g8x3684s4x9k5nbcmmm11jdn4mn7f5";
   };
 
-  buildInputs = [ pkgconfig intltool glib gtk3 udev libxml2 gnome3.defaultIconTheme
-                  gnome3.gsettings_desktop_schemas itstool
-                  libnotify libcanberra_gtk3
-                  gobjectIntrospection ];
+  configureFlags = [
+    "--disable-maintainer-mode"
+    "--enable-nls"
+    "--enable-schemas-compile"
+    "--disable-gtk-doc"
+    "--disable-gtk-doc-html"
+    "--disable-gtk-doc-pdf"
+    "--disable-desktop-update"
+    "--disable-icon-update"
+    "--enable-introspection"
+    "--disable-debug"
+    "--enable-compile-warnings"
+    "--disable-iso-c"
+    "--disable-documentation"
+  ];
+
+  nativeBuildInputs = [
+    intltool
+    itstool
+    pkgconfig
+  ];
+
+  buildInputs = [
+    glib
+    gnome3.defaultIconTheme
+    gnome3.gsettings_desktop_schemas
+    gobjectIntrospection
+    gtk3
+    libcanberra_gtk3
+    libnotify
+    libxml2
+    udev
+  ];
 
   enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
-    homepage = https://help.gnome.org/users/gnome-bluetooth/stable/index.html.en;
-    description = "Application that let you manage Bluetooth in the GNOME destkop";
-    maintainers = gnome3.maintainers;
+    description = "Application for managing Bluetooth";
+    homepage = https://help.gnome.org/users/gnome-bluetooth;
     license = licenses.gpl2;
+    maintainers = gnome3.maintainers;
     platforms = platforms.linux;
   };
 }
