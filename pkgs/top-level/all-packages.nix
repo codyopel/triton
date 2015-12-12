@@ -8298,7 +8298,13 @@ let
     enableDocumentation = true;
   };
 
-  webkitgtk_2_4 = callPackage ../development/libraries/webkitgtk/2.4.x.nix { };
+  webkitgtk_2_4_gtk2 = callPackage ../development/libraries/webkitgtk/2.4.x.nix {
+    gtkVer = "2";
+  };
+  webkitgtk_2_4_gtk3 = callPackage ../development/libraries/webkitgtk/2.4.x.nix {
+    gtkVer = "3";
+  };
+  webkitgtk_2_4 = webkitgtk_2_4_gtk3;
   webkitgtk = callPackage ../development/libraries/webkitgtk { };
 
   websocketpp = callPackage ../development/libraries/websocket++ { };

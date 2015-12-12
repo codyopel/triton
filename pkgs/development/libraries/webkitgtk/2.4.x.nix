@@ -38,6 +38,8 @@
 , wayland
 , xorg
 , zlib
+
+, gtkVer ? "3"
 }:
 
 with {
@@ -46,7 +48,7 @@ with {
     wtFlag;
 };
 
-assert gtk3 != null;
+assert (gtkVer == "2" || gtkVer == "3");
 
 stdenv.mkDerivation rec {
   name = "webkitgtk-2.4.9";
@@ -105,7 +107,7 @@ stdenv.mkDerivation rec {
     "--enable-glibtest"
     "--enable-schemas-compile"
     "--disable-maintainer-mode"
-    "--with-gtk=2.0"
+    "--with-gtk=${gtkVer}.0"
   ];
 
   nativeBuildInputs = [
