@@ -24,10 +24,14 @@ with lib;
 
   };
 
-  config = mkIf config.hardware.cpu.intel.updateMicrocode {
-    boot.initrd.prepend = [ "${pkgs.microcodeIntel}/intel-ucode.img" ];
-  } // mkIf config.hardware.cpu.amd.updateMicrocode {
-    boot.initrd.prepend = [ "${pkgs.microcodeAmd}/amd-ucode.img" ];
-  };
+  config = mkMerge [
+    (mkIf config.hardware.cpu.intel.updateMicrocode {
+         boot.initrd.prepend = [ "${pkgs.microcodeIntel}/intel-ucode.img" ];
+    })
+
+    (mkIf config.hardware.cpu.amd.updateMicrocode {
+        boot.initrd.prepend = [ "${pkgs.microcodeAmd}/amd-ucode.img" ];
+    })
+  ];
 
 }
