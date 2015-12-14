@@ -5532,12 +5532,11 @@ let
 
   django_pipeline = buildPythonPackage rec {
     name = "django-pipeline-${version}";
-    version = "1.5.1";
+    version = "1.5.4";
 
     src = pkgs.fetchurl {
       url = "http://pypi.python.org/packages/source/d/django-pipeline/${name}.tar.gz";
-      md5 = "dff8a4abb2895ee5df335c3fb2775a02";
-      sha256 = "1y49fa8jj7x9qjj5wzhns3zxwj0s73sggvkrv660cqw5qb7d8hha";
+      sha256 = "15p5cn826pkccllk417b9a958pn6wzm7h2g3khsv4dzg2n3fh4f7";
     };
 
     propagatedBuildInputs = with self; [ django futures ];
