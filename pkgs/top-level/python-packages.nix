@@ -5458,11 +5458,11 @@ let
 
   djangorestframework = buildPythonPackage rec {
     name = "djangorestframework-${version}";
-    version = "3.2.3";
+    version = "3.3.2";
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/d/djangorestframework/${name}.tar.gz";
-      sha256 = "06kp4hg3y4bqy2ixlb1q6bw81gwgsb86l4lanbav7bp1grrbbnj1";
+      sha256 = "1gq1zwp7b5q62x9a7p8sxk57hvj9p7ws8a1750iq6kw0ay542qj9";
     };
 
     propagatedBuildInputs = with self; [ django ];
