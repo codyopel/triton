@@ -5495,12 +5495,12 @@ let
 
   django_taggit = buildPythonPackage rec {
     name = "django-taggit-${version}";
-    version = "0.17.0";
+    version = "0.17.6";
     disabled = pythonOlder "2.7";
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/d/django-taggit/django-taggit-${version}.tar.gz";
-      sha256 = "1xy4mm1y6z6bpakw907859wz7fiw7jfm586dj89w0ggdqlb0767b";
+      sha256 = "0hk3hd56afgywsks4gppfh96q9nxpvrqk5np465psc00abvgvd06";
     };
 
     meta = {
