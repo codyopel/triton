@@ -5477,16 +5477,14 @@ let
 
   django_reversion = buildPythonPackage rec {
     name = "django-reversion-${version}";
-    version = "1.8.5";
+    version = "1.10.0";
 
     src = pkgs.fetchurl {
       url = "http://pypi.python.org/packages/source/d/django-reversion/${name}.tar.gz";
-      md5 = "2de5a3fe82aaf505c134570f96fcc7a8";
-      sha256 = "0z8fxvxgbxfnalr5br74rsw6g42nry2q656rx7rsgmicd8n42v2r";
+      sha256 = "15c32rsi4v30p1mk7qf0h7ih1mvr52zsgxf9srdi7wmpid1nmpx7";
     };
 
-    propagatedBuildInputs = with self; [ django_1_7 ] ++
-      (optionals (pythonOlder "2.7") [ importlib ordereddict ]);
+    propagatedBuildInputs = with self; [ django ];
 
     meta = {
       description = "An extension to the Django web framework that provides comprehensive version control facilities";
