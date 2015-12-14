@@ -25,7 +25,7 @@
 , serd
 , sord
 , sratom
-, webkitgtk_2_4
+, webkitgtk_2_4_gtk2
 , zita-convolver
 , zita-resampler
 , optimizationSupport ? false # Enable support for native CPU extensions
@@ -76,7 +76,7 @@ stdenv.mkDerivation rec {
     serd
     sord
     sratom
-    webkitgtk_2_4
+    webkitgtk_2_4_gtk2
     zita-convolver
     zita-resampler
   ];
