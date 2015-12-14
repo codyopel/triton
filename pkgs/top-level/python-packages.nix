@@ -5310,12 +5310,12 @@ let
 
   django_1_8 = buildPythonPackage rec {
     name = "Django-${version}";
-    version = "1.8.4";
+    version = "1.8.7";
     disabled = pythonOlder "2.7";
 
     src = pkgs.fetchurl {
       url = "http://www.djangoproject.com/m/releases/1.8/${name}.tar.gz";
-      sha256 = "1n3hb80v7wl5j2mry5pfald6i9z42a9c3m9405877iqw3v49csc2";
+      sha256 = "08s5gdp7sncqp4vnkh0dvkfmmd2v2jdn0mywqf0yxdarrzjnv9hp";
     };
 
     # error: invalid command 'test'
