@@ -5308,8 +5308,6 @@ let
     };
   };
 
-  django = self.django_1_7;
-
   django_1_8 = buildPythonPackage rec {
     name = "Django-${version}";
     version = "1.8.4";
@@ -5333,16 +5331,14 @@ let
       homepage = https://www.djangoproject.com/;
     };
   };
-
-
-  django_1_7 = buildPythonPackage rec {
+  django_1_9 = buildPythonPackage rec {
     name = "Django-${version}";
-    version = "1.7.10";
+    version = "1.9";
     disabled = pythonOlder "2.7";
 
     src = pkgs.fetchurl {
-      url = "http://www.djangoproject.com/m/releases/1.7/${name}.tar.gz";
-      sha256 = "0xbwg6nyvwcbp2hvk0x3s5y823k5kizn0za1bl2rf6g6xcn7sddr";
+      url = "http://www.djangoproject.com/m/releases/1.9/${name}.tar.gz";
+      sha256 = "0rkwdxh63y7pwx9larl2g7m1z206675dzx7ipd44p3bpm0clpzh5";
     };
 
     # error: invalid command 'test'
@@ -5358,97 +5354,7 @@ let
       homepage = https://www.djangoproject.com/;
     };
   };
-
-  django_1_6 = buildPythonPackage rec {
-    name = "Django-${version}";
-    version = "1.6.11";
-
-    src = pkgs.fetchurl {
-      url = "http://www.djangoproject.com/m/releases/1.6/${name}.tar.gz";
-      sha256 = "0misvia78c14y07zs5xsb9lv54q0v217jpaindrmhhw4wiryal3y";
-    };
-
-    # error: invalid command 'test'
-    doCheck = false;
-
-    # patch only $out/bin to avoid problems with starter templates (see #3134)
-    postFixup = ''
-      wrapPythonProgramsIn $out/bin "$out $pythonPath"
-    '';
-
-    meta = {
-      description = "A high-level Python Web framework";
-      homepage = https://www.djangoproject.com/;
-    };
-  };
-
-  django_1_5 = buildPythonPackage rec {
-    name = "Django-${version}";
-    version = "1.5.12";
-
-    src = pkgs.fetchurl {
-      url = "http://www.djangoproject.com/m/releases/1.5/${name}.tar.gz";
-      sha256 = "1vbcvn6ncg7hq5i1w95h746vkq9lmp120vx63h3p56z5nsz7gpmk";
-    };
-
-    # error: invalid command 'test'
-    doCheck = false;
-
-    # patch only $out/bin to avoid problems with starter templates (see #3134)
-    postFixup = ''
-      wrapPythonProgramsIn $out/bin "$out $pythonPath"
-    '';
-
-    meta = {
-      description = "A high-level Python Web framework";
-      homepage = https://www.djangoproject.com/;
-    };
-  };
-
-  django_1_4 = buildPythonPackage rec {
-    name = "Django-${version}";
-    version = "1.4.22";
-
-    src = pkgs.fetchurl {
-      url = "http://www.djangoproject.com/m/releases/1.4/${name}.tar.gz";
-      sha256 = "110p1mgdcf87kyr64mr2jgmyapyg27kha74yq3wjrazwfbbwkqnh";
-    };
-
-    # error: invalid command 'test'
-    doCheck = false;
-
-    # patch only $out/bin to avoid problems with starter templates (see #3134)
-    postFixup = ''
-      wrapPythonProgramsIn $out/bin "$out $pythonPath"
-    '';
-
-    meta = {
-      description = "A high-level Python Web framework";
-      homepage = https://www.djangoproject.com/;
-    };
-  };
-
-  django_1_3 = buildPythonPackage rec {
-    name = "Django-1.3.7";
-
-    src = pkgs.fetchurl {
-      url = "http://www.djangoproject.com/m/releases/1.3/${name}.tar.gz";
-      sha256 = "12pv8y2x3fhrcrjayfm6z40r57iwchfi5r19ajs8q8z78i3z8l7f";
-    };
-
-    # error: invalid command 'test'
-    doCheck = false;
-
-    # patch only $out/bin to avoid problems with starter templates (see #3134)
-    postFixup = ''
-      wrapPythonProgramsIn $out/bin "$out $pythonPath"
-    '';
-
-    meta = {
-      description = "A high-level Python Web framework";
-      homepage = https://www.djangoproject.com/;
-    };
-  };
+  django = self.django_1_9;
 
   django_appconf = buildPythonPackage rec {
     name = "django-appconf-${version}";
