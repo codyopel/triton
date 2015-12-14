@@ -5395,17 +5395,20 @@ let
   };
 
   django_tagging = buildPythonPackage rec {
-    name = "django-tagging-0.3.1";
+    name = "django-tagging-2015-11-24";
 
-    src = pkgs.fetchurl {
-      url = "http://pypi.python.org/packages/source/d/django-tagging/${name}.tar.gz";
-      md5 = "a0855f2b044db15f3f8a025fa1016ddf";
+    src = pkgs.fetchFromGitHub {
+      owner = "Fantomas42";
+      repo = "django-tagging";
+      rev = "6246a1f270031908fe66cacbf1fb7a377021c4fc";
+      sha256 = "0835acgpvi5gax76ryv4hrv96j6bha0z8j1jbyq4bpfl1q8nap1i";
     };
 
     # error: invalid command 'test'
     doCheck = false;
+    disabled = isPy3k;
 
-    propagatedBuildInputs = with self; [ django_1_3 ];
+    propagatedBuildInputs = with self; [ django ];
 
     meta = {
       description = "A generic tagging application for Django projects";
