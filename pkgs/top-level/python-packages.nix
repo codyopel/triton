@@ -7993,7 +7993,7 @@ let
 
 
   matplotlib = callPackage ../development/python-modules/matplotlib/default.nix {
-    stdenv = if stdenv.isDarwin then pkgs.clangStdenv else pkgs.stdenv;
+    stdenv = if stdenv.cc.isClang then pkgs.clangStdenv else pkgs.stdenv;
     enableGhostscript = true;
   };
 
