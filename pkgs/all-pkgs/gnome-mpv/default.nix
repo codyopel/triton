@@ -12,6 +12,7 @@
 , gnome3
 , gtk3
 , epoxy
+, librsvg
 , mpv
 , wayland
 , xorg
@@ -60,16 +61,12 @@ stdenv.mkDerivation rec {
     glib
     gtk3
     epoxy
+    librsvg
     mpv
     wayland
     xorg.libX11
     youtube-dl
   ];
-
-  preFixup = ''
-    wrapProgram $out/bin/gnome-mpv \
-      --suffix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH"
-  '';
 
   meta = with stdenv.lib; {
     description = "A simple GTK+ frontend for mpv";
