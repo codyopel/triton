@@ -5394,24 +5394,6 @@ let
     };
   };
 
-  django_evolution = buildPythonPackage rec {
-    name = "django_evolution-0.6.9";
-    disabled = isPy3k;
-
-    src = pkgs.fetchurl {
-      url = "http://downloads.reviewboard.org/releases/django-evolution/${name}.tar.gz";
-      md5 = "c0d7d10bc41898c88b14d434c48766ff";
-    };
-
-    propagatedBuildInputs = with self; [ django_1_5 ];
-
-    meta = {
-      description = "A database schema evolution tool for the Django web framework";
-      homepage = http://code.google.com/p/django-evolution/;
-    };
-  };
-
-
   django_tagging = buildPythonPackage rec {
     name = "django-tagging-0.3.1";
 
