@@ -5419,18 +5419,16 @@ let
 
   django_classytags = buildPythonPackage rec {
     name = "django-classy-tags-${version}";
-    version = "0.6.1";
+    version = "0.7.0";
 
     src = pkgs.fetchurl {
       url = "http://pypi.python.org/packages/source/d/django-classy-tags/${name}.tar.gz";
-      md5 = "eb686aa767ad8cf88c1fa0f400a42516";
-      sha256 = "0wxvpmjdzk0aajk33y4himn3wqjx7k0aqlka9j8ay3yfav78bdq0";
+      sha256 = "1fjkcq51pgm6r30js8rgqmnd46svmhgh61azirv5m6d6rvc0jnz5";
     };
 
-    propagatedBuildInputs = with self; [ django_1_7 ];
+    propagatedBuildInputs = with self; [ django ];
 
-    # tests appear to be broken on 0.6.1 at least
-    doCheck = ( version != "0.6.1" );
+    doCheck = false;
 
     meta = {
       description = "Class based template tags for Django";
