@@ -5548,24 +5548,6 @@ let
     };
   };
 
-
-  djblets = buildPythonPackage rec {
-    name = "Djblets-0.6.28";
-
-    src = pkgs.fetchurl {
-      url = "http://downloads.reviewboard.org/releases/Djblets/0.6/${name}.tar.gz";
-      sha256 = "11fsi911cqkjgv9j7646ljc2fgxsdfyq44kzmv01xhysm50fn6xx";
-    };
-
-    propagatedBuildInputs = with self; [ pil django_1_3 feedparser ];
-
-    meta = {
-      description = "A collection of useful extensions for Django";
-      homepage = https://github.com/djblets/djblets;
-    };
-  };
-
-
   dulwich = buildPythonPackage rec {
     name = "dulwich-${version}";
     version = "0.10.1a";
