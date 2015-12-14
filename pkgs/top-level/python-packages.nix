@@ -5439,11 +5439,11 @@ let
 
   django_modelcluster = buildPythonPackage rec {
     name = "django-modelcluster-${version}";
-    version = "0.6.2";
+    version = "1.1b1";
 
     src = pkgs.fetchurl {
-      url = "https://pypi.python.org/packages/source/d/django-modelcluster/django-modelcluster-${version}.tar.gz";
-      sha256 = "1plsdi44dvsj2sfx79lsrccjfg0ymajcsf5n0mln4cwd4qi5mwpx";
+      url = "https://pypi.python.org/packages/source/d/django-modelcluster/${name}.tar.gz";
+      sha256 = "023ijq0d7s5jaaqw78pwadhzgsyh09a1ix70xhp66c43amv44ql6";
     };
 
     propagatedBuildInputs = with self; [ pytz six ];
