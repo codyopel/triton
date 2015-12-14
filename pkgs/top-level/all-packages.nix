@@ -10949,8 +10949,6 @@ let
 
   emacs24-nox = lowPrio (appendToName "nox" (emacs24.override {
     withX = false;
-    withGTK2 = false;
-    withGTK3 = false;
   }));
 
   emacsPackagesGen = emacs: self: let callPackage = newScope self; in rec {
