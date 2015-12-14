@@ -12737,23 +12737,6 @@ let
     };
   };
 
-
-  reviewboard = buildPythonPackage rec {
-    name = "ReviewBoard-1.6.16";
-
-    src = pkgs.fetchurl {
-      url = "http://downloads.reviewboard.org/releases/ReviewBoard/1.6/${name}.tar.gz";
-      sha256 = "0vg3ypm57m43bscv8vswjdllv3d2j8lxqwwvpd65cl7jd1in0yr1";
-    };
-
-    propagatedBuildInputs = with self;
-      [ django_1_3 recaptcha_client pytz memcached dateutil_1_5 paramiko flup pygments
-        djblets django_evolution pycrypto modules.sqlite3
-        pysvn pil psycopg2
-      ];
-  };
-
-
   rdflib = buildPythonPackage (rec {
     name = "rdflib-4.1.2";
 
