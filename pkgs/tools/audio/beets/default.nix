@@ -1,4 +1,6 @@
 { stdenv, fetchFromGitHub
+, makeWrapper
+
 , writeScript
 , glibcLocales
 , buildPythonPackage
@@ -7,7 +9,12 @@
 , imagemagick
 
 , enableAcoustid   ? true
-, enableBadfiles   ? true, flac ? null, mp3val ? null
+, enableBadfiles   ? true
+  , flac ? null
+  , mp3val ? null
+, enableBpd        ? false
+  , gst_python ? null
+  , gst_plugins_base ? null
 , enableDiscogs    ? true
 , enableEchonest   ? true
 , enableFetchart   ? true
@@ -29,11 +36,14 @@ with {
     filterAttrs
     id
     optional
+    optionals
     optionalString;
 };
 
 assert enableAcoustid    -> pythonPackages.pyacoustid     != null;
 assert enableBadfiles    -> flac != null && mp3val != null;
+assert enableBpd         -> pythonPackages.pygobject_2    != null &&
+                            gst_python != null && gst_plugins_base != null;
 assert enableDiscogs     -> pythonPackages.discogs_client != null;
 assert enableEchonest    -> pythonPackages.pyechonest     != null;
 assert enableFetchart    -> pythonPackages.responses      != null;
@@ -46,6 +56,7 @@ assert enableWeb         -> pythonPackages.flask          != null;
 let
   optionalPlugins = {
     badfiles = enableBadfiles;
+    bpd = enableBpd;
     chroma = enableAcoustid;
     discogs = enableDiscogs;
     echonest = enableEchonest;
@@ -60,9 +71,7 @@ let
   };
 
   pluginsWithoutDeps = [
-    "badfiles"
     "bench"
-    "bpd"
     "bpm"
     "bucket"
     "convert"
@@ -135,7 +144,14 @@ in buildPythonPackage rec {
       s,"flac","${flac}/bin/flac",
       s,"mp3val","${mp3val}/bin/mp3val",
     }' beetsplug/badfiles.py
-   '';
+  '' + optionalString enableBpd ''
+    # Hack to allow newer clients to try to connect
+    sed -e '/PROTOCOL_VERSION/ s/0.13.0/0.19.0/' -i beetsplug/bpd/__init__.py
+  '';
+
+  nativeBuildInputs = [
+    makeWrapper
+  ];
 
   propagatedBuildInputs = [
     pythonPackages.enum34
@@ -156,7 +172,11 @@ in buildPythonPackage rec {
     ++ optional enableMpd        pythonPackages.mpd
     ++ optional enableReplaygain pythonPackages.audiotools
     ++ optional enableThumbnails pythonPackages.pyxdg
-    ++ optional enableWeb        pythonPackages.flask;
+    ++ optional enableWeb        pythonPackages.flask
+    ++ optionals enableBpd [
+      gst_python
+      pythonPackages.pygobject_2
+    ];
 
   buildInputs = with pythonPackages; [
     beautifulsoup4
@@ -165,7 +185,12 @@ in buildPythonPackage rec {
     nose
     rarfile
     responses
-  ];
+  ] ++ optional enableBpd gst_plugins_base;
+
+  preFixup = optionalString enableBpd ''
+    wrapProgram $out/bin/beet \
+      --prefix GST_PLUGIN_PATH : "${stdenv.lib.makeSearchPath "lib/gstreamer-0.10" [ gst_plugins_base ]}"
+  '';
 
   doCheck = true;
 
