@@ -46,7 +46,7 @@ assert enableBpd         -> pythonPackages.pygobject_2    != null &&
                             gst_python != null && gst_plugins_base != null;
 assert enableDiscogs     -> pythonPackages.discogs_client != null;
 assert enableEchonest    -> pythonPackages.pyechonest     != null;
-assert enableFetchart    -> pythonPackages.responses      != null;
+assert enableFetchart    -> pythonPackages.requests2      != null;
 assert enableLastfm      -> pythonPackages.pylast         != null;
 assert enableMpd         -> pythonPackages.mpd            != null;
 assert enableReplaygain  -> pythonPackages.audiotools     != null;
@@ -77,7 +77,9 @@ let
     "convert"
     "cue"
     "duplicates"
+    "edit" #
     "embedart"
+    "embyupdate" #
     "filefilter"
     "freedesktop"
     "fromfilename"
@@ -118,14 +120,17 @@ let
 
 in buildPythonPackage rec {
   name = "beets-${version}";
-  version = "1.3.15";
+  #version = "1.3.15";
+  version = "2015-12-12";
   namePrefix = "";
 
   src = fetchFromGitHub {
     owner = "sampsyo";
     repo = "beets";
-    rev = "v${version}";
-    sha256 = "17mbkilqqkxxa8ra8b4zlsax712jb0nfkvcx9iyq9303rqwv5sx2";
+    #rev = "v${version}";
+    rev = "7749cba00e1968bbf1b80c8ffc2b87e1798e86e2";
+    #sha256 = "17mbkilqqkxxa8ra8b4zlsax712jb0nfkvcx9iyq9303rqwv5sx2";
+    sha256 = "1fx91cds37qny6x5ss2fdmm9ja94ndc96ycyk1vypngr0p0yipyy";
   };
 
   patches = [
@@ -187,10 +192,10 @@ in buildPythonPackage rec {
     responses
   ] ++ optional enableBpd gst_plugins_base;
 
-  preFixup = optionalString enableBpd ''
-    wrapProgram $out/bin/beet \
-      --prefix GST_PLUGIN_PATH : "${stdenv.lib.makeSearchPath "lib/gstreamer-0.10" [ gst_plugins_base ]}"
-  '';
+  makeWrapperArgs = optionals enableBpd [
+    "--prefix GST_PLUGIN_PATH : ${
+      stdenv.lib.makeSearchPath "lib/gstreamer-0.10" [ gst_plugins_base ]}"
+  ];
 
   doCheck = true;
 
