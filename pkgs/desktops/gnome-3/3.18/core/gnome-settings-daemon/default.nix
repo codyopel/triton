@@ -86,7 +86,7 @@ stdenv.mkDerivation rec {
   ];
 
   preFixup = ''
-    gtk3WrapperArgs+=("--prefix PATH : ${glib}/bin")
+    gtk3AppsWrapperArgs+=("--prefix PATH : ${glib}/bin")
   '';
 
   enableParallelBuilding = true;
