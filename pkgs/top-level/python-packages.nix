@@ -1227,11 +1227,11 @@ let
   };
 
   responses = self.buildPythonPackage rec {
-    name = "responses-0.4.0";
+    name = "responses-0.5.0";
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/r/responses/${name}.tar.gz";
-      sha256 = "0fs7a4cf4f12mjhcjd5vfh0f3ixcy2nawzxpgsfr3ahf0rg7ppx5";
+      sha256 = "1kqipsi4glis9q92qml0y3jgcp191kwkk7y519gznhpvxrhcaxjc";
     };
 
     propagatedBuildInputs = with self; [ cookies mock requests2 six ];
