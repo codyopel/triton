@@ -10,12 +10,12 @@
 }:
 
 stdenv.mkDerivation rec {
-  name = "tinc-1.1pre-2015-09-25";
+  name = "tinc-1.1pre-2015-11-26";
 
   src = fetchgit {
     url = "git://tinc-vpn.org/tinc";
-    rev = "73068238436d8a22abb86e67b08f573b09fd04e1";
-    sha256 = "1j8bvvzvciy21s24jdpi089svy7wipg9pm84s98xjlp2plchj5dj";
+    rev = "cef40b8b978694fc0e7c02e292fcbb60806bf028";
+    sha256 = "0xs0pps8n380d42x1qjv3j6yfxqxmxzcppz1c1s7a8lmi3cy161n";
   };
 
   configureFlags = [
