@@ -10634,7 +10634,7 @@ let
       md5 = "b27c714d530300b917eb869726334226";
     };
 
-    propagatedBuildInputs = with self; [ requests audioread ];
+    propagatedBuildInputs = with self; [ requests2 audioread ];
 
     patches = [ ../development/python-modules/pyacoustid-py3.patch ];
 
