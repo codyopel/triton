@@ -23,7 +23,7 @@ let
     glib # for gsettings
     gtk3 # for gtk-update-icon-cache
     glib_networking
-    gvfs dconf
+    dconf
     gnome-backgrounds
     gnome_control_center
     gnome-menus
@@ -183,8 +183,6 @@ let
   gtksourceview = callPackage ./core/gtksourceview { };
 
   gucharmap = callPackage ./core/gucharmap { };
-
-  gvfs = pkgs.gvfs.override { gnome = gnome3; gnomeSupport = true; };
 
   eog = callPackage ./core/eog { };
 

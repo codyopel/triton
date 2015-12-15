@@ -4,9 +4,6 @@
 
 with lib;
 
-let
-  gnome3 = config.environment.gnome3.packageSet;
-in
 {
 
   ###### interface
@@ -33,9 +30,9 @@ in
 
   config = mkIf config.services.gnome3.gvfs.enable {
 
-    environment.systemPackages = [ gnome3.gvfs ];
+    environment.systemPackages = [ pkgs.gvfs ];
 
-    services.dbus.packages = [ gnome3.gvfs ];
+    services.dbus.packages = [ pkgs.gvfs ];
 
     services.udev.packages = [ pkgs.libmtp ];
 
