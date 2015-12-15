@@ -3034,14 +3034,14 @@ let
   };
 
   discogs_client = buildPythonPackage rec {
-    name = "discogs-client-2.0.2";
+    name = "discogs-client-2.2.0";
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/d/discogs-client/${name}.tar.gz";
-      md5 = "2cc57e1d134aa93404e779b9311676fa";
+      sha256 = "1kjm4zyxlkv8cjyd4zl0yslbkmfz4ga9nm3d2glpw3nmvmvajn40";
     };
 
-    propagatedBuildInputs = with self; [ oauth2 requests ];
+    propagatedBuildInputs = with self; [ oauthlib requests2 six ];
 
     meta = {
       description = "Official Python API client for Discogs";
