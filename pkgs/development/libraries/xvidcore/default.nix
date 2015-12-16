@@ -1,47 +1,49 @@
-{ stdenv, fetchurl, yasm, autoconf, automake, libtool }:
+{ stdenv, fetchurl
+, yasm
+}:
 
-with stdenv.lib;
 stdenv.mkDerivation rec {
-  name = "xvidcore-${version}";
-  version = "1.3.3";
+  name = "xvidcore-1.3.4";
   
   src = fetchurl {
     url = "http://downloads.xvid.org/downloads/${name}.tar.bz2";
-    sha256 = "0m5g75qvapr7xpywg6a83v5x19kw1nm9l2q48lg7jvvpba0bmqdh";
+    sha256 = "1xwbmp9wqshc0ckm970zdpi0yvgqxlqg0s8bkz98mnr8p2067bsz";
   };
 
-  preConfigure = ''
-    # Configure script is not in the root of the source directory
-    cd build/generic
-  '' + optionalString stdenv.isDarwin ''
-    # Undocumented darwin hack
-    substituteInPlace configure --replace "-no-cpp-precomp" ""
+  # configure/Makefile are not in the root of the source directory
+  postUnpack = ''
+    sourceRoot="$sourceRoot/build/generic"
   '';
 
-  configureFlags = [ ]
-    # Undocumented darwin hack (assembly is probably disabled due to an
-    # issue with nasm, however yasm is now used)
-    ++ optional stdenv.isDarwin "--enable-macosx_module --disable-assembly";
+  configureFlags = [
+    "--disable-idebug"
+    "--disable-iprofile"
+    "--disable-gnuprofile"
+    "--enable-assembly"
+    "--enable-pthread"
+    "--disable-macosx_module"
+  ];
 
-  nativeBuildInputs = [ ]
-    ++ optional (!stdenv.isDarwin) yasm;
+  nativeBuildInputs = [
+    yasm
+  ];
 
-  buildInputs = [ ]
-    # Undocumented darwin hack
-    ++ optionals stdenv.isDarwin [ autoconf automake libtool ];
-
-  # Don't remove static libraries (e.g. 'libs/*.a') on darwin.  They're needed to
-  # compile ffmpeg (and perhaps other things).
-  postInstall = optionalString (!stdenv.isDarwin) ''
+  # Remove static libraries
+  postInstall = ''
     rm $out/lib/*.a
   '';
   
-  meta = {
-    description = "MPEG-4 video codec for PC";
-    homepage    = https://www.xvid.com/;
-    license     = licenses.gpl2;
-    maintainers = with maintainers; [ codyopel lovek323 ];
-    platforms   = platforms.all;
+  meta = with stdenv.lib; {
+    description = "MPEG-4 video codec";
+    homepage = https://www.xvid.com/;
+    license = licenses.gpl2;
+    maintainers = with maintainers;  [
+      codyopel
+    ];
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
 
