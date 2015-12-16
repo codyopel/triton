@@ -39,11 +39,11 @@ assert (
 
 stdenv.mkDerivation rec {
   name = "poppler-${suffix}-${version}";
-  version = "0.37.0";
+  version = "0.38.0";
 
   src = fetchurl {
     url = "${meta.homepage}/poppler-${version}.tar.xz";
-    sha256 = "1vjvd0md8y37hlq3lsj0l01a3v3mzm572rzpn1311frvmrg9r7xq";
+    sha256 = "12wa9r2nxb2ajj4wvj9mbldr1k0rgx714j33zq67qv9lr14hs33g";
   };
 
   patches = [
