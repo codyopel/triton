@@ -78,8 +78,6 @@ let overridden = set // overrides; set = with overridden; {
 
   libgweather = callPackage ./desktop/libgweather { };
 
-  gvfs = gvfs.override { gnome = self; };
-
   libgnomekbd = callPackage ./desktop/libgnomekbd { };
 
   # Removed from recent GNOME releases, but still required
