@@ -7346,10 +7346,10 @@ let
 
   libuv = libuvVersions.v1_7_5;
 
-  libv4l = lowPrio (v4l_utils.override {
+  libv4l = lowPrio (v4l-utils.override {
+    config = "lib";
     alsaLib = null;
-    libX11 = null;
-    qt4 = null;
+    xorg = null;
     qt5 = null;
   });
 
@@ -10140,8 +10140,8 @@ let
     inherit ncurses perl;
   });
 
-  v4l_utils = callPackage ../os-specific/linux/v4l-utils {
-    qt5 = null;
+  v4l-utils = callPackage ../os-specific/linux/v4l-utils {
+    config = "utils";
   };
 
   windows = rec {
