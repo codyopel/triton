@@ -8,12 +8,12 @@
 stdenv.mkDerivation rec {
   name = "atkmm-${version}";
   versionMajor = "2.24";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/atkmm/${versionMajor}/${name}.tar.xz";
-    sha256 = "08zd6s5c1q90wm8310mdrb5f2lj8v63wxihrybwyw13xlf6ivi16";
+    sha256 = "1gaqwhviadsmy0fsr47686yglv1p4mpkamj0in127bz2b5bki5gz";
   };
 
   NIX_CFLAGS_COMPILE = [
