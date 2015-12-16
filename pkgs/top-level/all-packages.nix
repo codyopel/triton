@@ -2111,9 +2111,7 @@ let
 
   ninka = callPackage ../development/tools/misc/ninka { };
 
-  nodejs-4_1 = callPackage ../development/web/nodejs/v4_1_0.nix {
-    libuv = libuvVersions.v1_7_5;
-  };
+  nodejs-4_1 = callPackage ../development/web/nodejs/v4_1_0.nix { };
 
   nodejs-0_10 = callPackage ../development/web/nodejs/v0_10.nix { };
 
@@ -7344,7 +7342,7 @@ let
     automake = automake113x; # fails with 14
   });
 
-  libuv = libuvVersions.v1_7_5;
+  libuv = libuvVersions.v1_8_0;
 
   libv4l = lowPrio (v4l-utils.override {
     config = "lib";
