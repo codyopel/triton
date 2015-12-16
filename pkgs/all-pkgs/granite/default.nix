@@ -17,8 +17,9 @@ stdenv.mkDerivation rec {
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
-    url = "https://code.launchpad.net/granite/${versionMajor}/${version}/+download/${name}.tar.xz";
-    sha256 = "1laa109dz7kbd8zxddqw2p1b67yzva7cc5h3smqkj8a9jzbhv5fz";
+    url = "https://code.launchpad.net/granite/${versionMajor}/${version}/" +
+           "+download/${name}.tar.xz";
+    sha256 = "1inyq9qhayzg1kl7nc6i275k9yqdicl23rs5lyrz2xdsk8gxdhcf";
   };
 
   cmakeFlags = [
