@@ -544,10 +544,7 @@ let
 
   mkvtoolnix = callPackage ../all-pkgs/mkvtoolnix { };
   mkvtoolnix-cli = mkvtoolnix.override {
-    withGUI = false;
     qt5 = null;
-    legacyGUI = false;
-    wxGTK = null;
   };
 
   mp3val = callPackage ../all-pkgs/mp3val { };

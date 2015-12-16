@@ -15,28 +15,24 @@
 , xdg_utils
 , zlib
 # Optionals
-, withGUI ? false, qt5 ? null # Disabled for now until upstream issues are resolved
-, legacyGUI ? true, wxGTK ? null
-# For now the wxwidgets gui must be enabled, if wxwidgets is disabled
-# the build system doesn't install desktop entries, icons, etc...
+, qt5
 }:
 
 with {
   inherit (stdenv.lib)
-    enableFeature
-    optional;
+    enFlag
+    optionals;
 };
 
-assert withGUI -> qt5 != null;
-assert legacyGUI -> wxGTK != null;
+assert qt5 != null -> qt5.base != null;
 
 stdenv.mkDerivation rec {
   name = "mkvtoolnix-${version}";
-  version = "8.5.1";
+  version = "8.6.1";
 
   src = fetchurl {
     url = "http://www.bunkus.org/videotools/mkvtoolnix/sources/${name}.tar.xz";
-    sha256 = "0hsvvlgsxbxm2cwqwadxbl83rr7l9n6ps4y0j30zlsi3xx8y36nv";
+    sha256 = "0xzsr39rq291p1ccybivw19ss7bgf7lcwhvmjlfg0fm8nraq6pc1";
   };
 
   patchPhase = ''
@@ -49,18 +45,15 @@ stdenv.mkDerivation rec {
   '';
 
   configureFlags = [
-    "--with-boost-libdir=${boost.lib}/lib"
+    "--with-flac"
+    # Curl is only used to check for updates
     "--without-curl"
-  ] ++ (
-    if (withGUI || legacyGUI) then [
-      "--with-mkvtoolnix-gui"
-      "--enable-gui"
-      (enableFeature withGUI "qt")
-      (enableFeature legacyGUI "wxwidgets")
-    ] else [
-      "--disable-gui"
-    ]
-  );
+    "--with-boost-libdir=${boost.lib}/lib"
+    "--with-gettext"
+    "--without-tools"
+    (enFlag "qt" (qt5 != null) null)
+    "--disable-static-qt"
+  ];
 
   nativeBuildInputs = [
     gettext
@@ -79,8 +72,9 @@ stdenv.mkDerivation rec {
     libvorbis
     xdg_utils
     zlib
-  ] ++ optional withGUI qt5
-    ++ optional legacyGUI wxGTK;
+  ] ++ optionals (qt5 != null) [
+    qt5.base
+  ];
 
   buildPhase = ''
     ./drake
@@ -96,7 +90,12 @@ stdenv.mkDerivation rec {
     description = "Cross-platform tools for Matroska";
     homepage = http://www.bunkus.org/videotools/mkvtoolnix/;
     license = licenses.gpl2;
-    maintainers = with maintainers; [ codyopel ];
-    platforms = platforms.linux;
+    maintainers = with maintainers; [
+      codyopel
+    ];
+    platforms = [
+      "i686-linux"
+      "x86_64-linux"
+    ];
   };
 }
