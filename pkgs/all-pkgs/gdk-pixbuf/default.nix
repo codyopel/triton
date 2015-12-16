@@ -17,12 +17,12 @@
 stdenv.mkDerivation rec {
   name = "gdk-pixbuf-${version}";
   versionMajor = "2.32";
-  versionMinor = "2";
+  versionMinor = "3";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gdk-pixbuf/${versionMajor}/${name}.tar.xz";
-    sha256 = "0ib1jap60xkv74ndha06y8ziglpspp77fz62skzfy4rv2by0dayk";
+    sha256 = "0cfh87aqyqbfcwpbv1ihgmgfcn66il5q2n8yjyl8gxkjmkqp2rrb";
   };
 
   setupHook = ./setup-hook.sh;
