@@ -30,11 +30,11 @@ let
 in
 
 stdenv.mkDerivation rec {
-  name = "libmicrohttpd-0.9.44";
+  name = "libmicrohttpd-0.9.47";
 
   src = fetchurl {
     url = "mirror://gnu/libmicrohttpd/${name}.tar.gz";
-    sha256 = "07j1p21rvbrrfpxngk8xswzkmjkh94bp1971xfjh1p0ja709qwzj";
+    sha256 = "1335kznai5ih3kmavl1707sr4sakk0cc0srl5aax77x0a91spgcn";
   };
 
   configureFlags = [
