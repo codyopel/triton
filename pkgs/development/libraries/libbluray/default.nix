@@ -11,16 +11,13 @@
 , libxml2
 }:
 
-# Info on how to use:
-# https://wiki.archlinux.org/index.php/BluRay
-
 stdenv.mkDerivation rec {
   name = "libbluray-${version}";
-  version  = "0.9.1";
+  version  = "0.9.2";
 
   src = fetchurl {
-    url = "ftp://ftp.videolan.org/pub/videolan/libbluray/${version}/${name}.tar.bz2";
-    sha256 = "0h1r5z263cyr97bay89p1x4k6cbyv73gr7syv0rpp402b2jpyr6r";
+    url = "http://ftp.videolan.org/pub/videolan/libbluray/${version}/${name}.tar.bz2";
+    sha256 = "1sp71j4agcsg17g6b85cqz78pn5vknl5pl39rvr6mkib5ps99jgg";
   };
 
   patches = [
