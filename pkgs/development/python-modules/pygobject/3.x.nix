@@ -6,6 +6,7 @@
 , pycairo
 , cairo
 , bzip2
+, libffi
 }:
 
 stdenv.mkDerivation rec {
@@ -19,15 +20,19 @@ stdenv.mkDerivation rec {
     sha256 = "0prc3ky7g50ixmfxbc7zf43fw6in4hw2q07667hp8swi2wassg1a";
   };
 
+  nativeBuildInputs = [
+    pkgconfig
+  ];
+
   propagatedBuildInputs = [
     pycairo
     cairo
     gobjectIntrospection
+    libffi
   ];
 
   buildInputs = [
     python
-    pkgconfig
     glib
     bzip2
   ];
