@@ -560,6 +560,8 @@ let
 
   ncmpcpp = callPackage ../all-pkgs/ncmpcpp { };
 
+  noise = callPackage ../all-pkgs/noise { };
+
   pango = callPackage ../all-pkgs/pango { };
 
   pangomm = callPackage ../all-pkgs/pangomm { };
