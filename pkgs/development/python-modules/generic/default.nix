@@ -3,27 +3,31 @@
    (http://pypi.python.org/pypi/setuptools/), which represents a large
    number of Python packages nowadays.  */
 
-{ python, setuptools, unzip, wrapPython, lib, recursivePthLoader, distutils-cfg }:
+{ python, lib
+, setuptools
+, unzip
+, wrapPython
+, recursivePthLoader
+, distutils-cfg
+}:
 
-{ name
+{ name, buildInputs ? [ ]
 
 # by default prefix `name` e.g. "python3.3-${name}"
 , namePrefix ? python.libPrefix + "-"
-
-, buildInputs ? []
 
 # pass extra information to the distutils global configuration (think as global setup.cfg)
 , distutilsExtraCfg ? ""
 
 # propagate build dependencies so in case we have A -> B -> C,
 # C can import propagated packages by A
-, propagatedBuildInputs ? []
+, propagatedBuildInputs ? [ ]
 
 # passed to "python setup.py install"
-, setupPyInstallFlags ? []
+, setupPyInstallFlags ? [ ]
 
 # passed to "python setup.py build"
-, setupPyBuildFlags ? []
+, setupPyBuildFlags ? [ ]
 
 # enable tests by default
 , doCheck ? true
@@ -34,12 +38,12 @@
 # The difference is that `pythonPath' is not propagated to the user
 # environment.  This is preferrable for programs because it doesn't
 # pollute the user environment.
-, pythonPath ? []
+, pythonPath ? [ ]
 
 # used to disable derivation, useful for specific python versions
 , disabled ? false
 
-, meta ? {}
+, meta ? { }
 
 # Execute before shell hook
 , preShellHook ? ""
@@ -49,14 +53,15 @@
 
 # Additional arguments to pass to the makeWrapper function, which wraps
 # generated binaries.
-, makeWrapperArgs ? []
+, makeWrapperArgs ? [ ]
 
-, ... } @ attrs:
+, ...
+} @ attrs:
 
 
 # Keep extra attributes from `attrs`, e.g., `patchPhase', etc.
-if disabled
-then throw "${name} not supported for interpreter ${python.executable}"
+if disabled then
+  throw "${name} not supported for interpreter ${python.executable}"
 else
 
 python.stdenv.mkDerivation (attrs // {
@@ -67,11 +72,16 @@ python.stdenv.mkDerivation (attrs // {
   buildInputs = [
     wrapPython setuptools
     (distutils-cfg.override { extraCfg = distutilsExtraCfg; })
-  ] ++ buildInputs ++ pythonPath
+  ] ++ buildInputs
+    ++ pythonPath
     ++ (lib.optional (lib.hasSuffix "zip" attrs.src.name or "") unzip);
 
   # propagate python/setuptools to active setup-hook in nix-shell
-  propagatedBuildInputs = propagatedBuildInputs ++ [ recursivePthLoader python setuptools ];
+  propagatedBuildInputs = propagatedBuildInputs ++ [
+    recursivePthLoader
+    python
+    setuptools
+  ];
 
   pythonPath = pythonPath;
 
@@ -93,11 +103,11 @@ python.stdenv.mkDerivation (attrs // {
   '';
 
   checkPhase = attrs.checkPhase or ''
-      runHook preCheck
+    runHook preCheck
 
-      ${python}/bin/${python.executable} setup.py test
+    ${python}/bin/${python.executable} setup.py test
 
-      runHook postCheck
+    runHook postCheck
   '';
 
   buildPhase = attrs.buildPhase or ''
@@ -149,16 +159,16 @@ python.stdenv.mkDerivation (attrs // {
   '';
 
   postFixup = attrs.postFixup or ''
-      wrapPythonPrograms
+    wrapPythonPrograms
 
-      # TODO: document
-      createBuildInputsPth build-inputs "$buildInputStrings"
-      for inputsfile in propagated-build-inputs propagated-native-build-inputs; do
-        if test -e $out/nix-support/$inputsfile; then
-            createBuildInputsPth $inputsfile "$(cat $out/nix-support/$inputsfile)"
-        fi
-      done
-    '';
+    # TODO: document
+    createBuildInputsPth build-inputs "$buildInputStrings"
+    for inputsfile in propagated-build-inputs propagated-native-build-inputs; do
+      if test -e $out/nix-support/$inputsfile; then
+          createBuildInputsPth $inputsfile "$(cat $out/nix-support/$inputsfile)"
+      fi
+    done
+  '';
 
   shellHook = attrs.shellHook or ''
     if test -e setup.py; then

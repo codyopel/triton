@@ -10,21 +10,31 @@ let
   isPy33 = python.majorVersion == "3.3";
   isPy34 = python.majorVersion == "3.4";
   isPy35 = python.majorVersion == "3.5";
-  isPyPy = python.executable == "pypy";
   isPy3k = strings.substring 0 1 python.majorVersion == "3";
+  isPyPy = python.executable == "pypy";
 
   callPackage = pkgs.newScope self;
 
-  buildPythonPackage = makeOverridable (callPackage ../development/python-modules/generic { });
+  buildPythonPackage = makeOverridable (
+    callPackage ../development/python-modules/generic { }
+  );
 
   # Unique python version identifier
   pythonName =
-    if isPy26 then "python26" else
-    if isPy27 then "python27" else
-    if isPy33 then "python33" else
-    if isPy34 then "python34" else
-    if isPy35 then "python35" else
-    if isPyPy then "pypy" else "";
+    if isPy26 then
+      "python26"
+    else if isPy27 then
+      "python27"
+    else if isPy33 then
+      "python33"
+    else if isPy34 then
+      "python34"
+    else if isPy35 then
+      "python35"
+    else if isPyPy then
+      "pypy"
+    else
+      "";
 
   modules = python.modules or {
     readline = null;
@@ -36,34 +46,46 @@ let
 
   pythonPackages = modules // {
 
-  inherit python isPy26 isPy27 isPy33 isPy34 isPy35 isPyPy isPy3k pythonName buildPythonPackage;
+  inherit
+    python
+    isPy26
+    isPy27
+    isPy33
+    isPy34
+    isPy35
+    isPy3k
+    isPyPy
+    pythonName
+    buildPythonPackage;
 
   # helpers
 
   # global distutils config used by buildPythonPackage
   distutils-cfg = callPackage ../development/python-modules/distutils-cfg { };
 
-  wrapPython = pkgs.makeSetupHook
-    { deps = pkgs.makeWrapper;
-      substitutions.libPrefix = python.libPrefix;
-      substitutions.executable = "${python}/bin/${python.executable}";
-      substitutions.magicalSedExpression = let
+  wrapPython = pkgs.makeSetupHook {
+    deps = pkgs.makeWrapper;
+    substitutions.libPrefix = python.libPrefix;
+    substitutions.executable = "${python}/bin/${python.executable}";
+    substitutions.magicalSedExpression =
+      let
         # Looks weird? Of course, it's between single quoted shell strings.
         # NOTE: Order DOES matter here, so single character quotes need to be
         #       at the last position.
         quoteVariants = [ "'\"'''\"'" "\"\"\"" "\"" "'\"'\"'" ]; # hey Vim: ''
-
-        mkStringSkipper = labelNum: quote: let
-          label = "q${toString labelNum}";
-          isSingle = elem quote [ "\"" "'\"'\"'" ];
-          endQuote = if isSingle then "[^\\\\]${quote}" else quote;
-        in ''
-          /^ *[a-z]?${quote}/ {
-            /${quote}${quote}|${quote}.*${endQuote}/{n;br}
-            :${label}; n; /^${quote}/{n;br}; /${endQuote}/{n;br}; b${label}
-          }
-        '';
-
+        mkStringSkipper =
+          labelNum:
+          quote:
+          let
+            label = "q${toString labelNum}";
+            isSingle = elem quote [ "\"" "'\"'\"'" ];
+            endQuote = if isSingle then "[^\\\\]${quote}" else quote;
+          in ''
+            /^ *[a-z]?${quote}/ {
+              /${quote}${quote}|${quote}.*${endQuote}/{n;br}
+              :${label}; n; /^${quote}/{n;br}; /${endQuote}/{n;br}; b${label}
+            }
+          '';
       in ''
         1 {
           /^#!/!b; :r
@@ -73,8 +95,7 @@ let
           /^ *[^# ]/i import sys; sys.argv[0] = '"'$(basename "$f")'"'
         }
       '';
-    }
-   ../development/python-modules/generic/wrap.sh;
+    } ../development/python-modules/generic/wrap.sh;
 
   # specials
 
@@ -145,7 +166,9 @@ let
   pygobject_3 = callPackage ../development/python-modules/pygobject/3.x.nix { };
   pygobject = pythonPackages.pygobject_3;
 
-  pygtk = callPackage ../development/python-modules/pygtk { libglade = null; };
+  pygtk = callPackage ../development/python-modules/pygtk {
+    libglade = null;
+  };
 
   pyGtkGlade = self.pygtk.override {
     libglade = pkgs.gnome.libglade;
