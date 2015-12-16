@@ -573,6 +573,8 @@ let
 
   pixman = callPackage ../all-pkgs/pixman { };
 
+  sqlheavy = callPackage ../all-pkgs/sqlheavy { };
+
   sublime-text = callPackage ../all-pkgs/sublime-text { };
 
   vlc = callPackage ../all-pkgs/vlc { };
