@@ -17,6 +17,10 @@ stdenv.mkDerivation rec {
     sha1 = "926b7907bc8d274e063d42804666b40a3f3c124c";
   };
 
+  patches = [
+    dsoPatch
+  ];
+
   nativeBuildInputs = [ readline ];
 
   configurePhase = ''
