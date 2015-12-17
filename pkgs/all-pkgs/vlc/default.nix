@@ -41,7 +41,7 @@
 , libvdpau
 , libvorbis
 , libxml2
-, lua5
+, lua
 , mpeg2dec
 , perl
 , qt4
@@ -73,6 +73,10 @@ stdenv.mkDerivation rec {
     url = "http://download.videolan.org/vlc/${version}/${name}.tar.xz";
     sha256 = "1jqzrzrpw6932lbkf863xk8cfmn4z2ngbxz7w8ggmh4f6xz9sgal";
   };
+
+  patches = [
+    ./lua_53_compat.patch
+  ];
 
   configureFlags = [
     "--enable-alsa"
@@ -134,7 +138,7 @@ stdenv.mkDerivation rec {
     libvdpau
     libvorbis
     libxml2
-    lua5
+    lua
     mpeg2dec
     perl
     qt4
