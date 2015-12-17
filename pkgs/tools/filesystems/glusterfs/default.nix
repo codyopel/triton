@@ -1,4 +1,4 @@
-{stdenv, fetchurl, fuse, bison, flex, openssl, python, ncurses, readline,
+{stdenv, fetchurl, fuse, bison, flex_2_5_35, openssl, python, ncurses, readline,
  autoconf, automake, libtool, pkgconfig, zlib, libaio, libxml2, acl, sqlite
  , liburcu, attr
 }:
@@ -14,7 +14,7 @@ let
     sha256="01fg132k4gvvx5p0bi88956yzd77pcnw3iyi88vrsncmpnvg10xv";
   };
   buildInputs = [
-    fuse bison flex openssl python ncurses readline
+    fuse bison flex_2_5_35 openssl python ncurses readline
     autoconf automake libtool pkgconfig zlib libaio libxml2
     acl sqlite liburcu attr
   ];
