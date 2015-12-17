@@ -8,12 +8,12 @@
 stdenv.mkDerivation rec {
   name = "glibmm-${version}";
   versionMajor = "2.46";
-  versionMinor = "1";
+  versionMinor = "2";
   version = "${versionMajor}.${versionMinor}";
 
   src = fetchurl {
     url = "mirror://gnome/sources/glibmm/${versionMajor}/${name}.tar.xz";
-    sha256 = "1an4v1yk06svlmcyp1psk2a3bsn29s1a4gdx0ai2w788q6bfaiwn";
+    sha256 = "1j530gcv1qq49m411yc88yx6s91lwsznxjwlp4mww74cfqda08bj";
   };
 
   configureFlags = [
