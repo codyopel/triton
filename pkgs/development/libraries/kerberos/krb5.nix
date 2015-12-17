@@ -64,6 +64,10 @@ stdenv.mkDerivation rec {
     sha256 = "1sgr61cnkgc5xazijaww6wpn5fnxl9vyj9ixk3r3y7ikv3x0gnyf";
   };
 
+  postUnpack = ''
+    sourceRoot="$sourceRoot/src"
+  '';
+
   nativeBuildInputs = [ pkgconfig perl yacc ];
   buildInputs = [ optOpenssl optLibverto optOpenldap ]
     ++ cryptoInputs ++ tlsInputs ++ lineParserInputs;
