@@ -1,0 +1,1 @@
+sudo nixos-rebuild boot -I nixpkgs=/home/cwopel/Projects/nyxpkgs -I nixos-config=/etc/nixos/configuration.nix

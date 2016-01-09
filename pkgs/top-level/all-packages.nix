@@ -505,7 +505,33 @@ let
 
   gnome-mpv = callPackage ../all-pkgs/gnome-mpv { };
 
+  gnonlin_0 = callPackage ../all-pkgs/gnonlin/0.x.nix { };
+  gnonlin_1 = callPackage ../all-pkgs/gnonlin/1.x.nix { };
+  gnonlin = gnonlin_1;
+
   granite = callPackage ../all-pkgs/granite { };
+
+  gst-ffmpeg = callPackage ../all-pkgs/gst-ffmpeg { };
+
+  gst-libav = callPackage ../all-pkgs/gst-libav { };
+
+  gst-plugins-base_0 = callPackage ../all-pkgs/gst-plugins-base/0.x.nix { };
+  gst-plugins-base_1 = callPackage ../all-pkgs/gst-plugins-base/1.x.nix { };
+  gst-plugins-base = gst-plugins-base_1;
+
+  gst-plugins-good_0 = callPackage ../all-pkgs/gst-plugins-good/0.x.nix { };
+  gst-plugins-good_1 = callPackage ../all-pkgs/gst-plugins-good/1.x.nix { };
+  gst-plugins-good = gst-plugins-good;
+
+  gst-python_0 = callPackage ../all-pkgs/gst-python/0.x.nix { };
+  gst-python_1 = callPackage ../all-pkgs/gst-python/1.x.nix { };
+  gst-python = gst-python_1;
+
+  gstreamer_0 = callPackage ../all-pkgs/gstreamer/0.x.nix { };
+  gstreamer_1 = callPackage ../all-pkgs/gstreamer/1.x.nix { };
+  gstreamer = gstreamer_1;
+
+  gstreamer-editing-services = callPackage ../all-pkgs/gstreamer-editing-services { };
 
   gtk2 = callPackage ../all-pkgs/gtk+/2.x.nix { };
   gtk3 = callPackage ../all-pkgs/gtk+/3.x.nix { };
@@ -6363,50 +6389,11 @@ let
 
   gperftools = callPackage ../development/libraries/gperftools { };
 
-  gst_all_1 = recurseIntoAttrs(callPackage ../development/libraries/gstreamer {
-    callPackage = pkgs.newScope (pkgs // { inherit (pkgs) libav; });
-  });
-
-  gst_all = {
-    inherit (pkgs) gstreamer gnonlin gst_python qt_gstreamer;
-    gstPluginsBase = pkgs.gst_plugins_base;
-    gstPluginsBad = pkgs.gst_plugins_bad;
-    gstPluginsGood = pkgs.gst_plugins_good;
-    gstPluginsUgly = pkgs.gst_plugins_ugly;
-    gstFfmpeg = pkgs.gst_ffmpeg;
-  };
-
-  gstreamer = callPackage ../development/libraries/gstreamer/legacy/gstreamer {
-    bison = bison2;
-  };
-
-  gst_plugins_base = callPackage ../development/libraries/gstreamer/legacy/gst-plugins-base {};
-
-  gst_plugins_good = callPackage ../development/libraries/gstreamer/legacy/gst-plugins-good {};
-
-  gst_plugins_bad = callPackage ../development/libraries/gstreamer/legacy/gst-plugins-bad {};
-
-  gst_plugins_ugly = callPackage ../development/libraries/gstreamer/legacy/gst-plugins-ugly {};
-
-  gst_ffmpeg = callPackage ../development/libraries/gstreamer/legacy/gst-ffmpeg {
-    ffmpeg = ffmpeg_0;
-  };
-
-  gst_python = callPackage ../development/libraries/gstreamer/legacy/gst-python {};
-
-  gstreamermm = callPackage ../development/libraries/gstreamer/legacy/gstreamermm { };
-
-  gnonlin = callPackage ../development/libraries/gstreamer/legacy/gnonlin {};
-
   gusb = callPackage ../development/libraries/gusb {
     inherit (gnome) gtkdoc;
   };
 
   qt-mobility = callPackage ../development/libraries/qt-mobility {};
-
-  qt_gstreamer = callPackage ../development/libraries/gstreamer/legacy/qt-gstreamer {};
-
-  qt_gstreamer1 = callPackage ../development/libraries/gstreamer/qt-gstreamer { boost = boost155;};
 
   gnet = callPackage ../development/libraries/gnet { };
 

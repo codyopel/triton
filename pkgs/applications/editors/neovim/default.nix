@@ -112,8 +112,8 @@ let
       unibilium
     ] ++ optional withJemalloc jemalloc;
 
-    LUA_CPATH="${lpeg}/lib/lua/${lua.luaversion}/?.so;${luabitop}/lib/lua/5.2/?.so";
-    LUA_PATH="${luaMessagePack}/share/lua/5.1/?.lua";
+    LUA_CPATH="${lpeg}/lib/lua/${lua.luaversion}/?.so;${luabitop}/lib/lua/5.3/?.so";
+    LUA_PATH="${luaMessagePack}/share/lua/5.3/?.lua";
 
     postInstall = optionalString withPython ''
       ln -s ${pythonEnv}/bin/python $out/bin/nvim-python
